@@ -1,0 +1,26 @@
+    /* ####################################################
+    :: Template Name: Essence - Fashion Ecommerce Template
+    :: Author: Colorlib
+    :: Author URL: https://colorlib.com
+    :: Description: Essence is smart & elegant fashion e-commerce Template. It's suitable for all e-commerce business platform.
+    :: Version: 1.0.0
+    :: Created: April 27, 2018
+    :: Last Updated: May 2, 2018
+    #################################################### */
+
+    /* ---------------------------------------
+    ##### - PLACE YOUR CUSTOM CSS HERE - #####
+    --------------------------------------- */
+
+    .menu-link {
+        font-family: Roboto, Helvetica, Arial, sans-serif;
+        font-size: 16px; /* Adjust font size to match the "KIDS" link */
+        font-weight: 400; /* Use the same weight as "KIDS" */
+        color: #000; /* Or use the appropriate color */
+        text-decoration: none;
+    }
+    
+    .menu-link:hover {
+        color: #ff5a5f; /* Example hover color to match "KIDS" */
+        text-decoration: underline;
+    }
