@@ -27,5 +27,13 @@ router.get('/shop',userController.loadShop)
 router.get('/product-details', productController.loadProductDetail)
 
 
-
+router.post('/logout',(req,res)=>{
+    req.session.destroy((err)=>{
+        if(err){
+            console.error("logout error",err)
+        }else{
+            res.redirect('/')
+        }
+    })
+})
 module.exports = router;

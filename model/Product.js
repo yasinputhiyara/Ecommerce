@@ -25,8 +25,9 @@ const productsSchema = new Schema({
         
     },
     subCategory:{
-        type:Schema.Types.ObjectId,
-        ref:'SubCategory',
+        // type:Schema.Types.ObjectId,
+        // ref:'SubCategory',
+        type:String,
         required:true
     },
     productOffer:{
@@ -91,19 +92,19 @@ const categorySchema = new mongoose.Schema({
 }, { timestamps: true }
 );  
 
-const subCategorySchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
-        unique:true
-    },
-    isListed:{
-        type:Boolean,
-        default:true
+// const subCategorySchema = new mongoose.Schema({
+//     name: {
+//         type: String,
+//         required: true,
+//         unique:true
+//     },
+//     isListed:{
+//         type:Boolean,
+//         default:true
 
-    }
+//     }
 
-},{timestamps:true})
+// },{timestamps:true})
 
 
 const brandSchema = new mongoose.Schema({

@@ -156,9 +156,23 @@
                 <!-- Favourite Area -->
                 <div class="favourite-area">
                     <% if (user) { %>
-                        <a href="/user-account" class="menu-link">ACCOUNT</a>
+                        <div class="dropdown mt-4">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="accountDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <%= user.username  %>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="accountDropdown">
+                                <li><a class="dropdown-item" href="/user-account">My Account</a></li>
+                                <li>
+                                    <form action="/logout" method="POST" class="m-0">
+                                        <button type="submit" class="btn btn-danger dropdown-item">Logout</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
                     <% } %>
                 </div>
+                
+                
                 
 
                 <div class="favourite-area">
@@ -167,7 +181,9 @@
 
                 <!-- User Login Info -->
                 <div class="user-login-info">
-                    <a href="/login"><img src="/user/essence/img/core-img/user.svg" alt="" /></a>
+                    <% if(!user) { %>
+                        <a href="/login"><img src="/user/essence/img/core-img/user.svg" alt="" /></a>
+                        <% } %>
                 </div>
 
                 <!-- Cart Area -->

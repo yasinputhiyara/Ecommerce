@@ -1,6 +1,8 @@
 <%- include("../partials/adminheader") %>
 <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/sweetalert2@7.12.15/dist/sweetalert2.min.css'></link>
 
+
+
 <div class="container-scroller">
   <!-- Sidebar -->
   <%- include("../partials/adminSidebar") %>
@@ -51,7 +53,7 @@
                 <th scope="col">Sale Price</th>
                 <th scope="col">Regular Price</th>
                 <th scope="col">Quantity</th>
-                <th scope="col">Offer</th>
+                <!-- <th scope="col">Offer</th> -->
                 <th scope="col">Action</th>
                 <th scope="col">Edit</th>
               </tr>
@@ -68,16 +70,16 @@
                 <td><%= data[i].quantity %></td>
 
                 <!-- Product Offer -->
-                <td>
+                <!-- <td>
                   <% if (locals.data[i].productOffer) { %>
                     <%= data[i].productOffer %>
                   <% } else { %>
                     0%
                   <% } %>
-                </td>
+                </td> -->
 
                 <!-- Add/Remove Offer -->
-                <td>
+                <!-- <td>
                   <% if (locals.data[i].productOffer === 0) { %>
                   <button 
                     class="btn btn-info text-white" 
@@ -93,7 +95,7 @@
                     Remove Offer
                   </button>
                   <% } %>
-                </td>
+                </td> -->
 
                 <!-- Block/Unblock Product -->
                 <td>

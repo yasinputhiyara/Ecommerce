@@ -4,6 +4,9 @@ const bcrypt = require('bcrypt');
 const { User } = require('../../model/User');
 require("dotenv").config()
 
+
+const {Brand,Category,Product}= require('../../model/Product')
+
 const loadLogin = async (req, res) => {
     const errorMessage = req.session.errorMessage || null; // Retrieve and clear error
     req.session.errorMessage = null;
@@ -240,7 +243,39 @@ const loadHome = async (req,res)=>{
 
 
 const loadShop = async (req,res)=>{
-    res.render('user/shop')
+    try {
+        const user = req.session.user
+        // Fetch products, excluding those that are blocked
+        const products = await Product.find({ isBlocked: false, status: 'Available' });
+
+        // Fetch categories and brands, excluding blocked ones
+        const categories = await Category.find({ isBlocked: false });
+        const brands = await Brand.find({ isBlocked: false });
+
+        // Pagination Logic
+        const page = parseInt(req.query.page) || 1;
+        const perPage = 12;
+        const totalProducts = await Product.countDocuments({ isBlocked: false, status: 'Available' });
+        const totalPages = Math.ceil(totalProducts / perPage);
+
+        // Fetch the products for the current page
+        const productsPage = await Product.find({ isBlocked: false, status: 'Available' })
+            .skip((page - 1) * perPage)
+            .limit(perPage);
+
+        res.render('user/shop', {
+            products: productsPage,
+            categories,
+            brands,
+            totalProducts,
+            totalPages,
+            currentPage: page,
+            user
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Server Error");
+    }
 }
 
 
