@@ -234,9 +234,18 @@ const resendOtp = async (req, res) => {
 
 
 const loadHome = async (req,res)=>{
-    const user = req.session.user 
+    const user = req.session.user;
+    const  categories = await Category.find({isListed:true})
+    let productData = await Product.find({
+        // isBlocked:false,
+        category:{$in:categories.map(category=>category._id)},
+        quantity:{$gt:0}
+
+    })
+    
+
     products = {
-        user : "huyhrf"
+        user : ""
     }
     res.render('user/home',{products,user})
 }
@@ -246,7 +255,7 @@ const loadShop = async (req,res)=>{
     try {
         const user = req.session.user
         // Fetch products, excluding those that are blocked
-        const products = await Product.find({ isBlocked: false, status: 'Available' });
+        const products = await Product.find({ isBlocked: false });
 
         // Fetch categories and brands, excluding blocked ones
         const categories = await Category.find({ isBlocked: false });
@@ -255,11 +264,11 @@ const loadShop = async (req,res)=>{
         // Pagination Logic
         const page = parseInt(req.query.page) || 1;
         const perPage = 12;
-        const totalProducts = await Product.countDocuments({ isBlocked: false, status: 'Available' });
+        const totalProducts = await Product.countDocuments({ isBlocked: false });
         const totalPages = Math.ceil(totalProducts / perPage);
 
         // Fetch the products for the current page
-        const productsPage = await Product.find({ isBlocked: false, status: 'Available' })
+        const productsPage = await Product.find({ isBlocked: false })
             .skip((page - 1) * perPage)
             .limit(perPage);
 

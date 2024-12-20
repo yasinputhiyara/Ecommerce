@@ -37,7 +37,7 @@ router.post('/edit-product/:id',adminAuth ,upload.array('images',4), productCont
 
 
 //-----Category------//
-router.get('/view-category,adminAuth' ,categoryController.loadCategory )
+router.get('/view-category',adminAuth ,categoryController.loadCategory )
 router.post('/add-category',adminAuth,categoryController.addCategory)
 router.post('/addCategoryOffer',adminAuth,categoryController.addCategoryOffer)
 router.post('/removeCategoryOffer',adminAuth,categoryController.removeCategoryOffer)
@@ -47,10 +47,10 @@ router.get("/editCategory",adminAuth,categoryController.getEditCategory)
 
 
 //-------Brand----------//
-router.get('/view-brands',brandcontroller.loadBrand)
-router.post('/addBrand',upload.single('image'),brandcontroller.addBrand)
-router.get('/blockBrand' , brandcontroller.blockBrand)
-router.get('/unblockBrand', brandcontroller.unblockBrand)
+router.get('/view-brands',adminAuth,brandcontroller.loadBrand)
+router.post('/addBrand',adminAuth,upload.single('image'),brandcontroller.addBrand)
+router.get('/blockBrand',adminAuth , brandcontroller.blockBrand)
+router.get('/unblockBrand',adminAuth, brandcontroller.unblockBrand)
 
 
 module.exports = router;

@@ -2,6 +2,7 @@ var express = require('express');
 const passport = require('passport')
 var router = express.Router();
 
+const {userAuth}=require('../middleware/auth')
 const userController = require('../controller/user/userController')
 const productController = require('../controller/user/productController')
 
@@ -13,7 +14,6 @@ router.post('/register' , userController.verifyRegister);
 router.get('/otp-verify' , userController.loadOtpPage)
 router.post('/verify-otp' , userController.verifyOtp)
 router.post('/resend-otp' , userController.resendOtp)
-
 
 
 router.get('/auth/google',passport.authenticate('google',{scope:['profile','email']}))
@@ -36,4 +36,5 @@ router.post('/logout',(req,res)=>{
         }
     })
 })
+
 module.exports = router;

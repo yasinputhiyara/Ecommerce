@@ -1,9 +1,15 @@
 
 
+const {Brand,Category,Product} = require('../../model/Product')
+
 
 const loadProductDetail = async (req,res)=>{
-
-    res.render('user/view-productDetails')
+    try {
+        
+        res.render('user/view-productDetails')
+    } catch (error) {
+        
+    }
 
 }
 

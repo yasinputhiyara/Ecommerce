@@ -152,7 +152,7 @@
                                 <div class="col-sm-6 mb-3">
                                   <label class="form-label">Sub Category</label>
                                   <select class="form-select border" style="width: 150px;" name="subCategory">
-
+                                    
                                     <option value="formal"> Formal Shoes</option>
                                     <option value="sports"> Sports Shoes</option>
                                     <option value="casual"> Casual Shoes</option>
@@ -172,23 +172,80 @@
                             </div>
                             <div class="card-body">
                               <div class="row">
-                                <% for (let i=1; i <=4; i++) { %>
-                                  <div class="col-lg-3 col-md-4 mb-4">
-                                    <label for="input<%= i %>" class="form-label">Upload Image <%= i %> </label>
-                                    <input type="file" class="form-control" id="input<%= i %>" name="images"
-                                      accept="image/png, image/jpeg, image/jpg"
-                                      onchange="loadImageForCropping(event,<%= i %>)">
-                                    <!-- Display existing image if it exists in the database -->
-                                    <img src="" alt="Product Image <%= i %>" id="imgView<%= i %>"
-                                      class="img-preview mt-2"
-                                      style="width: 100%; max-height: 150px; object-fit: cover;">
-
-                                  </div>
-                                  <% } %>
+                                <!-- Input 1 -->
+                                <div class="col-lg-3 col-md-4 mb-4">
+                                  <label for="input1" class="form-label">Upload Image 1</label>
+                                  <input 
+                                    type="file" 
+                                    class="form-control" 
+                                    id="input1" 
+                                    name="images" 
+                                    accept="image/png, image/jpeg, image/jpg" 
+                                    onchange="loadImageForCropping(event, 1)">
+                                  <img 
+                                    src="" 
+                                    alt="Product Image 1" 
+                                    id="imgView1" 
+                                    class="img-preview mt-2" 
+                                    style="width: 100%; max-height: 150px; object-fit: cover;">
+                                </div>
+                          
+                                <!-- Input 2 -->
+                                <div class="col-lg-3 col-md-4 mb-4">
+                                  <label for="input2" class="form-label">Upload Image 2</label>
+                                  <input 
+                                    type="file" 
+                                    class="form-control" 
+                                    id="input2" 
+                                    name="images" 
+                                    accept="image/png, image/jpeg, image/jpg" 
+                                    onchange="loadImageForCropping(event, 2)">
+                                  <img 
+                                    src="" 
+                                    alt="Product Image 2" 
+                                    id="imgView2" 
+                                    class="img-preview mt-2" 
+                                    style="width: 100%; max-height: 150px; object-fit: cover;">
+                                </div>
+                          
+                                <!-- Input 3 -->
+                                <div class="col-lg-3 col-md-4 mb-4">
+                                  <label for="input3" class="form-label">Upload Image 3</label>
+                                  <input 
+                                    type="file" 
+                                    class="form-control" 
+                                    id="input3" 
+                                    name="images" 
+                                    accept="image/png, image/jpeg, image/jpg" 
+                                    onchange="loadImageForCropping(event, 3)">
+                                  <img 
+                                    src="" 
+                                    alt="Product Image 3" 
+                                    id="imgView3" 
+                                    class="img-preview mt-2" 
+                                    style="width: 100%; max-height: 150px; object-fit: cover;">
+                                </div>
+                          
+                                <!-- Input 4 -->
+                                <div class="col-lg-3 col-md-4 mb-4">
+                                  <label for="input4" class="form-label">Upload Image 4</label>
+                                  <input 
+                                    type="file" 
+                                    class="form-control" 
+                                    id="input4" 
+                                    name="images" 
+                                    accept="image/png, image/jpeg, image/jpg" 
+                                    onchange="loadImageForCropping(event, 4)">
+                                  <img 
+                                    src="" 
+                                    alt="Product Image 4" 
+                                    id="imgView4" 
+                                    class="img-preview mt-2" 
+                                    style="width: 100%; max-height: 150px; object-fit: cover;">
+                                </div>
                               </div>
                             </div>
-
-                          </div>
+                          </div>                          
 
                           <!-- Modal for Image Cropping -->
                           <div class="modal fade" id="cropModal" tabindex="-1" aria-labelledby="cropModalLabel"
@@ -332,8 +389,8 @@
           const img = document.createElement("img");
           img.src = e.target.result;
           img.className = "thumbnail";
-          img.style.width = "100px";
-          img.style.height = "100px";
+          img.style.width = "200px";
+          img.style.height = "200px";
           container.appendChild(img);
         };
         reader.readAsDataURL(file);
@@ -374,8 +431,8 @@
             scalable: true,
             zoomable: true,
             cropBoxResizable: true,
-            minCropBoxWidth: 50,
-            minCropBoxHeight: 50,
+            minCropBoxWidth: 80,
+            minCropBoxHeight: 80,
           });
         }
         reader.readAsDataURL(file);
