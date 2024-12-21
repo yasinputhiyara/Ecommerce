@@ -30,7 +30,6 @@ router.get('/add-product',adminAuth, productController.loadAddProduct)
 router.post('/add-product',adminAuth,upload.array("images", 4),productController.addProduct)
 router.get('/blockProduct',adminAuth ,productController.blockProduct )
 router.get('/unblockProduct' ,adminAuth, productController.unblockProduct)
-
 router.get('/edit-product',adminAuth,productController.loadEditProduct);
 router.post('/edit-product/:id',adminAuth ,upload.array('images',4), productController.editProduct)
 

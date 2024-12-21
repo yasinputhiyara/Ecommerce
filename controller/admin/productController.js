@@ -138,12 +138,19 @@ const loadEditProduct = async (req, res) => {
   } catch (error) {}
 };
 
+
 const editProduct = async (req, res) => {
   try {
     const id = req.params.id;
-    const product = await Product.findOne({ _id: id });
     const data = req.body;
 
+    // Check if the product exists
+    const product = await Product.findOne({ _id: id });
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    // Check if a product with the same name exists (excluding the current product)
     const existingProduct = await Product.findOne({
       productName: data.productName,
       _id: { $ne: id },
@@ -152,45 +159,72 @@ const editProduct = async (req, res) => {
     if (existingProduct) {
       return res
         .status(400)
-        .json({ error: "Product with this name already exist " });
+        .json({ error: "A product with this name already exists." });
     }
 
-    const images = [];
-
+    // Handle new image uploads
+    const newImages = [];
     if (req.files && req.files.length > 0) {
       for (let i = 0; i < req.files.length; i++) {
-        images.push(req.files[i].filename);
+        const originaImagePath = path.join(
+          "public",
+          "product-images",
+          req.files[i].filename
+        );
+        const resizedImagePath = path.join(
+          "public",
+          "resized-images",
+          req.files[i].filename
+        );
+        await sharp(originaImagePath)
+          .resize({ width: 440, height: 440 })
+          .toFile(resizedImagePath);
+
+        // Replace backslashes with forward slashes
+        const imagePath = path.join(req.files[i].filename).replace(/\\/g, "/");
+        newImages.push(imagePath);
       }
     }
 
+    // Find the category ObjectId
+    const category = await Category.findOne({ name: data.category });
+    if (!category) {
+      return res.status(400).json({ error: "Invalid category name" });
+    }
+
+    // Update product details
     const updateFields = {
       productName: data.productName,
       description: data.description,
       brand: data.brand,
-      category: product.category,
-      subCategory : data.subCategory,
+      category: category._id, // Use the ObjectId of the category
+      subCategory: data.subCategory,
       regularPrice: data.regularPrice,
       salePrice: data.salePrice,
       quantity: data.quantity,
-      size: data.size,
       color: data.color,
     };
 
-    if (images.length > 0) {
-      updateFields.$push = { productImages: { $each: images } };
+    // Update `productImages` if new images are uploaded
+    if (newImages.length > 0) {
+      // Remove the first image from the existing product images
+      product.productImages.shift();
+      updateFields.productImages = [...product.productImages, ...newImages];
     }
 
     const updatedProduct = await Product.findByIdAndUpdate(
       id,
-      images.length > 0
-        ? { $set: updateFields, $push: updateFields.$push }
-        : { $set: updateFields },
+      { $set: updateFields },
       { new: true }
     );
-
+    console.log(updatedProduct);
     res.redirect("/admin/view-products");
-  } catch (error) {}
+  } catch (error) {
+    console.error("Error editing product: ", error);
+    res.status(500).json({ error: "An error occurred while updating the product." });
+  }
 };
+
 
 module.exports = {
   loadProducts,

@@ -171,33 +171,92 @@
                                                             <h4>Product Images</h4>
                                                         </div>
                                                         <div class="card-body">
-                                                            <div class="row">
-                                                                <% for (let i=1; i <=4; i++) { %>
-                                                                    <div class="col-lg-3 col-md-4 mb-4">
-                                                                        <label for="input<%= i %>"
-                                                                            class="form-label">Upload Image <%= i %>
-                                                                        </label>
-                                                                        <input type="file" class="form-control"
-                                                                            id="input<%= i %>" name="images"
-                                                                            accept="image/png, image/jpeg, image/jpg" <%
-                                                                            if (product.productImages[i-1]) { %>
-                                                                        value="/product-images/<%=product.productImages[i-1]
-                                                                            %>"
-                                                                            <% } %>
-                                                                                onchange="loadImageForCropping(event,<%=
-                                                                                    i %>)">
-                                                                                    <!-- Display existing image if it exists in the database -->
-                                                                                    <img src="/product-images/<%= product.productImages[i-1]%>"
-                                                                                        alt="Product Image <%= i %>"
-                                                                                        id="imgView<%= i %>"
-                                                                                        class="img-preview mt-2"
-                                                                                        style="width: 100%; max-height: 150px; object-fit: cover;">
+                                                            <div class="row g-3">
+                                                                <!-- Upload Image 1 -->
+                                                                <div class="col-lg-3 col-md-4">
+                                                                    <label for="input1" class="form-label">Upload Image
+                                                                        1</label>
+                                                                    <input type="file" class="form-control" id="input1"
+                                                                        name="images"
+                                                                        accept="image/png, image/jpeg, image/jpg"
+                                                                        onchange="loadImageForCropping(event, 1)">
+                                                                    <% if (product.productImages[0]) { %>
+                                                                        <div class="mt-2">
+                                                                            <p class="text-muted">Current Image: <%=
+                                                                                    product.productImages[0] %>
+                                                                            </p>
+                                                                            <img src="/product-images/<%= product.productImages[0] %>"
+                                                                                alt="Product Image 1" id="imgView1"
+                                                                                class="img-thumbnail"
+                                                                                style="width: 100%; max-height: 150px; object-fit: cover;">
+                                                                        </div>
+                                                                        <% } %>
+                                                                </div>
 
-                                                                    </div>
-                                                                    <% } %>
+                                                                <!-- Upload Image 2 -->
+                                                                <div class="col-lg-3 col-md-4">
+                                                                    <label for="input2" class="form-label">Upload Image
+                                                                        2</label>
+                                                                    <input type="file" class="form-control" id="input2"
+                                                                        name="images"
+                                                                        accept="image/png, image/jpeg, image/jpg"
+                                                                        onchange="loadImageForCropping(event, 2)">
+                                                                    <% if (product.productImages[1]) { %>
+                                                                        <div class="mt-2">
+                                                                            <p class="text-muted">Current Image: <%=
+                                                                                    product.productImages[1] %>
+                                                                            </p>
+                                                                            <img src="/product-images/<%= product.productImages[1] %>"
+                                                                                alt="Product Image 2" id="imgView2"
+                                                                                class="img-thumbnail"
+                                                                                style="width: 100%; max-height: 150px; object-fit: cover;">
+                                                                        </div>
+                                                                        <% } %>
+                                                                </div>
+
+                                                                <!-- Upload Image 3 -->
+                                                                <div class="col-lg-3 col-md-4">
+                                                                    <label for="input3" class="form-label">Upload Image
+                                                                        3</label>
+                                                                    <input type="file" class="form-control" id="input3"
+                                                                        name="images"
+                                                                        accept="image/png, image/jpeg, image/jpg"
+                                                                        onchange="loadImageForCropping(event, 3)">
+                                                                    <% if (product.productImages[2]) { %>
+                                                                        <div class="mt-2">
+                                                                            <p class="text-muted">Current Image: <%=
+                                                                                    product.productImages[2] %>
+                                                                            </p>
+                                                                            <img src="/product-images/<%= product.productImages[2] %>"
+                                                                                alt="Product Image 3" id="imgView3"
+                                                                                class="img-thumbnail"
+                                                                                style="width: 100%; max-height: 150px; object-fit: cover;">
+                                                                        </div>
+                                                                        <% } %>
+                                                                </div>
+
+                                                                <!-- Upload Image 4 -->
+                                                                <div class="col-lg-3 col-md-4">
+                                                                    <label for="input4" class="form-label">Upload Image
+                                                                        4</label>
+                                                                    <input type="file" class="form-control" id="input4"
+                                                                        name="images"
+                                                                        accept="image/png, image/jpeg, image/jpg"
+                                                                        onchange="loadImageForCropping(event, 4)">
+                                                                    <% if (product.productImages[3]) { %>
+                                                                        <div class="mt-2">
+                                                                            <p class="text-muted">Current Image: <%=
+                                                                                    product.productImages[3] %>
+                                                                            </p>
+                                                                            <img src="/product-images/<%= product.productImages[3] %>"
+                                                                                alt="Product Image 4" id="imgView4"
+                                                                                class="img-thumbnail"
+                                                                                style="width: 100%; max-height: 150px; object-fit: cover;">
+                                                                        </div>
+                                                                        <% } %>
+                                                                </div>
                                                             </div>
                                                         </div>
-
                                                     </div>
 
                                                     <!-- Modal for Image Cropping -->
@@ -214,8 +273,8 @@
                                                                 </div>
                                                                 <div class="modal-body">
                                                                     <div class="container">
-                                                                        <img id="imageToCrop" src=""
-                                                                            alt="Image to Crop">
+                                                                        <img id="imageToCrop" src="" alt="Image to Crop"
+                                                                            class="img-fluid">
                                                                     </div>
                                                                 </div>
                                                                 <div class="modal-footer">
