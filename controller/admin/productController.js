@@ -67,11 +67,10 @@ const addProduct = async (req, res) => {
           .toFile(resizedImagePath);
 
         // Replace backslashes with forward slashes
-        const imagePath = path
-          .join(req.files[i].filename)
+        const imagePath = path.join(req.files[i].filename);
         images.push(imagePath);
       }
-    } 
+    }
     // else {
     //   return res.status(400).json("Please upload at least one image.");
     // }
@@ -138,31 +137,30 @@ const loadEditProduct = async (req, res) => {
   } catch (error) {}
 };
 
-
 const editProduct = async (req, res) => {
   try {
-    const id = req.params.id;
-    const data = req.body;
+    const id = req.params.id; // Product ID from request parameters
+    const updatedData = req.body;
 
     // Check if the product exists
-    const product = await Product.findOne({ _id: id });
+    const product = await Product.findById(id);
     if (!product) {
-      return res.status(404).json({ error: "Product not found" });
+      return res.status(404).json({ message: "Product not found" });
     }
 
-    // Check if a product with the same name exists (excluding the current product)
+    // Check if a product with the new name already exists (excluding the current product)
     const existingProduct = await Product.findOne({
-      productName: data.productName,
+      productName: updatedData.productName,
       _id: { $ne: id },
     });
 
     if (existingProduct) {
       return res
         .status(400)
-        .json({ error: "A product with this name already exists." });
+        .json({ message: "A product with this name already exists." });
     }
 
-    // Handle new image uploads
+    // Handle image uploads
     const newImages = [];
     if (req.files && req.files.length > 0) {
       for (let i = 0; i < req.files.length; i++) {
@@ -186,44 +184,113 @@ const editProduct = async (req, res) => {
       }
     }
 
-    // Find the category ObjectId
-    const category = await Category.findOne({ name: data.category });
-    if (!category) {
-      return res.status(400).json({ error: "Invalid category name" });
+    // If new images are added, append them to existing images
+    let updatedImages = product.productImages;
+    if (newImages.length > 0) {
+      updatedImages = [...updatedImages, ...newImages];
     }
 
-    // Update product details
-    const updateFields = {
-      productName: data.productName,
-      description: data.description,
-      brand: data.brand,
-      category: category._id, // Use the ObjectId of the category
-      subCategory: data.subCategory,
-      regularPrice: data.regularPrice,
-      salePrice: data.salePrice,
-      quantity: data.quantity,
-      color: data.color,
+    // Find the category ObjectId
+    const categoryId = await Category.findOne({ name: updatedData.category });
+    if (!categoryId) {
+      return res.status(400).json({ message: "Invalid category name" });
+    }
+
+    // Update the product fields
+    const updatedProduct = {
+      productName: updatedData.productName,
+      description: updatedData.description,
+      brand: updatedData.brand,
+      category: categoryId._id, // Use the ObjectId of the category
+      subCategory: updatedData.subCategory,
+      regularPrice: updatedData.regularPrice,
+      salePrice: updatedData.salePrice,
+      quantity: updatedData.quantity,
+      color: updatedData.color,
+      productImages: updatedImages,
     };
 
-    // Update `productImages` if new images are uploaded
-    if (newImages.length > 0) {
-      // Remove the first image from the existing product images
-      product.productImages.shift();
-      updateFields.productImages = [...product.productImages, ...newImages];
-    }
+    // Update the product in the database
+    await Product.findByIdAndUpdate(id, updatedProduct, { new: true });
 
-    const updatedProduct = await Product.findByIdAndUpdate(
-      id,
-      { $set: updateFields },
-      { new: true }
-    );
-    console.log(updatedProduct);
-    res.redirect("/admin/view-products");
+    return res.redirect("/admin/view-products");
   } catch (error) {
     console.error("Error editing product: ", error);
-    res.status(500).json({ error: "An error occurred while updating the product." });
+    return res.status(500).json({ message: "Server error" });
   }
 };
+const deleteProductImage = async (req, res) => {
+  try {
+    const { productId, imageName } = req.params;
+
+    // Validate productId and imageName
+    if (!productId || !imageName) {
+      return res.status(400).json({
+        success: false,
+        message: "Product ID and image name are required.",
+      });
+    }
+
+    // Find the product by ID
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found.",
+      });
+    }
+
+    // Check if the image exists in the product's productImages array
+    const imageIndex = product.productImages.indexOf(imageName);
+    if (imageIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        message: "Image not found in product.",
+      });
+    }
+
+    // Remove the image from the productImages array
+    product.productImages.splice(imageIndex, 1);
+    await product.save();
+
+    // Paths to the images in the filesystem
+    const imagePath = path.join('public', 'product-images', imageName);
+    const resizedImagePath = path.join('public', 'resized-images', imageName);
+
+    // Function to delete a file
+    const deleteFile = (filePath) =>
+      new Promise((resolve, reject) => {
+        fs.unlink(filePath, (err) => {
+          if (err) {
+            console.error(`Error deleting file ${filePath}:`, err);
+            return reject(err);
+          }
+          resolve();
+        });
+      });
+
+    // Delete the original and resized images
+    try {
+      await Promise.all([deleteFile(imagePath), deleteFile(resizedImagePath)]);
+      return res.status(200).json({
+        success: true,
+        message: "Image and resized image deleted successfully.",
+      });
+    } catch (err) {
+      return res.status(500).json({
+        success: false,
+        message: "Failed to delete one or more image files from the server.",
+      });
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    return res.status(500).json({
+      success: false,
+      message: "An error occurred while deleting the image.",
+    });
+  }
+};
+
 
 
 module.exports = {
@@ -234,4 +301,5 @@ module.exports = {
   unblockProduct,
   loadEditProduct,
   editProduct,
+  deleteProductImage,
 };
