@@ -2,26 +2,33 @@
 const { response } = require('express');
 const {User} = require('../model/User')
 
-const userAuth = (req,res,next)=>{
-
-    if(req.session.user){
-        User.findById(req.session.user)
-        .then(data=>{
-            if(data && !data.isBlocked){
-
-                next();
-            }else{
-                res.redirect('/login')
-            }
-        }).catch(error=>{
-            console.log("Error in user auth middleware")
-            res.status(500).send("Internal Server Error")
-            
-        })
-    }else{
-        res.redirect('/login')
+const userAuth = async (req, res, next) => {
+    try {
+      if(req.session.user){
+        res.redirect('/')
+      }else{
+        next()
+      }
+    } catch (error) {
+      console.error("Error in userAuth middleware:", error.message || error);
+      return res.status(500).send("Internal Server Error");
     }
+  };
+
+const isLoggedIn = (req, res, next) => {
+    if (req.session && req.session.user) {
+        return res.redirect("/");
+    }
+    next();
 }
+
+const isLoggedOut = (req, res, next) => {
+    if (!req.session.user) {
+        return res.redirect("/login");
+    }
+    next();
+}
+  
 
 const adminAuth = (req, res, next) => {
     if (req.session && req.session.admin) {
@@ -45,5 +52,7 @@ const adminAuth = (req, res, next) => {
  
 module.exports ={
     userAuth,
-    adminAuth
+    adminAuth,
+    isLoggedIn,
+    isLoggedOut
 }

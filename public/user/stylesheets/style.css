@@ -24,3 +24,43 @@
         color: #ff5a5f; /* Example hover color to match "KIDS" */
         text-decoration: underline;
     }
+
+    .single-product-wrapper {
+        border: 1px solid #eee;
+        padding: 15px;
+        border-radius: 10px;
+        overflow: hidden;
+        text-align: center;
+      }
+      
+      .product-img .image-wrapper {
+        width: 100%;
+        height: 250px; /* Set a fixed height for images */
+        position: relative;
+        overflow: hidden;
+        border-radius: 10px;
+        background-color: #f9f9f9; /* Add a background color for empty space */
+      }
+      
+      .product-img .image-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Ensures images fill the area without distortion */
+      }
+      
+      .product-description {
+        margin-top: 15px;
+      }
+      
+      .product-price .old-price {
+        text-decoration: line-through;
+        color: #999;
+        margin-right: 5px;
+      }
+      
+      .product-description h6 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-top: 10px;
+      }
+      

@@ -187,10 +187,14 @@ const verifyOtp = async (req, res) => {
                 return res.status(500).json({ success: false, message: "Error saving user" });
             }
 
-            req.session.user = saveUserData._id;
+            req.session.user ={
+                
+                _id:saveUserData._id,
+                username:saveUserData.username,
+            } 
             console.log('Session User:', req.session.user);
 
-            return res.json({ success: true, redirectUrl: "/login" });
+            return res.json({ success: true, redirectUrl: "/" });
         } else {
             console.error('Invalid OTP');
             return res.status(400).json({ success: false, message: "Invalid OTP, please try again" });
@@ -236,44 +240,41 @@ const resendOtp = async (req, res) => {
 const loadHome = async (req,res)=>{
     const user = req.session.user;
     const  categories = await Category.find({isListed:true})
-    let productData = await Product.find({
-        // isBlocked:false,
-        category:{$in:categories.map(category=>category._id)},
-        quantity:{$gt:0}
-
-    })
+    let productData = await Product.find({})
     
-
-    products = {
-        user : ""
-    }
-    res.render('user/home',{products,user})
+    
+    
+    res.render('user/home',{products:productData,user})
 }
 
-
-const loadShop = async (req,res)=>{
+const loadShop = async (req, res) => {
     try {
-        const user = req.session.user
-        // Fetch products, excluding those that are blocked
-        const products = await Product.find({ isBlocked: false });
-
-        // Fetch categories and brands, excluding blocked ones
-        const categories = await Category.find({ isBlocked: false });
-        const brands = await Brand.find({ isBlocked: false });
+        const user = req.session.user;
 
         // Pagination Logic
-        const page = parseInt(req.query.page) || 1;
-        const perPage = 12;
-        const totalProducts = await Product.countDocuments({ isBlocked: false });
-        const totalPages = Math.ceil(totalProducts / perPage);
+        const itemsPerPage = 9; // Number of products per page
+        const page = parseInt(req.query.page) || 1; // Current page, default is 1
 
-        // Fetch the products for the current page
-        const productsPage = await Product.find({ isBlocked: false })
-            .skip((page - 1) * perPage)
-            .limit(perPage);
+        // Fetch total count of products (excluding blocked ones)
+        const totalProducts = await Product.countDocuments();
 
+        // Calculate the total number of pages
+        const totalPages = Math.ceil(totalProducts / itemsPerPage);
+
+        // Fetch products for the current page
+        const products = await Product.find({})
+            .skip((page - 1) * itemsPerPage)
+            .limit(itemsPerPage);
+
+        // Fetch categories and brands 
+        const categories = await Category.find({});
+        const brands = await Brand.find({ isBlocked: false });
+
+        console.log(totalProducts, totalPages , categories , brands);
+
+        // Render the shop view
         res.render('user/shop', {
-            products: productsPage,
+            products,
             categories,
             brands,
             totalProducts,
@@ -285,7 +286,11 @@ const loadShop = async (req,res)=>{
         console.error(err);
         res.status(500).send("Server Error");
     }
-}
+};
+
+
+
+
 
 
 
@@ -301,5 +306,4 @@ module.exports = {
     loadHome,
     loadShop
     
-
 }

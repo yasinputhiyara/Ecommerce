@@ -29,6 +29,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+app.use((req,res,next)=>{
+  res.set('cache-control' , 'no-store');
+  next();
+})
+
+app.use(nocache())
 app.use(
   session({
     secret:process.env.SESSION_SECRET, // Secret key used to sign the session ID cookie
@@ -45,10 +52,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session())
 
-app.use((req,res,next)=>{
-  res.set('cache-control' , 'no-store');
-  next();
-})
+
 
 app.use(methodOverride('_method'));
 
