@@ -124,48 +124,35 @@ const getUnlistCategory = async (req, res) => {
   }
 };
 
-const getEditCategory = async (req, res) => {
-  try {
-    const id = req.query.id;
-    const category = await Category.findOne({ _id: id });
-
-    res.render("admin/edit-category", { category: category });
-  } catch (error) {
-    console.error('Category edit Error' ,error)
-  }
-};
 
 const editCategory = async (req, res) => {
   try {
-    const id = req.params.id;
-    const { categoryName, description } = req.body;
-
-    const existingCategory = await Category.findOne({ name: categoryName });
-
-    if (existingCategory) {
-      return res
-        .status(400)
-        .json({ error: "Category exists , please choose another name" });
+    const { id, name, description } = req.body;
+    console.log(req.body);
+    // Check if the category exists
+    const category = await Category.findById(id);
+    if (!category) {
+      return res.status(404).json({ error: "Category not found" });
     }
 
-    const updateCategory = await Category.findByIdAndUpdate(
-      id,
-      {
-        name: categoryName,
-        description: description,
-      },
-      { new: true }
-    );
-
-    if (updateCategory) {
-      res.redirect("/admin/view-category");
-    } else {
-      res.status(400).json({ error: "Category not found" });
+    // Check for duplicate category name
+    const duplicateCategory = await Category.findOne({ name, _id: { $ne: id } });
+    if (duplicateCategory) {
+      return res.status(400).json({ error: "A category with this name already exists " });
     }
+
+    // Update the category details
+    category.name = name;
+    category.description = description;
+    await category.save();
+
+    return res.status(200).json({ message: "Category updated successfully" });
   } catch (error) {
-    console.error('Category edit Error' ,error)
+    console.error("Edit Category Error", error);
+    return res.status(500).json({ error: "An error occurred while editing the category" });
   }
 };
+
 
 module.exports = {
   loadCategory,
@@ -174,6 +161,5 @@ module.exports = {
   removeCategoryOffer,
   getUnlistCategory,
   getListCategory,
-  getEditCategory,
   editCategory,
 };

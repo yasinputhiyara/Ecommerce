@@ -8,16 +8,17 @@ require("dotenv").config()
 const {Brand,Category,Product}= require('../../model/Product')
 
 const loadLogin = async (req, res) => {
+    
     const errorMessage = req.session.errorMessage || null; // Retrieve and clear error
     req.session.errorMessage = null;
-    res.render('user/login', { message: errorMessage });
+    res.render('user/login', { message: errorMessage , user : null});
 };
 
 
 const loadRegister = async (req, res) => {
     const error = req.session.errorMessage || null;
     req.session.errorMessage = null;
-    res.render('user/register', { error });
+    res.render('user/register', { error , user : null});
 };
 
 
@@ -81,13 +82,9 @@ const verifyLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email, isAdmin: false }); // Ensure it's not an admin
 
         if (!user) {
-            req.session.errorMessage = "User not found";
-            return res.redirect('/login');
-        }
-        if (!user.password) {
             req.session.errorMessage = "User not found";
             return res.redirect('/login');
         }
@@ -97,8 +94,6 @@ const verifyLogin = async (req, res) => {
             return res.redirect('/login');
         }
 
-        
-
         const passwordMatch = await bcrypt.compare(password, user.password);
 
         if (!passwordMatch) {
@@ -106,7 +101,7 @@ const verifyLogin = async (req, res) => {
             return res.redirect('/login');
         }
 
-        // Login successful
+        // Store user session
         req.session.user = {
             _id: user._id,
             username: user.username,
@@ -117,6 +112,7 @@ const verifyLogin = async (req, res) => {
         res.status(500).send("Internal Server Error");
     }
 };
+
 
 
 const verifyRegister = async (req, res) => {
@@ -238,13 +234,26 @@ const resendOtp = async (req, res) => {
 
 
 const loadHome = async (req,res)=>{
+
+    try {
+        if(User.isBlocked){
+            console.log("User is Blocked by Admin")
+            req.session.destroy();  
+            return res.redirect("/login");
+        }
     const user = req.session.user;
     const  categories = await Category.find({isListed:true})
-    let productData = await Product.find({})
+    let productData = await Product.find({isBlocked:false}).sort({createdAt:-1}).limit(4)
     
     
     
     res.render('user/home',{products:productData,user})
+    } catch (error) {
+        console.error("Error in loading Home Page",error)
+        res.status(500).send("Internal Server Error")
+        
+    }
+    
 }
 
 const loadShop = async (req, res) => {
@@ -262,7 +271,7 @@ const loadShop = async (req, res) => {
         const totalPages = Math.ceil(totalProducts / itemsPerPage);
 
         // Fetch products for the current page
-        const products = await Product.find({})
+        const products = await Product.find({isBlocked:false})
             .skip((page - 1) * itemsPerPage)
             .limit(itemsPerPage);
 
@@ -270,7 +279,7 @@ const loadShop = async (req, res) => {
         const categories = await Category.find({});
         const brands = await Brand.find({ isBlocked: false });
 
-        console.log(totalProducts, totalPages , categories , brands);
+        // console.log(totalProducts, totalPages , categories , brands);
 
         // Render the shop view
         res.render('user/shop', {

@@ -13,7 +13,7 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/login',adminController.loadLogin);
-router.post('/login',adminController.verifyLogin)
+router.post('/login',adminController.verifyAdminLogin)
 router.get('/',adminAuth,adminController.loadDashboard)
 
 //-------User-------//
@@ -43,14 +43,24 @@ router.post('/addCategoryOffer',adminAuth,categoryController.addCategoryOffer)
 router.post('/removeCategoryOffer',adminAuth,categoryController.removeCategoryOffer)
 router.get("/listCategory",adminAuth , categoryController.getListCategory);
 router.get('/unlistCategory',adminAuth , categoryController.getUnlistCategory)
-router.get("/editCategory",adminAuth,categoryController.getEditCategory)
-
+router.put('/edit-category/:id',adminAuth,categoryController.editCategory)
 
 //-------Brand----------//
 router.get('/view-brands',adminAuth,brandcontroller.loadBrand)
 router.post('/addBrand',adminAuth,upload.single('image'),brandcontroller.addBrand)
 router.get('/blockBrand',adminAuth , brandcontroller.blockBrand)
 router.get('/unblockBrand',adminAuth, brandcontroller.unblockBrand)
+router.post('/editBrand',adminAuth,upload.single('image'),brandcontroller.editBrand)
+
+
+router.get('/logout', (req, res) => {
+    if (req.session.admin) {
+        delete req.session.admin; // Clear only admin session
+        return res.redirect('/admin/login');
+    }
+    res.redirect('/admin/login'); // Default fallback
+});
+
 
 
 module.exports = router;

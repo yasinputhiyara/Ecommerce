@@ -51,9 +51,49 @@ const unblockBrand = async (req, res) => {
   res.redirect("/admin/view-brands");
 };
 
+
+const editBrand = async (req, res) => {
+  try {
+    const { id, name } = req.body;
+
+    const brand = await Brand.findById(id);
+    if (!brand) {
+      return res.status(404).render("admin/view-brand", {
+        errorMessage: "Brand not found!",
+        data: await Brand.find({}),
+      });
+    }
+
+    
+    const existingBrand = await Brand.findOne({ brandName: name });
+    if (existingBrand && existingBrand._id.toString() !== id) {
+      return res.status(400).render("admin/view-brand", {
+        errorMessage: "Brand with this name already exists!",
+        data: await Brand.find({}),
+      });
+    }
+
+    let updatedData = { brandName: name }; // Prepare the updated data
+
+    // Check if a new image is uploaded
+    if (req.file) {
+      updatedData.brandImage = req.file.filename; // Update image if a new file is provided
+    }
+
+    await Brand.findByIdAndUpdate(id, updatedData); // Update the brand in the database
+    res.redirect("/admin/view-brands"); // Redirect to the brands view page
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+
+
 module.exports = {
   loadBrand,
   addBrand,
   blockBrand,
-  unblockBrand
+  unblockBrand,
+  editBrand
 };

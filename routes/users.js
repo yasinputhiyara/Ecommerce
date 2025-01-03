@@ -6,6 +6,7 @@ const {Product} = require('../model/Product')
 const {userAuth ,isLoggedIn , isLoggedOut}=require('../middleware/auth')
 const userController = require('../controller/user/userController')
 const productController = require('../controller/user/productController')
+const {checkBan} = require('../middleware/isBan')
 
 /* GET users listing. */
 router.get('/login',isLoggedIn,userController.loadLogin)
@@ -21,7 +22,7 @@ router.get('/auth/google',isLoggedIn,passport.authenticate('google',{scope:['pro
 router.get('/auth/google/callback',isLoggedIn,passport.authenticate('google',{failureRedirect:'/login'}), async (req,res)=>{
     let user = req.user
     console.log(user)
-    let products = await Product.find({})
+    let products = await Product.find({isBlocked:false})
     res.render('user/home',{user , products})
 }) 
 
@@ -30,15 +31,14 @@ router.get('/',userController.loadHome)
 router.get('/shop',userController.loadShop)
 router.get('/product-details/:id', productController.loadProductDetail)
 
+router.post('/logout', (req, res) => {
+    if (req.session.user) {
+        delete req.session.user; 
+        return res.redirect('/');
+    }
+    res.redirect('/'); // Default fallback
+});
 
-router.post('/logout',(req,res)=>{
-    req.session.destroy((err)=>{
-        if(err){
-            console.error("logout error",err)
-        }else{
-            res.redirect('/')
-        }
-    })
-})
+
 
 module.exports = router;

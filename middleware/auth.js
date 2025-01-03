@@ -23,7 +23,9 @@ const isLoggedIn = (req, res, next) => {
 }
 
 const isLoggedOut = (req, res, next) => {
-    if (!req.session.user) {
+    if (User.isBlocked)  {
+        console.log("User is Blocked by Admin")
+        req.session.user = null;
         return res.redirect("/login");
     }
     next();

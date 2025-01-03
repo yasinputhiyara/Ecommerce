@@ -8,6 +8,8 @@ const nocache = require('nocache')
 const passport = require('./connection/passport')
 const methodOverride = require('method-override');
 
+const {checkBan} = require('./middleware/isBan')
+
 
 var dotenv = require('dotenv')
 dotenv.config();
@@ -51,6 +53,8 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session())
+
+app.use(checkBan)
 
 
 

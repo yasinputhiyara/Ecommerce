@@ -113,10 +113,10 @@
                                   <td class="text-start">
                                     <% if(brand.isBlocked){ %>
 
-                                      <span class="badge rounded-pill alert-danger" style="width: 60px">Blocked</span>
+                                      <span class="badge rounded-pill bg-danger" style="width: 60px">Blocked</span>
                                       <% }else{ %>
 
-                                        <span class="badge rounded-pill alert-success" style="width: 60px">Active</span>
+                                        <span class="badge rounded-pill bg-success" style="width: 60px">Active</span>
                                         <% } %>
 
                                   </td>
@@ -125,24 +125,18 @@
                                       <button class="btn btn-danger" style="width: 90px">
                                         <a href="/admin/blockBrand?id=<%= brand._id  %>" class="text-white">Block</a>
                                       </button>
-
-                                      <% }else { %>
-                                        <button class="btn btn-success" style="width: 90px">
-                                          <a href="/admin/unblockBrand?id=<%= brand._id  %>"
-                                            class="text-white">Unblock</a>
-                                        </button>
-
-                                        <% } %>
-
-
-
-                                          <!-- <button
-                                  class="btn btn-danger"
-                                  style="width: 90px"
-                                  onclick=""
-                                >
-                                  <a href="" class="text-white">Delete</a>
-                                </button> -->
+                                      <button 
+                                        class="btn btn-warning text-white" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#editCategoryModal" 
+                                        onclick="populateEditModal('<%= brand._id %>', '<%= brand.brandName %>', '<%= brand.brandImage[0] %>')">
+                                        Edit
+                                      </button>
+                                    <% } else { %>
+                                      <button class="btn btn-success" style="width: 90px">
+                                        <a href="/admin/unblockBrand?id=<%= brand._id  %>" class="text-white">Unblock</a>
+                                      </button>
+                                    <% } %>
                                   </td>
                                 </tr>
                                 <% }) %>
@@ -160,6 +154,40 @@
       </div>
   </div>
 
+
+  <!-- Edit Category Modal -->
+<div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editCategoryModalLabel">Edit Brand</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="post" action="/admin/editBrand" enctype="multipart/form-data">
+        <div class="modal-body">
+          <input type="hidden" name="id" id="brandId">
+          <div class="mb-3">
+            <label for="brandName" class="form-label">Brand Name</label>
+            <input type="text" class="form-control" id="brandName" name="name" required>
+          </div>
+          <div class="mb-3">
+            <label for="brandImage" class="form-label">Brand Image</label>
+            <input type="file" class="form-control" id="brandImage" name="image">
+          </div>
+          <div class="text-center">
+            <img id="brandPreview" src="" alt="Brand Image" class="img-thumbnail" style="max-width: 100px;">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
   <% if (errorMessage) { %>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
@@ -170,5 +198,13 @@
       });
     </script>
   <% } %>
+
+  <script>
+     function populateEditModal(id, name, image) {
+    document.getElementById('brandId').value = id; // Populate hidden input
+    document.getElementById('brandName').value = name; // Populate name input
+    document.getElementById('brandPreview').src = '/product-images/' + image; // Show current image
+  }
+  </script>
 
   <%- include("../partials/adminfooter") %>

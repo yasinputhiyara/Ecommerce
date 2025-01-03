@@ -1,86 +1,176 @@
 <%- include("../partials/adminheader") %>
 
-    <style>
-        .col-md-3 {
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            margin: 10px;
-        }
+<style>
+    /* General Styles */
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f8f9fa;
+    }
 
-        .form-label {
-            margin-bottom: 8px;
-        }
+    .container-scroller {
+        padding: 20px;
+    }
 
-        .form-control {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
+    .form-label {
+        font-weight: bold;
+        color: #495057;
+    }
 
-        .d-grid {
-            margin-top: 20px;
-        }
+    .form-control {
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #ced4da;
+        font-size: 14px;
+    }
 
-        .btn-primary {
-            background-color: #007bff;
-            color: #fff;
-            border: 1px solid #007bff;
-            border-radius: 5px;
-            padding: 10px 20px;
-            cursor: pointer;
-        }
+    .form-control:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    }
 
-        .btn-primary:hover {
-            background-color: #0056b3;
-            border-color: #0056b3;
-        }
+    .btn-primary {
+        background-color: #007bff;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-size: 14px;
+        font-weight: bold;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
 
-        .pagination-container {
-            text-align: center;
-        }
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
 
-        .pagination {
-            display: inline-block;
-        }
+    .card {
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        background-color: #ffffff;
+        overflow: hidden;
+    }
 
-        .pagination a,
-        .pagination .current-page {
-            display: inline-block;
-            padding: 5px 10px;
-            margin: 0 2px;
-            border: 1px solid #ddd;
-            text-decoration: none;
-            color: #333;
-        }
+    .card-header {
+        background-color: #007bff;
+        color: #ffffff;
+        padding: 15px;
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
 
-        .pagination a:hover {
-            background-color: #f5f5f5;
-        }
+    .card-body {
+        padding: 20px;
+    }
 
-        .error-message {
-            color: red;
-        }
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+    }
 
-        input.form-control {
-            color: #000;
-            /* Set default text color */
-            background-color: #fff;
-            /* Set default background color */
-        }
+    .table th, .table td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #e9ecef;
+    }
 
-        input.form-control:focus {
-            color: #000;
-            /* Text color on focus */
-            background-color: #fff;
-            /* Background color on focus */
-            border-color: #007bff;
-            /* Optional: Change border color to indicate focus */
-        }
-    </style>
+    .table th {
+        background-color: #f1f1f1;
+        font-weight: bold;
+    }
+
+    .badge {
+        padding: 5px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
+    .badge-success {
+        background-color: #28a745;
+        color: #ffffff;
+    }
+
+    .badge-danger {
+        background-color: #dc3545;
+        color: #ffffff;
+    }
+
+    /* Table Actions */
+    .btn-action {
+        border-radius: 8px;
+        padding: 5px 10px;
+        font-size: 12px;
+        cursor: pointer;
+        text-transform: uppercase;
+    }
+
+    .btn-info {
+        background-color: #17a2b8;
+        color: #ffffff;
+        border: none;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-info:hover {
+        background-color: #117a8b;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        color: #ffffff;
+        border: none;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-danger:hover {
+        background-color: #bd2130;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        color: #ffffff;
+        border: none;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+    }
+
+    /* Pagination */
+    .pagination-container {
+        margin: 20px 0;
+        text-align: center;
+    }
+
+    .pagination a {
+        display: inline-block;
+        margin: 0 5px;
+        padding: 8px 12px;
+        background-color: #007bff;
+        color: #ffffff;
+        border-radius: 5px;
+        text-decoration: none;
+    }
+
+    .pagination a:hover {
+        background-color: #0056b3;
+    }
+
+    .pagination .current-page {
+        display: inline-block;
+        margin: 0 5px;
+        padding: 8px 12px;
+        background-color: #6c757d;
+        color: #ffffff;
+        border-radius: 5px;
+    }
+</style>
 
 
     <div class="container-scroller">
@@ -191,12 +281,12 @@
 
                                                                         <% if(category.isListed){ %>
                                                                             <span
-                                                                                class="badge rounded-pill alert-success"
+                                                                                class="badge rounded-pill bg-success "
                                                                                 style="width: 60px">Listed</span>
                                                                             <% }else { %>
 
                                                                                 <span
-                                                                                    class="badge rounded-pill alert-danger"
+                                                                                    class="badge rounded-pill bg-danger"
                                                                                     style="width: 60px">Unlisted</span>
                                                                                 <% } %>
                                                                     </td>
@@ -222,8 +312,9 @@
 
                                                                     </td>
                                                                     <td class="text-start">
-                                                                        <a href="/admin/editCategory?id=<%= category._id %>"
-                                                                            class="btn btn-info text-white">Edit</a>
+                                                                        <button class="btn btn-info text-white" onclick="openEditModal('<%= category._id %>', '<%= category.name %>', '<%= category.description %>')">
+                                                                            Edit
+                                                                        </button>
                                                                     </td>
                                                                 </tr>
                                                                 <% }) %>
@@ -234,6 +325,40 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- Edit Category Modal -->
+                                <div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form onsubmit="submitEditForm(event)">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="editCategoryModalLabel">Edit Category</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <input type="hidden" id="editCategoryId">
+                                                    <div class="mb-3">
+                                                        <label for="editCategoryName" class="form-label">Category Name</label>
+                                                        <input type="text" id="editCategoryName" class="form-control">
+                                                        <div id="edit-name-error" class="text-danger"></div>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="editCategoryDescription" class="form-label">Description</label>
+                                                        <textarea id="editCategoryDescription" class="form-control"></textarea>
+                                                        <div id="edit-description-error" class="text-danger"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+
+
                                 <!-- <div class="pagination-container">
                                     <a href="#">&laquo; Previous</a>
                                     <span class="current-page"></span>
@@ -419,5 +544,75 @@
 
     </script>
 
+
+<script>
+    // Function to open the modal and populate it with category data
+    function openEditModal(id, name, description) {
+        document.getElementById('editCategoryId').value = id;
+        document.getElementById('editCategoryName').value = name;
+        document.getElementById('editCategoryDescription').value = description;
+        const editModal = new bootstrap.Modal(document.getElementById('editCategoryModal'));
+        editModal.show();
+    }
+
+    // Form submission for editing category
+    function submitEditForm(event) {
+        event.preventDefault();
+
+        const id = document.getElementById('editCategoryId').value;
+        const name = document.getElementById('editCategoryName').value.trim();
+        const description = document.getElementById('editCategoryDescription').value.trim();
+
+        // Validation
+        let isValid = true;
+        if (!name) {
+            document.getElementById('edit-name-error').textContent = "Please enter a name.";
+            isValid = false;
+        } else {
+            document.getElementById('edit-name-error').textContent = "";
+        }
+
+        if (!description) {
+            document.getElementById('edit-description-error').textContent = "Please enter a description.";
+            isValid = false;
+        } else {
+            document.getElementById('edit-description-error').textContent = "";
+        }
+
+        if (!isValid) return;
+
+        // Send data to the server
+        fetch(`/admin/edit-category/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, description })
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                return response.json().then(errorData => {
+                    throw new Error(errorData.error || 'An unknown error occurred.');
+                });
+            }
+        })
+        .then(data => {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: data.message || 'Category updated successfully!',
+            }).then(() => {
+                location.reload(); // Reload after success
+            });
+        })
+        .catch(error => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: error.message || 'Something went wrong!',
+            });
+        });
+    }
+</script>
 
     <%- include("../partials/adminfooter") %>

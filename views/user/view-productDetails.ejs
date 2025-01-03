@@ -1,73 +1,193 @@
-
-
 <%- include("../partials/header") %>
 
-<style>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
     /* Container for the main image */
-.main-image-container {
-    text-align: center;
-    margin-bottom: 15px;
-    
-}
+    .main-image-container {
+      text-align: center;
+      margin-bottom: 15px;
 
-.main-image {
-    width: 50%;
-    max-width: 500px;
-    height: 400px;
-    object-fit: cover;
-    border: 2px solid #ccc;
-    border-radius: 10px;
-}
+    }
 
-/* Container for thumbnails */
-.thumbnail-container {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-}
+    .main-image {
+      width: 50%;
+      max-width: 500px;
+      height: 400px;
+      object-fit: cover;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+    }
 
-.thumbnail {
-    cursor: pointer;
-    border: 2px solid transparent;
-    border-radius: 5px;
-}
+    /* Container for thumbnails */
+    .thumbnail-container {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
 
-.thumbnail img {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    border-radius: 5px;
-}
+    .thumbnail {
+      cursor: pointer;
+      border: 2px solid transparent;
+      border-radius: 5px;
+    }
 
-.thumbnail:hover {
-    border-color: #007bff;
-}
+    .thumbnail img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
 
-/* Navigation Buttons */
-.image-nav-buttons {
-    text-align: center;
-    margin-top: 10px;
-}
+    .thumbnail:hover {
+      border-color: #007bff;
+    }
 
-.image-nav-buttons button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    font-size: 18px;
-    cursor: pointer;
-    border-radius: 5px;
-}
+    /* Navigation Buttons */
+    .image-nav-buttons {
+      text-align: center;
+      margin-top: 10px;
+    }
 
-.image-nav-buttons button:hover {
-    background-color: #0056b3;
-}
+    .image-nav-buttons button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      font-size: 18px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
 
-</style>
+    .image-nav-buttons button:hover {
+      background-color: #0056b3;
+    }
+
+    .selection-box {
+      display: flex;
+      justify-content: flex-start;
+      gap: 20px;
+    }
+
+    .size-selection,
+    .color-selection {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .size-selection h6,
+    .color-selection h6 {
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    /* Buttons for size */
+    .option-btn {
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: bold;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .option-btn:hover,
+    .option-btn.active {
+      background-color: #007bff;
+      color: #fff;
+      border-color: #007bff;
+    }
+
+    /* Buttons for color */
+    .color-btn {
+      width: 30px;
+      height: 30px;
+      border: 1px solid #ddd;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .color-btn:hover,
+    .color-btn.active {
+      border-color: #007bff;
+      transform: scale(1.1);
+    }
 
 
-<!-- ##### Breadcumb Area Start ##### -->
-<div class="breadcumb_area bg-img" style="background-image: url(/user/essence/img/bg-img/breadcumb.jpg)">
+    /*---------ZOOM IN IMAGE---------*/
+    .main-image-container {
+      position: relative;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    /* Main image */
+    .main-image {
+      width: 50%;
+      max-width: 500px;
+      height: 400px;
+      object-fit: cover;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      cursor: crosshair;
+    }
+
+    /* Magnifier container */
+    .magnifier {
+      position: absolute;
+      border: 2px solid #007bff;
+      width: 150px;
+      height: 150px;
+      overflow: hidden;
+      border-radius: 50%;
+      display: none;
+      pointer-events: none;
+      z-index: 10;
+      background-color: rgba(255, 255, 255, 0.7);
+      /* Subtle background for better visibility */
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Zoomed image inside magnifier */
+    .magnifier img {
+      position: absolute;
+      width: 400%;
+      /* Adjust for zoom level */
+      height: 400%;
+      /* Adjust for zoom level */
+      pointer-events: none;
+    }
+
+
+    /* review  */
+
+    .rating-input .fa-star {
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .rating-input .fa-star.text-warning {
+      color: #ffc107 !important;
+    }
+
+    .rating-input .fa-star.text-muted {
+      color: #ddd !important;
+    }
+  </style>
+
+
+  <!-- ##### Breadcumb Area Start ##### -->
+  <div class="breadcumb_area bg-img" style="background-image: url(/user/essence/img/bg-img/breadcumb.jpg)">
     <div class="container h-100">
       <div class="row h-100 align-items-center">
         <div class="col-12">
@@ -81,78 +201,191 @@
   <!-- ##### Breadcumb Area End ##### -->
 
 
-<section class="single_product_details_area d-flex align-items-center mt-50">
+  <section class="single_product_details_area d-flex align-items-center mt-50">
 
     <!-- Single Product Thumb -->
     <div class="single_product_thumb clearfix">
-        <div class="main-image-container">
-            <!-- Main Image -->
-            <img id="mainImage" src="/product-images/<%= product.productImages[0] %>" alt="Main Product Image" class="main-image">
+      <div class="main-image-container">
+        <!-- Main Image -->
+        <img id="mainImage" src="/product-images/<%= product.productImages[0] %>" alt="Main Product Image"
+          class="main-image">
+
+        <!-- Magnifier -->
+        <div id="magnifier" class="magnifier">
+          <img id="magnifierImage" src="/product-images/<%= product.productImages[0] %>" alt="Zoomed Product Image">
         </div>
-    
-        <div class="thumbnail-container">
-            <!-- Thumbnail Images -->
-            <div class="thumbnail">
-                <img src="/product-images/<%= product.productImages[0] %>" alt="Thumbnail 1" onclick="updateMainImage(this)">
-            </div>
-            <div class="thumbnail">
-                <img src="/product-images/<%= product.productImages[1] %>" alt="Thumbnail 2" onclick="updateMainImage(this)">
-            </div>
-            <div class="thumbnail">
-                <img src="/product-images/<%= product.productImages[2] %>" alt="Thumbnail 3" onclick="updateMainImage(this)">
-            </div>
-        </div>
-    
-        <!-- Navigation Buttons -->
-        <div class="image-nav-buttons">
-            <button id="prevButton" onclick="changeImage(-1)">&#10094;</button>
-            <button id="nextButton" onclick="changeImage(1)">&#10095;</button>
-        </div>
+      </div>
+
+      <div class="thumbnail-container">
+        <!-- Thumbnail Images Rendered Using a Loop -->
+        <% product.productImages.forEach((image, index)=> { %>
+          <div class="thumbnail">
+            <img src="/product-images/<%= image %>" alt="Thumbnail <%= index + 1 %>" onclick="updateMainImage(this)">
+          </div>
+          <% }); %>
+      </div>
+
+      <!-- Navigation Buttons -->
+      <!-- <div class="image-nav-buttons">
+        <button id="prevButton" onclick="changeImage(-1)">&#10094;</button>
+        <button id="nextButton" onclick="changeImage(1)">&#10095;</button>
+      </div> -->
     </div>
-     
+
+
 
     <!-- Single Product Description -->
     <div class="single_product_desc clearfix">
-        <span><%= product.brand  %></span>
-        <a href="cart.html">
-            <h2><%= product.productName  %></h2>
-        </a>
-        <p class="product-price"><span class="old-price">$<%= product.regularPrice  %></span> $<%= product.salePrice  %></p>
-        <p class="product-desc"><%= product.description  %></p>
+      <span>
+        <%= product.brand %>
+      </span>
+      <a href="cart.html">
+        <h2>
+          <%= product.productName %>
+        </h2>
+      </a>
+      <p class="product-price"><span class="old-price">$<%= product.regularPrice %></span> $<%= product.salePrice %>
+      </p>
+      <p class="product-desc">
+        <%= product.description %>
+      </p>
 
-        <!-- Form -->
-        <form class="cart-form clearfix" method="post">
-            <!-- Select Box -->
-            <div class="select-box d-flex mt-50 mb-30">
-                <select name="select" id="productSize" class="mr-5">
-                    <option value="value">Size: XL</option>
-                    <option value="value">Size: X</option>
-                    <option value="value">Size: M</option>
-                    <option value="value">Size: S</option>
-                </select>
-                <select name="select" id="productColor">
-                    <option value="value">Color: Black</option>
-                    <option value="value">Color: White</option>
-                    <option value="value">Color: Red</option>
-                    <option value="value">Color: Purple</option>
-                </select>
+
+      <!-- Form -->
+      <form class="cart-form clearfix" method="post">
+        <!-- Select Box -->
+        <div class="selection-box d-flex flex-wrap mt-50 mb-30">
+          <!-- Size Selection -->
+          <div class="size-selection mr-5">
+            <h6>Size:</h6>
+            <div class="options">
+              <button type="button" class="option-btn" data-size="XL">XL</button>
+              <button type="button" class="option-btn" data-size="L">L</button>
+              <button type="button" class="option-btn" data-size="M">M</button>
+              <button type="button" class="option-btn" data-size="S">S</button>
             </div>
-            <!-- Cart & Favourite Box -->
-            <div class="cart-fav-box d-flex align-items-center">
-                <!-- Cart -->
-                <button type="submit" name="addtocart" value="5" class="btn essence-btn">Add to cart</button>
-                <!-- Favourite -->
-                <div class="product-favourite ml-4">
-                    <a href="#" class="favme fa fa-heart"></a>
-                </div>
+          </div>
+
+          <!-- Color Selection -->
+          <div class="color-selection mr-5">
+            <h6>Color:</h6>
+            <div class="options d-flex">
+              <button type="button" class="color-btn" data-color="Black" style="background-color: black;"></button>
+              <button type="button" class="color-btn" data-color="White"
+                style="background-color: white; border: 1px solid #ddd;"></button>
+              <button type="button" class="color-btn" data-color="Red" style="background-color: red;"></button>
+              <button type="button" class="color-btn" data-color="Purple" style="background-color: purple;"></button>
             </div>
-        </form>
+          </div>
+
+          <!-- Quantity Selection -->
+          <div class="quantity-selection">
+            <h6>Quantity:</h6>
+            <% if(product.quantity===0){ %>
+              <p style="color: red ; font-size: 30px; font-weight: 500;">Out of Stock</p>
+              <% } else { %>
+                <select name="quantity" id="quantity" class="form-control">
+                  <% for(let i=1 ; i<=product.quantity ; i++){ %>
+                    <option value="<%= i %>">
+                      <%= i %>
+                    </option>
+
+                    <% } %>
+                </select>
+
+
+
+
+          </div>
+        </div>
+
+        <!-- Cart & Favourite Box -->
+        <div class="cart-fav-box d-flex align-items-center">
+          <!-- Cart -->
+          <button type="submit" name="addtocart" value="5" class="btn bg-primary essence-btn">Add to cart</button>
+          <!-- Favourite -->
+          <div class="product-favourite ml-4">
+            <a href="#" class="favme fa fa-heart"></a>
+          </div>
+        </div>
+
+        <% } %>
+      </form>
     </div>
-</section>
+
+    <!-- Review -->
+
+    <div class="container mt-4">
+      <div class="row">
+        <div class="col-12 text-center">
+          <h4>Customer Reviews</h4>
+          <!-- Star Rating Display -->
+          <div class="rating mt-2">
+            <i class="fa fa-star text-warning"></i>
+            <i class="fa fa-star text-warning"></i>
+            <i class="fa fa-star text-warning"></i>
+            <i class="fa fa-star-half-alt text-warning"></i>
+            <i class="fa fa-star text-muted"></i>
+            <span class="ml-2">(3.5/5)</span> <!-- Example rating -->
+          </div>
+          <!-- Write a Review Link -->
+          <div class="mt-3">
+            <a href="#" class="text-primary" data-toggle="modal" data-target="#reviewModal">
+              <i class="fa fa-pencil-alt"></i> Write a Review
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
 
 
-<!-- ##### New Arrivals Area Start ##### -->
-<section class="new-arrivals-area section-padding-80 clearfix">
+    <!-- Review Modal -->
+    <div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="reviewModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="reviewModalLabel">Write a Review</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form action="" method="post">
+            <div class="modal-body">
+              <!-- Star Rating Input -->
+              <div class="form-group text-center">
+                <label for="rating" class="d-block">Rate this product:</label>
+                <div id="starRating" class="rating-input">
+                  <i class="fa fa-star" data-value="1"></i>
+                  <i class="fa fa-star" data-value="2"></i>
+                  <i class="fa fa-star" data-value="3"></i>
+                  <i class="fa fa-star" data-value="4"></i>
+                  <i class="fa fa-star" data-value="5"></i>
+                </div>
+                <input type="hidden" id="ratingInput" name="rating" required>
+              </div>
+              <!-- Review Text -->
+              <div class="form-group">
+                <label for="reviewText">Your Review:</label>
+                <textarea class="form-control" id="reviewText" name="review" rows="4"
+                  placeholder="Write your review here..." required></textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary">Submit Review</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+
+
+
+  <!-- ##### New Arrivals Area Start ##### -->
+  <section class="new-arrivals-area section-padding-80 clearfix">
     <div class="container">
       <div class="row">
         <div class="col-12">
@@ -165,20 +398,24 @@
       <div class="row">
         <!-- Single Product Card -->
 
-        <% for(let i = 0 ; i < products.length ; i++){ %>
+        <% for(let i=0 ; i < products.length ; i++){ %>
           <div class="col-md-4 col-sm-6 col-lg-3 mb-4">
             <div class="card product-card">
               <div class="product-img-container">
                 <img src="\resized-images\<%= products[i].productImages[0] %>" class="card-img-top"
                   alt="Product Image" />
                 <!-- Hover Thumb -->
-                <img src="\resized-images\<%= products[i].productImages[1] %>" class="hover-img"
-                  alt="Hover Image" />
+                <img src="\resized-images\<%= products[i].productImages[1] %>" class="hover-img" alt="Hover Image" />
               </div>
               <div class="card-body text-center">
-                <span class="product-brand d-block"> <%= products[i].brand  %></span>
-                <h6 class="product-title"><a href="single-product-details.html"><%= products[i].productName  %></a></h6>
-                <p class="product-price">$<%= products[i].salePrice  %></p>
+                <span class="product-brand d-block">
+                  <%= products[i].brand %>
+                </span>
+                <h6 class="product-title"><a href="single-product-details.html">
+                    <%= products[i].productName %>
+                  </a></h6>
+                <p class="product-price">$<%= products[i].salePrice %>
+                </p>
                 <a href="#" class="btn essence-btn">Add to Cart</a>
               </div>
             </div>
@@ -186,31 +423,100 @@
           <% } %>
 
 
-        <!-- Repeat as necessary -->
+            <!-- Repeat as necessary -->
       </div>
     </div>
   </section>
 
   <!-- ##### New Arrivals Area End ##### -->
 
-<script>
+  <script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
+
+
+  <script>
+    const productImages = `<%- JSON.stringify(product.productImages) %>`;
     let currentImageIndex = 0;
-const productImages = [
-    "/product-images/<%= product.productImages[0] %>",
-    "/product-images/<%= product.productImages[1] %>",
-    "/product-images/<%= product.productImages[2] %>"
-];
 
-function updateMainImage(thumbnail) {
+    // Update main image and magnifier image
+    function updateMainImage(thumbnail) {
+      const mainImage = document.getElementById("mainImage");
+      const magnifierImage = document.getElementById("magnifierImage");
+      mainImage.src = thumbnail.src;
+      magnifierImage.src = thumbnail.src;
+    }
+
+    // Navigate through images
+    function changeImage(direction) {
+      currentImageIndex = (currentImageIndex + direction + productImages.length) % productImages.length;
+      const mainImage = document.getElementById("mainImage");
+      const magnifierImage = document.getElementById("magnifierImage");
+      mainImage.src = `/product-images/${productImages[currentImageIndex]}`;
+      magnifierImage.src = `/product-images/${productImages[currentImageIndex]}`;
+    }
+
+    // Zoom functionality
     const mainImage = document.getElementById("mainImage");
-    mainImage.src = thumbnail.src;
-}
+    const magnifier = document.getElementById("magnifier");
+    const magnifierImg = document.getElementById("magnifierImage");
 
-function changeImage(direction) {
-    currentImageIndex = (currentImageIndex + direction + productImages.length) % productImages.length;
-    document.getElementById("mainImage").src = productImages[currentImageIndex];
-}
+    mainImage.addEventListener("mouseover", () => {
+      magnifier.style.display = "block";
+    });
 
-</script>
+    mainImage.addEventListener("mouseout", () => {
+      magnifier.style.display = "none";
+    });
 
-<%- include("../partials/footer") %>
+    mainImage.addEventListener("mousemove", (event) => {
+      const rect = mainImage.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+
+      const magnifierSize = magnifier.offsetWidth / 2;
+      let magnifierX = x - magnifierSize;
+      let magnifierY = y - magnifierSize;
+
+      magnifierX = Math.max(0, Math.min(magnifierX, rect.width - magnifier.offsetWidth));
+      magnifierY = Math.max(0, Math.min(magnifierY, rect.height - magnifier.offsetHeight));
+
+      magnifier.style.left = `${rect.left + magnifierX}px`;
+      magnifier.style.top = `${rect.top + magnifierY}px`;
+
+      const zoomLevel = 4; // Adjust zoom level
+      const offsetX = (x / rect.width) * magnifierImg.offsetWidth;
+      const offsetY = (y / rect.height) * magnifierImg.offsetHeight;
+
+      magnifierImg.style.left = `${-offsetX + magnifierSize}px`;
+      magnifierImg.style.top = `${-offsetY + magnifierSize}px`;
+    });
+
+  </script>
+
+  <!-- Review -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const stars = document.querySelectorAll('#starRating .fa-star');
+      const ratingInput = document.getElementById('ratingInput');
+
+      stars.forEach((star, index) => {
+        star.addEventListener('click', () => {
+          ratingInput.value = index + 1;
+          stars.forEach((s, i) => {
+            if (i <= index) {
+              s.classList.add('text-warning');
+              s.classList.remove('text-muted');
+            } else {
+              s.classList.add('text-muted');
+              s.classList.remove('text-warning');
+            }
+          });
+        });
+      });
+    });
+  </script>
+
+
+
+
+
+  <%- include("../partials/footer") %>

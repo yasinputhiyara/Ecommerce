@@ -52,7 +52,8 @@ const productsSchema = new Schema({
     },
     isBlocked:{
         type:Boolean,
-        required:false
+        required:true,
+        default:false
     },
     status:{
         type:String,

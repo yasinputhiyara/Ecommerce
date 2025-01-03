@@ -5,7 +5,29 @@ const sharp = require("sharp");
 
 const loadProducts = async (req, res) => {
   try {
-    const productData = await Product.find({}).populate("category");
+    // Extract search query and page number
+    const searchQuery = req.query.search || "";
+    const page = parseInt(req.query.page) || 1;
+    const limit = 5; // Number of items per page
+    const skip = (page - 1) * limit;
+
+    // Build the search filter
+    const searchFilter = searchQuery
+      ? { productName: { $regex: searchQuery, $options: "i" } } // Case-insensitive search
+      : {};
+
+    // Fetch filtered and paginated products
+    const productData = await Product.find(searchFilter)
+      .populate("category")
+      .sort({ createdAt: -1 }) 
+      .skip(skip)
+      .limit(limit);
+
+    // Get total number of products for pagination calculation
+    const totalProducts = await Product.countDocuments(searchFilter);
+    const totalPages = Math.ceil(totalProducts / limit);
+
+    // Fetch categories and brands
     const category = await Category.find({ isListed: true });
     const brand = await Brand.find({ isBlocked: false });
 
@@ -14,13 +36,20 @@ const loadProducts = async (req, res) => {
         data: productData,
         cat: category,
         brand: brand,
+        currentPage: page,
+        totalPages: totalPages,
+        searchQuery: searchQuery, // Pass the search query to the template
       });
     } else {
-      // res.render("error")
       res.send("error");
     }
-  } catch (error) {}
+  } catch (error) {
+    console.error("Error loading products:", error);
+    res.status(500).send("An error occurred");
+  }
 };
+
+
 
 const loadAddProduct = async (req, res) => {
   try {

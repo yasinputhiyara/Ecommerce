@@ -19,36 +19,37 @@ const loadLogin = async (req, res) => {
     }
 }
 
-const verifyLogin = async (req, res) => {
+const verifyAdminLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Find admin user with the provided username
+        // Ensure admin login
         const admin = await User.findOne({ email, isAdmin: true });
 
-        if (admin) {
-            // Compare the provided password with the hashed password in the database
-            const passwordMatch = await bcrypt.compare(password, admin.password);
-
-            if (passwordMatch) {
-                // Store admin session and redirect to dashboard
-                req.session.admin = true;
-                return res.redirect('/admin');
-            } else {
-                // Invalid password
-                req.session.error = 'Invalid username or password';
-                return res.redirect('/admin/login');
-            }
-        } else {
-            // Username not found
-            req.session.error = 'Invalid username or password';
+        if (!admin) {
+            req.session.error = 'Invalid email or password';
             return res.redirect('/admin/login');
         }
+
+        const passwordMatch = await bcrypt.compare(password, admin.password);
+
+        if (!passwordMatch) {
+            req.session.error = 'Invalid email or password';
+            return res.redirect('/admin/login');
+        }
+
+        // Store admin session
+        req.session.admin = {
+            _id: admin._id,
+            username: admin.username,
+        };
+        res.redirect('/admin');
     } catch (err) {
-        console.error('Error verifying login:', err);
-        return res.redirect('/error'); // Redirect to error page on failure
+        console.error('Admin Login Error:', err);
+        res.status(500).send("Internal Server Error");
     }
-}
+};
+
 
 const loadDashboard = async (req, res) => {
     try {
@@ -61,13 +62,40 @@ const loadDashboard = async (req, res) => {
 
 const viewUsers = async (req, res) => {
     try {
-        const users = await User.find({})
-        res.render('admin/view-users', { users })
-
+      // Extract search query and page number from query parameters
+      const searchQuery = req.query.search || ""; // Search query from the URL, defaulting to an empty string
+      const page = parseInt(req.query.page) || 1; // Page number, defaulting to 1 if not provided
+      const limit = 5; // Number of users per page
+      const skip = (page - 1) * limit; // Skip calculation for pagination
+  
+      // Build the search filter for the query
+      const searchFilter = searchQuery
+        ? { username: { $regex: searchQuery, $options: "i" } } // Case-insensitive search for username
+        : {}; // Empty filter if no search query is provided
+  
+      // Fetch the users with the search filter, sorting by creation date, and paginated
+      const users = await User.find(searchFilter)
+        .sort({ createdOn: -1 }) // Sort by creation date in descending order
+        .skip(skip) // Skip records for pagination
+        .limit(limit); // Limit the number of records per page
+  
+      // Get the total count of users for pagination calculation
+      const totalUsers = await User.countDocuments(searchFilter); // Total number of users matching the search filter
+      const totalPages = Math.ceil(totalUsers / limit); // Total number of pages
+  
+      // Render the view with users, search query, pagination details, and other necessary data
+      res.render('admin/view-users', {
+        users,
+        searchQuery, // Pass the search query to the template
+        currentPage: page, // Current page number
+        totalPages, // Total pages for pagination
+      });
     } catch (error) {
-
+      console.error("Error fetching users:", error);
+      res.status(500).send("An error occurred while fetching users");
     }
-}
+  };
+  
 
 const loadUpdateUser = async (req, res) => {
     try {
@@ -102,7 +130,7 @@ const loadUpdateUser = async (req, res) => {
 
 module.exports = {
     loadLogin,
-    verifyLogin,
+    verifyAdminLogin,
     loadDashboard,
     viewUsers,
     loadUpdateUser,
