@@ -80,6 +80,8 @@ const securePassword = async (password) => {
 
 const verifyLogin = async (req, res) => {
     try {
+        req.session.userData= req.body
+        req.session.loggedIn=true
         const { email, password } = req.body;
 
         const user = await User.findOne({ email, isAdmin: false }); // Ensure it's not an admin
@@ -105,6 +107,7 @@ const verifyLogin = async (req, res) => {
         req.session.user = {
             _id: user._id,
             username: user.username,
+            email: user.email,
         };
         res.redirect('/');
     } catch (error) {
@@ -303,7 +306,6 @@ const loadShop = async (req, res) => {
 
 
 
-
 module.exports = {
     loadLogin,
     loadRegister,
@@ -313,6 +315,7 @@ module.exports = {
     resendOtp,
     verifyLogin,
     loadHome,
-    loadShop
+    loadShop,
+    
     
 }

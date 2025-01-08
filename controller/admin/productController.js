@@ -53,7 +53,7 @@ const loadProducts = async (req, res) => {
 
 const loadAddProduct = async (req, res) => {
   try {
-    const category = await Category.find({ isListed: true });
+    const category = await Category.find({  });
     const brand = await Brand.find({ isBlocked: false });
     res.render("admin/add-product", {
       cat: category,

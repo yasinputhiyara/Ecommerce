@@ -5,12 +5,13 @@ let checkBan = async (req, res, next) => {
     
     if (req.session.loggedIn) {
         
-      const email = req.session?.currentEmail || req.session?.userData?.email;
+      const email = req.session.user?.currentEmail || req.session?.userData?.email;
+      console.log("Email found in session:", email);
 
       // Ensure email exists in the session
       if (!email) {
         console.log("No email found in session.");
-        return res.redirect('/signin'); // Redirect to login if email is missing
+        return res.redirect('/register'); // Redirect to login if email is missing
       }
 
       // Find the user in the database
@@ -19,7 +20,7 @@ let checkBan = async (req, res, next) => {
       // Check if the user exists and is blocked
       if (user && user.isBlocked) {
         console.log(`User ${email} is blocked`);
-        return res.render('banPage', {
+        return res.render('user/index', {
           message: "Your account has been blocked. Please contact support.",
         });
       }
@@ -32,6 +33,4 @@ let checkBan = async (req, res, next) => {
   }
 };
 
-module.exports = {
-  checkBan
-}
+module.exports = checkBan

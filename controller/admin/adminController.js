@@ -42,6 +42,7 @@ const verifyAdminLogin = async (req, res) => {
         req.session.admin = {
             _id: admin._id,
             username: admin.username,
+            email: admin.email,
         };
         res.redirect('/admin');
     } catch (err) {

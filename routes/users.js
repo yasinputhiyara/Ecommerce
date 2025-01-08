@@ -6,6 +6,7 @@ const {Product} = require('../model/Product')
 const {userAuth ,isLoggedIn , isLoggedOut}=require('../middleware/auth')
 const userController = require('../controller/user/userController')
 const productController = require('../controller/user/productController')
+const profileController = require('../controller/user/profileController')
 const {checkBan} = require('../middleware/isBan')
 
 /* GET users listing. */
@@ -16,6 +17,14 @@ router.post('/register' ,isLoggedIn, userController.verifyRegister);
 router.get('/otp-verify' ,isLoggedIn, userController.loadOtpPage)
 router.post('/verify-otp' ,isLoggedIn, userController.verifyOtp)
 router.post('/resend-otp' ,isLoggedIn, userController.resendOtp)
+
+//----- USER PROFILE ROUTES ----//
+router.get('/forgot-password',isLoggedIn,profileController.loadForgetPasswordPage)
+router.post('/forgot-email-valid',isLoggedIn,profileController.verifyForgetEmail)
+router.post('/forgot-pass-otp',isLoggedIn,profileController.verifyOtp)
+router.post('/resend-forgot-otp',isLoggedIn,profileController.resendOtp)
+router.get('/change-password',isLoggedIn,profileController.loadChangePasswordPage)
+router.patch('/reset-password',isLoggedIn,profileController.resetPassword)
 
 
 router.get('/auth/google',isLoggedIn,passport.authenticate('google',{scope:['profile','email']}))

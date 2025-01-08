@@ -13,7 +13,8 @@ const loadBrand = async (req, res) => {
 const addBrand = async (req, res) => {
     try {
       const brand = req.body.name;
-      const findBrand = await Brand.findOne({ brandName: brand });
+      const regex = new RegExp(`^${brand}$`, "i")
+      const findBrand = await Brand.findOne({ brandName: regex });
   
       if (findBrand) {
         // Brand already exists, send an error message
