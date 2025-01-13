@@ -1,0 +1,102 @@
+<%- include("../partials/header") %>
+
+<link rel="stylesheet" href="/user/stylesheets/cart.css">
+ <!-- ##### Breadcumb Area Start ##### -->
+ <div class="breadcumb_area bg-img" style="background-image: url(/user/essence/img/bg-img/breadcumb.jpg)">
+    <div class="container h-100">
+      <div class="row h-100 align-items-center">
+        <div class="col-12">
+          <div class="page-title text-center">
+            <h2>dresses</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- ##### Breadcumb Area End ##### -->
+  <section class="shopping-cart">
+    <div class="container">
+        <div class="content">
+            <h2>Shopping Cart</h2>
+            <div class="row">
+                <!-- Left Column: Product Table -->
+                <div class="col-md-8">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Product Name</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Total</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (cartData && cartData.items.length > 0) { %>
+                                    <% cartData.items.forEach(item => { %>
+                                        <tr>
+                                            <td>
+                                              <img src="/resized-images/<%= item.productId.productImages[0] %>" alt="<%= item.productId.productName %>" style="width: 60px;">
+
+                                              
+                                            </td>
+                                            <td><%= item.productId.productName %></td>
+                                            <td>&#8377;<%= item.price %></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-light">-</button>
+                                                <span class="mx-2"><%= item.quantity %></span>
+                                                <button class="btn btn-sm btn-light">+</button>
+                                            </td>
+                                            <td>&#8377;<%= item.price * item.quantity %></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-danger">Remove</button>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="6" class="text-center">Your cart is empty</td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- Right Column: Order Summary -->
+                <div class="col-md-4">
+                    <div class="summary">
+                        <h3>Order Summary</h3>
+                        <div class="summary-item">
+                            <span>Subtotal</span>
+                            <span>
+                                &#8377;<%= cartData ? cartData.items.reduce((acc, item) => acc + (item.price * item.quantity), 0) : 0 %>
+                            </span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Discount</span>
+                            <span>&#8377;0</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Shipping</span>
+                            <span>&#8377;50</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Total</span>
+                            <span>
+                                &#8377;<%= cartData ? cartData.items.reduce((acc, item) => acc + (item.price * item.quantity), 0) + 50 : 0 %>
+                            </span>
+                        </div>
+                        <a href="/checkout" class="btn btn-primary mt-3">Proceed to Checkout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+<%- include("../partials/footer") %>

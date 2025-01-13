@@ -13,7 +13,7 @@ const userAuth = async (req, res, next) => {
       console.error("Error in userAuth middleware:", error.message || error);
       return res.status(500).send("Internal Server Error");
     }
-  };
+};
 
 const isLoggedIn = (req, res, next) => {
     if (req.session && req.session.user) {
@@ -23,12 +23,11 @@ const isLoggedIn = (req, res, next) => {
 }
 
 const isLoggedOut = (req, res, next) => {
-    if (User.isBlocked)  {
-        console.log("User is Blocked by Admin")
-        req.session.user = null;
-        return res.redirect("/login");
+    if (req.session && req.session.user)  {
+        next();
+    } else{
+        res.redirect('/login')
     }
-    next();
 }
   
 

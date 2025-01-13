@@ -252,65 +252,60 @@
 
 
       <!-- Form -->
-      <form class="cart-form clearfix" method="post">
+      <!-- Form -->
+      <form class="cart-form clearfix" method="post" action="/addToCart/<%= product._id %>">
         <!-- Select Box -->
         <div class="selection-box d-flex flex-wrap mt-50 mb-30">
           <!-- Size Selection -->
           <div class="size-selection mr-5">
             <h6>Size:</h6>
             <div class="options">
-              <button type="button" class="option-btn" data-size="XL">XL</button>
-              <button type="button" class="option-btn" data-size="L">L</button>
-              <button type="button" class="option-btn" data-size="M">M</button>
-              <button type="button" class="option-btn" data-size="S">S</button>
-            </div>
-          </div>
-
-          <!-- Color Selection -->
-          <div class="color-selection mr-5">
-            <h6>Color:</h6>
-            <div class="options d-flex">
-              <button type="button" class="color-btn" data-color="Black" style="background-color: black;"></button>
-              <button type="button" class="color-btn" data-color="White"
-                style="background-color: white; border: 1px solid #ddd;"></button>
-              <button type="button" class="color-btn" data-color="Red" style="background-color: red;"></button>
-              <button type="button" class="color-btn" data-color="Purple" style="background-color: purple;"></button>
+              <label>
+                <input type="radio" name="size" value="XL" required> XL
+              </label>
+              <label>
+                <input type="radio" name="size" value="L"> L
+              </label>
+              <label>
+                <input type="radio" name="size" value="M"> M
+              </label>
+              <label>
+                <input type="radio" name="size" value="S"> S
+              </label>
             </div>
           </div>
 
           <!-- Quantity Selection -->
           <div class="quantity-selection">
             <h6>Quantity:</h6>
-            <% if(product.quantity===0){ %>
-              <p style="color: red ; font-size: 30px; font-weight: 500;">Out of Stock</p>
+            <% if (product.quantity===0) { %>
+              <p style="color: red; font-size: 30px; font-weight: 500;">Out of Stock</p>
               <% } else { %>
-                <select name="quantity" id="quantity" class="form-control">
-                  <% for(let i=1 ; i<=product.quantity ; i++){ %>
+                <select name="quantity" id="quantity" class="form-control" required>
+                  <% for (let i=1; i <=product.quantity; i++) { %>
                     <option value="<%= i %>">
                       <%= i %>
                     </option>
-
                     <% } %>
                 </select>
-
-
-
-
+                <% } %>
           </div>
         </div>
+
+        <!-- Hidden Field for Price -->
+        <input type="hidden" name="price" value="<%= product.salePrice %>">
 
         <!-- Cart & Favourite Box -->
         <div class="cart-fav-box d-flex align-items-center">
           <!-- Cart -->
-          <button type="submit" name="addtocart" value="5" class="btn bg-primary essence-btn">Add to cart</button>
+          <button type="submit" name="addtocart" class="btn bg-primary essence-btn">Add to cart</button>
           <!-- Favourite -->
           <div class="product-favourite ml-4">
             <a href="#" class="favme fa fa-heart"></a>
           </div>
         </div>
-
-        <% } %>
       </form>
+
     </div>
 
     <!-- Review -->

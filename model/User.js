@@ -54,7 +54,7 @@ const usersSchema = new mongoose.Schema({
       default:Date.now,
 
     },
-    referalCOde:{
+    referalCode:{
       type:String
     },
     referalCode:{

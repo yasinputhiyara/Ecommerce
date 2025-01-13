@@ -1,0 +1,398 @@
+<%- include("../../partials/header") %>
+
+  <link rel="stylesheet" href="/user/stylesheets/profile.css">
+
+  <div class="profile-session-container">
+    <div class="container-fluid">
+      <div class="dashboard">
+        <!-- Sidebar -->
+        <div class="sidebar">
+          <a href="/dashboard" class="w-100" style="text-decoration: none">
+            <button class="nav-button w-100">dashboard</button>
+          </a>
+          <a href="/orders" class="w-100" style="text-decoration: none">
+            <button class="nav-button w-100">Orders</button>
+          </a>
+          <a href="/update-profile" class="w-100" style="text-decoration: none">
+            <button class="nav-button active w-100">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              </svg>
+              Update Profile
+            </button>
+          </a>
+          <a href="/address" class="w-100" style="text-decoration: none">
+            <button class="nav-button w-100">My Address</button>
+          </a>
+          <a href="/wallet" class="w-100" style="text-decoration: none">
+            <button class="nav-button w-100">Wallet</button>
+          </a>
+          <a href="/logout" class="w-100" style="text-decoration: none">
+            <button class="nav-button w-100">Logout</button>
+          </a>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+          <h2 class="section-title">Update Profile</h2>
+
+          <div class="mb-3">
+            <label for="name" class="form-label profile-label">NAME</label>
+            <div class="profile-value-container">
+              <div class="profile-value" id="nameValue">
+                <%= userData.username %>
+              </div>
+              <button class="edit-btn" data-field="name">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="email" class="form-label profile-label">EMAIL</label>
+            <div class="profile-value-container">
+              <div class="profile-value" id="emailValue">
+                <%= userData.email %>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="phone" class="form-label profile-label">PHONE NUMBER</label>
+            <div class="profile-value-container">
+              <div class="profile-value" id="phoneValue">
+                <%= userData.phone %>
+              </div>
+              <button class="edit-btn" data-field="phone">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="password" class="form-label profile-label">PASSWORD</label>
+            <div class="profile-value-container">
+              <div class="profile-value" id="passwordValue">* * * * * * * *</div>
+              <button class="edit-btn" data-field="password">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="text-center">
+            <button class="btn btn-custom">DONE</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Password Update Modal -->
+  <div class="password-modal" id="passwordModal">
+    <div class="password-modal-content">
+      <h3 class="text-center mb-4">Update Password</h3>
+
+      <div class="password-input-group">
+        <label for="currentPassword" class="form-label">Current Password</label>
+        <input type="password" class="form-control" id="currentPassword" placeholder="Enter current password"
+          name="CurrentPassword">
+        <div class="error-message" id="currentPasswordError">Current password is incorrect</div>
+      </div>
+
+      <div class="password-input-group">
+        <label for="newPassword" class="form-label">New Password</label>
+        <input type="password" class="form-control" id="newPassword" placeholder="Enter new password"
+          name="NewPassword">
+        <div class="error-message" id="newPasswordError">Password must be at least 8 characters long</div>
+      </div>
+
+      <div class="password-input-group">
+        <label for="confirmPassword" class="form-label">Confirm New Password</label>
+        <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm new password"
+          name="ConfirmNewPassword">
+        <div class="error-message" id="confirmPasswordError">Passwords do not match</div>
+      </div>
+
+      <div class="text-center">
+        <button class="btn btn-custom" id="updatePasswordBtn">Update Password</button>
+        <button class="btn btn-secondary mt-2" id="cancelPasswordBtn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const editButtons = document.querySelectorAll('.edit-btn');
+      const passwordModal = document.getElementById('passwordModal');
+      const cancelPasswordBtn = document.getElementById('cancelPasswordBtn');
+      const updatePasswordBtn = document.getElementById('updatePasswordBtn');
+      const doneButton = document.querySelector('.btn-custom');
+
+      const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      const phonePattern = /^\d{10}$/;
+
+      let nameChanged = false;
+      let passwordChanged = false;
+      let phoneChanged = false;
+
+      editButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+          const field = e.currentTarget.dataset.field;
+
+          if (field === 'password') {
+            passwordModal.classList.add('show');
+            return;
+          }
+
+          const valueElement = document.getElementById(`${field}Value`);
+          if (valueElement.tagName === 'INPUT') return;
+
+          const currentValue = valueElement.textContent;
+          const inputValue = currentValue === 'Not Set' ? '' : currentValue;
+
+          valueElement.outerHTML = `
+          <input 
+            type="${field === 'phone' ? 'tel' : 'text'}"
+            class="profile-input" 
+            id="${field}Value" 
+            value="${inputValue}"
+            ${field === 'phone' ? 'pattern="[0-9]{10}"' : ''}
+            maxlength="${field === 'phone' ? '10' : '50'}"
+          />
+        `;
+
+          const inputElement = document.getElementById(`${field}Value`);
+          inputElement.focus();
+
+          inputElement.addEventListener('blur', () => saveEdit(field, currentValue));
+          inputElement.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') saveEdit(field, currentValue);
+          });
+        });
+      });
+
+      function saveEdit(field, oldValue) {
+        const inputElement = document.getElementById(`${field}Value`);
+        const newValue = inputElement.value.trim();
+
+        if (newValue === oldValue) {
+          inputElement.outerHTML = `
+          <div class="profile-value" id="${field}Value">${oldValue}</div>
+        `;
+          return;
+        }
+
+        if (validateInput(field, newValue)) {
+          const displayValue = field === 'phone' && !newValue ? 'Not Set' : newValue;
+
+          inputElement.outerHTML = `
+          <div class="profile-value" id="${field}Value">${displayValue}</div>
+        `;
+
+          if (field === 'name') nameChanged = true;
+          if (field === 'phone') phoneChanged = true;
+        } else {
+          inputElement.outerHTML = `
+          <div class="profile-value" id="${field}Value">${oldValue}</div>
+        `;
+        }
+      }
+
+      function validateInput(field, value) {
+        switch (field) {
+          case 'name':
+            if (value.trim().length < 2) {
+              Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'Name must be at least 2 characters long'
+              });
+              return false;
+            }
+            if (!/^[a-zA-Z\s]+$/.test(value)) {
+              Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'Name can only contain letters and spaces'
+              });
+              return false;
+            }
+            return true;
+
+          case 'phone':
+            if (value === '') return true;
+            if (!phonePattern.test(value)) {
+              Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'Please enter a valid 10-digit phone number'
+              });
+              return false;
+            }
+            return true;
+
+          default:
+            return true;
+        }
+      }
+
+      updatePasswordBtn.addEventListener('click', () => {
+        const currentPassword = document.getElementById('currentPassword');
+        const newPassword = document.getElementById('newPassword');
+        const confirmPassword = document.getElementById('confirmPassword');
+
+        ['currentPassword', 'newPassword', 'confirmPassword'].forEach(id => {
+          document.getElementById(`${id}Error`).style.display = 'none';
+        });
+
+        let hasError = false;
+
+        if (currentPassword.value.length === 0) {
+          document.getElementById('currentPasswordError').textContent = 'Current password is required';
+          document.getElementById('currentPasswordError').style.display = 'block';
+          hasError = true;
+        }
+
+        if (!passwordPattern.test(newPassword.value)) {
+          document.getElementById('newPasswordError').textContent = 'Password must contain at least 8 characters, including uppercase, lowercase, number, and special character';
+          document.getElementById('newPasswordError').style.display = 'block';
+          hasError = true;
+        }
+
+        if (newPassword.value !== confirmPassword.value) {
+          document.getElementById('confirmPasswordError').textContent = 'Passwords do not match';
+          document.getElementById('confirmPasswordError').style.display = 'block';
+          hasError = true;
+        }
+
+        if (!hasError) {
+          fetch('/profile/change-password', {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              currentPassword: currentPassword.value,
+              newPassword: newPassword.value,
+              confirmNewPassword: confirmPassword.value // Add this line
+            })
+          })
+            .then(response => response.json())
+            .then(data => {
+              if (data.message === "Password updated successfully") {
+                document.getElementById('passwordValue').textContent = '********';
+                passwordModal.classList.remove('show');
+
+                currentPassword.value = '';
+                newPassword.value = '';
+                confirmPassword.value = '';
+
+                passwordChanged = true;
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Success',
+                  text: 'Password updated successfully'
+                });
+              } else {
+                document.getElementById('currentPasswordError').textContent = data.message;
+                document.getElementById('currentPasswordError').style.display = 'block';
+                hasError = true;
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'An error occurred while updating password'
+              });
+            });
+        }
+      });
+
+      cancelPasswordBtn.addEventListener('click', () => {
+        passwordModal.classList.remove('show');
+        ['currentPassword', 'newPassword', 'confirmPassword'].forEach(id => {
+          document.getElementById(id).value = '';
+          document.getElementById(`${id}Error`).style.display = 'none';
+        });
+      });
+
+      doneButton.addEventListener('click', () => {
+        const updatedName = document.getElementById('nameValue').textContent;
+        const updatedPhone = document.getElementById('phoneValue').textContent;
+
+        if (nameChanged || passwordChanged || phoneChanged) {
+          const updateData = {};
+
+          if (nameChanged) updateData.name = updatedName;
+          if (phoneChanged) updateData.phone = updatedPhone === 'Not Set' ? '' : updatedPhone;
+
+          fetch('/profile/update', {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updateData)
+          })
+            .then(response => response.json())
+            .then(data => {
+              if (data.message === "Profile updated successfully") {
+                document.getElementById('nameValue').textContent = data.user.name;
+                document.getElementById('phoneValue').textContent = data.user.phone || 'Not Set';
+
+                nameChanged = false;
+                passwordChanged = false;
+                phoneChanged = false;
+
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Success',
+                  text: 'Profile updated successfully'
+                });
+              } else {
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Error!',
+                  text: data.message
+                });
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'An error occurred while updating profile'
+              });
+            });
+        } else {
+          Swal.fire({
+            icon: 'info',
+            title: 'Info',
+            text: 'No changes to save'
+          });
+        }
+      });
+    });
+  </script>
+
+
+
+
+  <%- include("../../partials/footer") %>

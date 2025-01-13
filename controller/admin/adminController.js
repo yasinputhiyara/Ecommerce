@@ -55,7 +55,7 @@ const verifyAdminLogin = async (req, res) => {
 const loadDashboard = async (req, res) => {
     try {
 
-        res.render('admin/dashboard')
+    res.render('admin/dashboard')
     } catch (error) {
 
     }

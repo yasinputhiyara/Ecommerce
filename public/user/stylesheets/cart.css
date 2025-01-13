@@ -1,0 +1,63 @@
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: #f8f9fa;
+    }
+    .shopping-cart {
+      padding: 50px 0;
+    }
+    .shopping-cart .content {
+      background: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      padding: 20px;
+    }
+    .shopping-cart h2 {
+      font-size: 2rem;
+      color: #007bff;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .shopping-cart table {
+      margin-top: 20px;
+    }
+    .shopping-cart table th, 
+    .shopping-cart table td {
+      text-align: center;
+      vertical-align: middle;
+    }
+    .shopping-cart img {
+      height: 60px;
+      width: 60px;
+      border-radius: 8px;
+    }
+    .shopping-cart .summary {
+      background: #f7fbff;
+      border-top: 2px solid #007bff;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 30px;
+    }
+    .shopping-cart .summary h3 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+    .shopping-cart .summary .summary-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 1rem;
+    }
+    .shopping-cart .summary .summary-item:last-child {
+      font-weight: bold;
+    }
+    .shopping-cart .btn-primary {
+      width: 100%;
+      font-size: 1.2rem;
+      padding: 10px;
+    }
+    .btn-sm {
+      font-size: 0.9rem;
+    }
+  
