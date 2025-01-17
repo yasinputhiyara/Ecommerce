@@ -28,6 +28,7 @@ const addCategory = async (req, res) => {
   }
 };
 
+
 const addCategoryOffer = async (req, res) => {
   try {
     const percentage = parseInt(req.body.percentage);

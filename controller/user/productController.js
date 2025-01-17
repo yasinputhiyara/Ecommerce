@@ -22,6 +22,8 @@ const loadProductDetail = async (req,res)=>{
 
 
 
+
+
 module.exports={
     loadProductDetail
 }

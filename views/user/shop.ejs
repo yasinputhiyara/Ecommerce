@@ -1,5 +1,8 @@
 <%- include("../partials/header") %>
 
+<link rel="stylesheet" href="/user/essence/css/core-style.css">
+
+
 
 
   <!-- ##### Breadcumb Area Start ##### -->
@@ -8,7 +11,7 @@
       <div class="row h-100 align-items-center">
         <div class="col-12">
           <div class="page-title text-center">
-            <h2>dresses</h2>
+            <h2>Shop</h2>
           </div>
         </div>
       </div>
@@ -34,19 +37,13 @@
 
                   <div class="catagories-menu">
                     <ul id="menu-content2" class="menu-content collapse show">
-                      
-                      <!-- Single Item -->
-                      <li data-toggle="collapse" data-target="#category-<%= i %>" class="collapsed">
-                        <a href="#"><%= categories[i].name %></a>
-                        <ul class="sub-menu collapse" id="category-<%= i %>">
-                          <li><a href="#">All</a></li>
-                          <li><a href="#">Bodysuits</a></li>
-                          <li><a href="#">Dresses</a></li>
-                          <li><a href="#">Hoodies &amp; Sweats</a></li>
-                          <li><a href="#">Jackets &amp; Coats</a></li>
-                          
-                        </ul>
-                      </li>
+                      <% for (let i = 0; i < categories.length; i++) { %>
+                        <li data-toggle="collapse" data-target="#category-<%= i %>" class="collapsed">
+                          <a href="javascript:void(0)" onclick="applyFilters({ category: '<%= categories[i].name %>' })">
+                            <%= categories[i].name %>
+                          </a>
+                        </li>
+                      <% } %>
                     </ul>
                   </div>
                   <% } %>

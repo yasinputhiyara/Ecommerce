@@ -2,6 +2,21 @@
 
   <link rel="stylesheet" href="/user/stylesheets/profile.css">
 
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      padding: 20px;
+    }
+  </style>
+
   <div class="profile-session-container">
     <div class="container-fluid">
       <div class="dashboard">
@@ -83,8 +98,8 @@
                                   <%= address.altPhone %>
                                 </p>
                                 <div class="d-flex justify-content-between">
-                                  <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editAddressModal"
-                                    onclick="editPrepareModal('<%= address._id %>')"> 
+                                  <button class="btn btn-warning" data-bs-toggle="modal"
+                                    data-bs-target="#editAddressModal" onclick="editPrepareModal('<%= address._id %>')">
                                     Edit
                                   </button>
                                   <button class="btn btn-danger" onclick="removeAddress('<%= address.id %>')">
@@ -111,16 +126,18 @@
                 <div class="modal-content">
                   <div class="modal-header">
                     <h5 class="modal-title" id="modalTitle">Create/Update Address</h5>
-                    <button type="button" class="btn-close" onclick="cancelButton()" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" onclick="cancelButton()" data-bs-dismiss="modal"
+                      aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
                     <form id="addressForm" action="/add-address" method="POST">
                       <input type="hidden" id="addressId" name="id" value="<%=user._id  %>">
-            
+
                       <!-- Address Type Dropdown -->
                       <div class="mb-3">
                         <label for="addressTypeInput" class="form-label">Address Type</label>
-                        <select class="form-control" id="addressTypeInput" name="addressType" required aria-describedby="addressTypeHelp">
+                        <select class="form-control" id="addressTypeInput" name="addressType" required
+                          aria-describedby="addressTypeHelp">
                           <option value="" disabled selected>Select Address Type</option>
                           <option value="Home">Home</option>
                           <option value="Office">Office</option>
@@ -128,109 +145,127 @@
                           <!-- <option value="College">College</option> -->
                         </select>
                       </div>
-            
+
                       <!-- Other Input Fields -->
                       <div class="mb-3">
                         <label for="nameInput" class="form-label">Name</label>
-                        <input type="text" class="form-control" id="nameInput" name="name" required aria-describedby="nameHelp">
+                        <input type="text" class="form-control" id="nameInput" name="name" required
+                          aria-describedby="nameHelp">
                       </div>
                       <div class="mb-3">
                         <label for="cityInput" class="form-label">City</label>
-                        <input type="text" class="form-control" id="cityInput" name="city" required aria-describedby="cityHelp">
+                        <input type="text" class="form-control" id="cityInput" name="city" required
+                          aria-describedby="cityHelp">
                       </div>
                       <div class="mb-3">
                         <label for="landmarkInput" class="form-label">Landmark</label>
-                        <input type="text" class="form-control" id="landmarkInput" name="landMark" required aria-describedby="landmarkHelp">
+                        <input type="text" class="form-control" id="landmarkInput" name="landMark" required
+                          aria-describedby="landmarkHelp">
                       </div>
                       <div class="mb-3">
                         <label for="stateInput" class="form-label">State</label>
-                        <input type="text" class="form-control" id="stateInput" name="state" required aria-describedby="stateHelp">
+                        <input type="text" class="form-control" id="stateInput" name="state" required
+                          aria-describedby="stateHelp">
                       </div>
                       <div class="mb-3">
                         <label for="pincodeInput" class="form-label">Pincode</label>
-                        <input type="number" class="form-control" id="pincodeInput" name="pincode" required aria-describedby="pincodeHelp">
+                        <input type="number" class="form-control" id="pincodeInput" name="pincode" required
+                          aria-describedby="pincodeHelp">
                       </div>
                       <div class="mb-3">
                         <label for="phoneInput" class="form-label">Phone</label>
-                        <input type="text" class="form-control" id="phoneInput" name="phone" required aria-describedby="phoneHelp">
+                        <input type="text" class="form-control" id="phoneInput" name="phone" required
+                          aria-describedby="phoneHelp">
                       </div>
                       <div class="mb-3">
                         <label for="altPhoneInput" class="form-label">Alternate Phone</label>
-                        <input type="text" class="form-control" id="altPhoneInput" name="altPhone" required aria-describedby="altPhoneHelp">
+                        <input type="text" class="form-control" id="altPhoneInput" name="altPhone" required
+                          aria-describedby="altPhoneHelp">
                       </div>
                     </form>
                   </div>
                   <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="cancelButton" data-bs-dismiss="modal" onclick="cancelButton()">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="saveButton" >Save Address</button>
+                    <button type="button" class="btn btn-secondary" id="cancelButton" data-bs-dismiss="modal"
+                      onclick="cancelButton()">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveButton">Save Address</button>
                   </div>
                 </div>
               </div>
             </div>
 
-                        <!--Edit Address Modal -->
-                        <div class="modal fade" id="editAddressModal" tabindex="-1">
-                          <div class="modal-dialog">
-                            <div class="modal-content">
-                              <div class="modal-header">
-                                <h5 class="modal-title" id="modalTitle">Update Address</h5>
-                                <button type="button" class="btn-close" onclick="cancelButton()" data-bs-dismiss="modal" aria-label="Close"></button>
-                              </div>
-                              <div class="modal-body">
-                                <form id="addressForm" action="/edit-address" method="POST">
-                                  <input type="hidden" id="addressId" name="id" value="<%=user._id  %>">
-                        
-                                  <!-- Address Type Dropdown -->
-                                  <div class="mb-3">
-                                    <label for="addressTypeInput" class="form-label">Address Type</label>
-                                    <select class="form-control" id="addressTypeInput" name="addressType" required aria-describedby="addressTypeHelp">
-                                      <option value=""  selected>Select Address Type</option>
-                                      <option value="Home">Home</option>
-                                      <option value="Office">Office</option>
-                                      <option value="School">School / College</option>
-                                      <!-- <option value="College">College</option> -->
-                                    </select>
-                                  </div>
-                        
-                                  <!-- Other Input Fields -->
-                                  <div class="mb-3">
-                                    <label for="nameInput" class="form-label">Name</label>
-                                    <input type="text" class="form-control" id="nameInput" name="name" required aria-describedby="nameHelp">
-                                  </div>
-                                  <div class="mb-3">
-                                    <label for="cityInput" class="form-label">City</label>
-                                    <input type="text" class="form-control" id="cityInput" name="city" required aria-describedby="cityHelp">
-                                  </div>
-                                  <div class="mb-3">
-                                    <label for="landmarkInput" class="form-label">Landmark</label>
-                                    <input type="text" class="form-control" id="landmarkInput" name="landMark" required aria-describedby="landmarkHelp">
-                                  </div>
-                                  <div class="mb-3">
-                                    <label for="stateInput" class="form-label">State</label>
-                                    <input type="text" class="form-control" id="stateInput" name="state" required aria-describedby="stateHelp">
-                                  </div>
-                                  <div class="mb-3">
-                                    <label for="pincodeInput" class="form-label">Pincode</label>
-                                    <input type="number" class="form-control" id="pincodeInput" name="pincode" required aria-describedby="pincodeHelp">
-                                  </div>
-                                  <div class="mb-3">
-                                    <label for="phoneInput" class="form-label">Phone</label>
-                                    <input type="text" class="form-control" id="phoneInput" name="phone" required aria-describedby="phoneHelp">
-                                  </div>
-                                  <div class="mb-3">
-                                    <label for="altPhoneInput" class="form-label">Alternate Phone</label>
-                                    <input type="text" class="form-control" id="altPhoneInput" name="altPhone" required aria-describedby="altPhoneHelp">
-                                  </div>
-                                </form>
-                              </div>
-                              <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" id="cancelButton" data-bs-dismiss="modal" onclick="cancelButton()">Cancel</button>
-                                <button type="button" class="btn btn-primary" id="saveButton" >Save Address</button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-            
+            <!--Edit Address Modal -->
+            <div class="modal fade" id="editAddressModal" tabindex="-1">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Update Address</h5>
+                    <button type="button" class="btn-close" onclick="cancelButton()" data-bs-dismiss="modal"
+                      aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <form id="addressForm" action="/edit-address" method="POST">
+                      <input type="hidden" id="addressId" name="id" value="<%=user._id  %>">
+
+                      <!-- Address Type Dropdown -->
+                      <div class="mb-3">
+                        <label for="addressTypeInput" class="form-label">Address Type</label>
+                        <select class="form-control" id="addressTypeInput" name="addressType" required
+                          aria-describedby="addressTypeHelp">
+                          <option value="" selected>Select Address Type</option>
+                          <option value="Home">Home</option>
+                          <option value="Office">Office</option>
+                          <option value="School">School / College</option>
+                          <!-- <option value="College">College</option> -->
+                        </select>
+                      </div>
+
+                      <!-- Other Input Fields -->
+                      <div class="mb-3">
+                        <label for="nameInput" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="nameInput" name="name" required
+                          aria-describedby="nameHelp">
+                      </div>
+                      <div class="mb-3">
+                        <label for="cityInput" class="form-label">City</label>
+                        <input type="text" class="form-control" id="cityInput" name="city" required
+                          aria-describedby="cityHelp">
+                      </div>
+                      <div class="mb-3">
+                        <label for="landmarkInput" class="form-label">Landmark</label>
+                        <input type="text" class="form-control" id="landmarkInput" name="landMark" required
+                          aria-describedby="landmarkHelp">
+                      </div>
+                      <div class="mb-3">
+                        <label for="stateInput" class="form-label">State</label>
+                        <input type="text" class="form-control" id="stateInput" name="state" required
+                          aria-describedby="stateHelp">
+                      </div>
+                      <div class="mb-3">
+                        <label for="pincodeInput" class="form-label">Pincode</label>
+                        <input type="number" class="form-control" id="pincodeInput" name="pincode" required
+                          aria-describedby="pincodeHelp">
+                      </div>
+                      <div class="mb-3">
+                        <label for="phoneInput" class="form-label">Phone</label>
+                        <input type="text" class="form-control" id="phoneInput" name="phone" required
+                          aria-describedby="phoneHelp">
+                      </div>
+                      <div class="mb-3">
+                        <label for="altPhoneInput" class="form-label">Alternate Phone</label>
+                        <input type="text" class="form-control" id="altPhoneInput" name="altPhone" required
+                          aria-describedby="altPhoneHelp">
+                      </div>
+                    </form>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelButton" data-bs-dismiss="modal"
+                      onclick="cancelButton()">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveButton">Save Address</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
 
           </div>
 
@@ -243,141 +278,141 @@
 
   <script>
     // JavaScript to handle form submission and show SweetAlert
-document.getElementById('saveButton').addEventListener('click', async () => {
-  const form = document.getElementById('addressForm');
-  const formData = new FormData(form);
-  
-  // Convert form data to a JSON object
-  const data = Object.fromEntries(formData.entries());
+    document.getElementById('saveButton').addEventListener('click', async () => {
+      const form = document.getElementById('addressForm');
+      const formData = new FormData(form);
 
-  try {
-    
-    // Send the data to the server using Fetch
-    const response = await fetch('/add-address', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    });
+      // Convert form data to a JSON object
+      const data = Object.fromEntries(formData.entries());
 
-    const result = await response.json();
+      try {
 
-    // Check if the request was successful
-    if (response.ok) {
-      // Show success SweetAlert
-      Swal.fire({
-        title: 'Success!',
-        text: result.message || 'Address saved successfully.',
-        icon: 'success',
-        confirmButtonText: 'OK'
-      }).then(() => {
-        // Reload the page or close the modal
-        location.reload();
-      });
-    } else {
-      // Show error SweetAlert
-      Swal.fire({
-        title: 'Error!',
-        text: result.message || 'Failed to save address. Please try again.',
-        icon: 'error',
-        confirmButtonText: 'OK'
-      });
-    }
-  } catch (error) {
-    // Handle any network or unexpected errors
-    Swal.fire({
-      title: 'Error!',
-      text: 'Something went wrong. Please check your connection and try again.',
-      icon: 'error',
-      confirmButtonText: 'OK'
-    });
-    console.error('Error:', error);
-  }
-});
-
-// Cancel button resets the form and modal
-function cancelButton() {
-  const form = document.getElementById('addressForm');
-  form.reset();
-  document.getElementById('addressId').value = '';
-  document.getElementById('modalTitle').textContent = 'Create/Update Address';
-}
-
-// Prepare modal for edit or create
-function editPrepareModal(addressId){
-  const form = document.getElementById('addressForm');
-  const address = addresses.find(address => address._id === addressId);
-
-  // Set the form values
-  form.addressId.value = address._id;
-  form.addressType.value = address.addressType;
-  form.name.value = address.name;
-  form.city.value = address.city;
-  form.landMark.value = address.landMark;
-  form.state.value = address.state;
-  form.pincode.value = address.pincode;
-  form.phone.value = address.phone;
-  form.altPhone.value = address.altPhone;
-
-  // Change the modal title
-  document.getElementById('modalTitle').textContent = 'Update Address';
-  document.getElementById('saveButton').textContent = 'Update Address';
-  document.getElementById('saveButton').setAttribute('onclick', 'updateAddress()');
-
-}
-
-
-// Function to remove an address
-async function removeAddress(id) {
-  try {
-    const confirm = await Swal.fire({
-      title: 'Are you sure?',
-      text: 'Do you really want to delete this address?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'Cancel'
-    });
-
-    if (confirm.isConfirmed) {
-      const response = await fetch(`/delete-address/${id}`, {
-        method: 'DELETE'
-      });
-
-      if (response.ok) {
-        Swal.fire({
-          title: 'Deleted!',
-          text: 'The address has been deleted.',
-          icon: 'success',
-          confirmButtonText: 'OK'
-        }).then(() => {
-          location.reload();
+        // Send the data to the server using Fetch
+        const response = await fetch('/add-address', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
         });
-      } else {
+
+        const result = await response.json();
+
+        // Check if the request was successful
+        if (response.ok) {
+          // Show success SweetAlert
+          Swal.fire({
+            title: 'Success!',
+            text: result.message || 'Address saved successfully.',
+            icon: 'success',
+            confirmButtonText: 'OK'
+          }).then(() => {
+            // Reload the page or close the modal
+            location.reload();
+          });
+        } else {
+          // Show error SweetAlert
+          Swal.fire({
+            title: 'Error!',
+            text: result.message || 'Failed to save address. Please try again.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+        }
+      } catch (error) {
+        // Handle any network or unexpected errors
         Swal.fire({
           title: 'Error!',
-          text: 'Failed to delete address. Please try again.',
+          text: 'Something went wrong. Please check your connection and try again.',
           icon: 'error',
           confirmButtonText: 'OK'
         });
+        console.error('Error:', error);
+      }
+    });
+
+    // Cancel button resets the form and modal
+    function cancelButton() {
+      const form = document.getElementById('addressForm');
+      form.reset();
+      document.getElementById('addressId').value = '';
+      document.getElementById('modalTitle').textContent = 'Create/Update Address';
+    }
+
+    // Prepare modal for edit or create
+    function editPrepareModal(addressId) {
+      const form = document.getElementById('addressForm');
+      const address = addresses.find(address => address._id === addressId);
+
+      // Set the form values
+      form.addressId.value = address._id;
+      form.addressType.value = address.addressType;
+      form.name.value = address.name;
+      form.city.value = address.city;
+      form.landMark.value = address.landMark;
+      form.state.value = address.state;
+      form.pincode.value = address.pincode;
+      form.phone.value = address.phone;
+      form.altPhone.value = address.altPhone;
+
+      // Change the modal title
+      document.getElementById('modalTitle').textContent = 'Update Address';
+      document.getElementById('saveButton').textContent = 'Update Address';
+      document.getElementById('saveButton').setAttribute('onclick', 'updateAddress()');
+
+    }
+
+
+    // Function to remove an address
+    async function removeAddress(id) {
+      try {
+        const confirm = await Swal.fire({
+          title: 'Are you sure?',
+          text: 'Do you really want to delete this address?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Yes, delete it!',
+          cancelButtonText: 'Cancel'
+        });
+
+        if (confirm.isConfirmed) {
+          const response = await fetch(`/delete-address/${id}`, {
+            method: 'DELETE'
+          });
+
+          if (response.ok) {
+            Swal.fire({
+              title: 'Deleted!',
+              text: 'The address has been deleted.',
+              icon: 'success',
+              confirmButtonText: 'OK'
+            }).then(() => {
+              location.reload();
+            });
+          } else {
+            Swal.fire({
+              title: 'Error!',
+              text: 'Failed to delete address. Please try again.',
+              icon: 'error',
+              confirmButtonText: 'OK'
+            });
+          }
+        }
+      } catch (error) {
+        Swal.fire({
+          title: 'Error!',
+          text: 'Something went wrong. Please try again later.',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+        console.error('Error:', error);
       }
     }
-  } catch (error) {
-    Swal.fire({
-      title: 'Error!',
-      text: 'Something went wrong. Please try again later.',
-      icon: 'error',
-      confirmButtonText: 'OK'
-    });
-    console.error('Error:', error);
-  }
-}
 
-    
+
   </script>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
   <%- include("../../partials/footer") %>

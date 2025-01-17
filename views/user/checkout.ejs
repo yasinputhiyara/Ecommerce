@@ -1,0 +1,344 @@
+<%- include("../partials/header") %>
+
+    <link rel="stylesheet" href="/user/essence/css/core-style.css">
+
+    <!-- ##### Breadcumb Area Start ##### -->
+    <div class="breadcumb_area bg-img" style="background-image: url(/user/essence/img/bg-img/breadcumb.jpg);">
+        <div class="container h-100">
+            <div class="row h-100 align-items-center">
+                <div class="col-12">
+                    <div class="page-title text-center">
+                        <h2>Checkout</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ##### Breadcumb Area End ##### -->
+
+    <!-- ##### Checkout Area Start ##### -->
+    <div class="checkout_area section-padding-80">
+        <div class="container">
+            <div class="row">
+                <!-- Left Column - Addresses -->
+                <div class="col-12 col-md-6">
+                    <div class="checkout_details_area mt-50 clearfix">
+                        <div class="cart-page-heading mb-30">
+                            <h5>Select Delivery Address</h5>
+                        </div>
+
+                        <!-- Saved Addresses -->
+
+
+                        <div class="saved-addresses mb-4">
+                            <div class="card mb-3">
+                                <% if (addresses && addresses.length> 0) { %>
+                                    <% addresses.forEach((address, index)=> { %>
+                                        <div class="card-body">
+                                            <div class="custom-control custom-radio">
+                                                <input type="radio" class="custom-control-input"
+                                                    id="address<%= index %>" name="saved-address"
+                                                    value="<%= address._id %>" <%=index===0 ? "checked" : "" %>>
+
+                                                <label class="custom-control-label" for="address<%= index %>">
+                                                    <strong>
+                                                        <%= address.name %>
+                                                    </strong><br>
+                                                    <%= address.addressType %><br>
+                                                        <%= address.landMark %><br>
+                                                            <%= address.city %><br>
+                                                                <%= address.state %>, <%= address.pincode %><br>
+                                                                        Phone: <%= address.phone %><br>
+                                                                            Alternate Phone: <%= address.altPhone %>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <% }); %>
+                                            <% } else { %>
+                                                <div class="card-body text-center">
+                                                    <p>No Saved Addresses</p>
+                                                </div>
+                                                <% } %>
+                            </div>
+                        </div>
+
+
+                        <!-- Add New Address Button -->
+                        <button class="btn essence-btn mb-4" onclick="toggleAddressForm()">Add New Address</button>
+
+                        <!-- New Address Form (Initially Hidden) -->
+                        <div id="newAddressForm" style="display: none;">
+                            <div class="cart-page-heading mb-30">
+                                <h5>Add New Address</h5>
+                            </div>
+                            <form id="addressForm" method="POST">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="addressType">Address Type <span>*</span></label>
+                                        <input type="text" class="form-control" id="addressType" name="addressType"
+                                            value="Home" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="name">Name <span>*</span></label>
+                                        <input type="text" class="form-control" id="name" name="name" required>
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <label for="street_address">Street Address <span>*</span></label>
+                                        <input type="text" class="form-control" id="street_address" name="landMark"
+                                            required>
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <label for="city">Town/City <span>*</span></label>
+                                        <input type="text" class="form-control" id="city" name="city" required>
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <label for="state">Province <span>*</span></label>
+                                        <input type="text" class="form-control" id="state" name="state" required>
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <label for="postcode">Postcode <span>*</span></label>
+                                        <input type="text" class="form-control" id="postcode" name="pincode" required>
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <label for="phone_number">Phone No <span>*</span></label>
+                                        <input type="text" class="form-control" id="phone_number" name="phone" required>
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <label for="altPhone">Alternate Phone No <span>*</span></label>
+                                        <input type="text" class="form-control" id="altPhone" name="altPhone" required>
+                                    </div>
+                                    <div class="col-12">
+                                        <button type="submit" id="saveButton" class="btn essence-btn">Save
+                                            Address</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Right Column - Order Details -->
+
+
+
+                <div class="col-12 col-md-6 col-lg-5 ml-lg-auto">
+                    <div class="order-details-confirmation">
+                        <div class="cart-page-heading">
+                            <h5>Your Order</h5>
+                            <p>The Details</p>
+                        </div>
+
+                        <ul class="order-details-form mb-4">
+                            <li><span>Product</span> <span>Total</span></li>
+                            <% if (cart && cart.items && cart.items.length> 0) { %>
+                                <% cart.items.forEach((item)=> { %>
+                                    <li>
+                                        <span>
+                                            <%= item.productId.productName %> x <%= item.quantity %>
+                                        </span>
+                                        <span>$<%= (item.productId.salePrice * item.quantity).toFixed(2) %></span>
+                                    </li>
+                                    <% }); %>
+                                        <li>
+                                            <span>Subtotal</span>
+                                            <span>$<%= cart.items.reduce((acc, item)=> acc + item.productId.salePrice *
+                                                    item.quantity, 0).toFixed(2) %></span>
+                                        </li>
+                                        <li><span>Shipping</span> <span>Free</span></li>
+                                        <li>
+                                            <span>Total</span>
+                                            <span>$<%= cart.items.reduce((acc, item)=> acc + item.productId.salePrice *
+                                                    item.quantity, 0).toFixed(2) %></span>
+                                        </li>
+                                        <% } else { %>
+                                            <li>
+                                                <span>Your cart is empty</span>
+                                            </li>
+                                            <% } %>
+                        </ul>
+
+                        <!-- Payment Methods -->
+                        <h5>Select Payment Method</h5>
+                        <div class="payment-methods">
+                            <!-- Credit Card Payment Method -->
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="paymentMethod" value="creditCard"
+                                    id="creditCardRadio">
+                                <label class="form-check-label" for="creditCardRadio">
+                                    Credit Card
+                                </label>
+                                <div id="creditCardDetails" style="display: none;">
+                                    <form>
+                                        <label for="creditCardNumber">Card Number</label>
+                                        <input type="text" id="creditCardNumber" class="form-control mb-2"
+                                            placeholder="Enter card number">
+                                        <label for="expiryDate">Expiry Date</label>
+                                        <input type="text" id="expiryDate" class="form-control mb-2"
+                                            placeholder="MM/YY">
+                                        <label for="cvv">CVV</label>
+                                        <input type="text" id="cvv" class="form-control mb-2" placeholder="CVV">
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- PayPal Payment Method -->
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="paymentMethod" value="paypal"
+                                    id="paypalRadio">
+                                <label class="form-check-label" for="paypalRadio">
+                                    PayPal
+                                </label>
+                                <div id="paypalDetails" style="display: none;">
+                                    <p>To complete your purchase, log in to PayPal.</p>
+                                    <a href="https://www.paypal.com" target="_blank" class="btn btn-primary">Proceed to
+                                        PayPal</a>
+                                </div>
+                            </div>
+
+                            <!-- Cash on Delivery Payment Method -->
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="paymentMethod" value="cod"
+                                    id="codRadio">
+                                <label class="form-check-label" for="codRadio">
+                                    Cash on Delivery (COD)
+                                </label>
+                                <div id="codDetails" style="display: none;">
+                                    <p>Pay with cash when your order is delivered.</p>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- Place Order Button -->
+                        <!-- Updated Place Order Button -->
+                        <form action="/place-order" method="post" id="orderForm">
+                            <input type="hidden" name="selectedAddress" id="selectedAddress">
+                            <input type="hidden" name="paymentMethod" id="paymentMethod">
+                            <button type="submit" class="btn essence-btn">Place Order</button>
+                        </form>
+
+
+                    </div>
+                </div>
+
+
+
+
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.getElementById('addressForm').addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent the default form submission
+
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch('/add-address', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: result.message || 'Address saved successfully.',
+                        icon: 'success',
+                        confirmButtonText: 'OK',
+                    }).then(() => {
+                        location.reload(); // Reload the page to reflect changes
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: result.message || 'Failed to save address. Please try again.',
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Something went wrong. Please check your connection and try again.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                });
+                console.error('Error:', error);
+            }
+        });
+
+    </script>
+
+
+
+    <script>
+        // Toggle Address Form
+        function toggleAddressForm() {
+            const form = document.getElementById('newAddressForm');
+            form.style.display = form.style.display === 'none' || !form.style.display ? 'block' : 'none';
+        }
+
+
+
+    </script>
+
+    <script>
+        document.querySelectorAll('input[name="saved-address"]').forEach((radio) => {
+            radio.addEventListener('change', (e) => {
+                document.getElementById('selectedAddress').value = e.target.value;
+            });
+        });
+
+        // Initialize the selected address value on page load
+        document.getElementById('selectedAddress').value =
+            document.querySelector('input[name="saved-address"]:checked').value;
+    </script>
+
+
+    <script>
+
+
+        // Set the selected address and payment method in the hidden fields before form submission
+        document.getElementById('orderForm').addEventListener('submit', (e) => {
+            // Get selected address and payment method
+            const selectedAddress = document.querySelector('input[name="saved-address"]:checked');
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
+            console.log("selectedAddress ", selectedAddress)
+            console.log("paymentMethod ", paymentMethod)
+            if (!selectedAddress || !paymentMethod) {
+                e.preventDefault();
+                alert('Please select a delivery address and payment method.');
+                return;
+            }
+
+            // Set hidden input values
+            document.getElementById('selectedAddress').value = selectedAddress.value; // Use value here
+            document.getElementById('paymentMethod').value = paymentMethod.value;
+
+        });
+
+    </script>
+
+
+    <!-- Include your existing scripts -->
+    <script src="/user/essence/js/jquery/jquery-2.2.4.min.js"></script>
+    <script src="/user/essence/js/popper.min.js"></script>
+    <script src="/user/essence/js/bootstrap.min.js"></script>
+    <script src="/user/essence/js/plugins.js"></script>
+    <script src="/user/essence/js/classy-nav.min.js"></script>
+    <script src="/user/essence/js/active.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+    <%- include("../partials/footer") %>

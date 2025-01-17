@@ -288,12 +288,11 @@
                     </option>
                     <% } %>
                 </select>
-                <% } %>
+                
           </div>
         </div>
 
-        <!-- Hidden Field for Price -->
-        <input type="hidden" name="price" value="<%= product.salePrice %>">
+        
 
         <!-- Cart & Favourite Box -->
         <div class="cart-fav-box d-flex align-items-center">
@@ -304,6 +303,11 @@
             <a href="#" class="favme fa fa-heart"></a>
           </div>
         </div>
+
+        <% } %>
+
+        <!-- Hidden Field for Price -->
+        <input type="hidden" name="price" value="<%= product.salePrice %>">
       </form>
 
     </div>

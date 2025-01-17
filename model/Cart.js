@@ -33,7 +33,9 @@ const cartSchema = new Schema({
             type:String,
             default:'none'
         }
-    }]
+    }],
+    
+
 })
 
 const Cart = mongoose.model("Cart", cartSchema) 
