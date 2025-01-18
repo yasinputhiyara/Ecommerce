@@ -1,6 +1,6 @@
 <%- include("../partials/header") %>
 
-<link rel="stylesheet" href="/user/essence/css/core-style.css">
+  <link rel="stylesheet" href="/user/essence/css/core-style.css">
 
 
 
@@ -33,20 +33,19 @@
               <h6 class="widget-title mb-30">Catagories</h6>
 
               <!--  Catagories  -->
-                <% for(let i = 0 ; i < categories.length ; i++){ %>
 
-                  <div class="catagories-menu">
-                    <ul id="menu-content2" class="menu-content collapse show">
-                      <% for (let i = 0; i < categories.length; i++) { %>
-                        <li data-toggle="collapse" data-target="#category-<%= i %>" class="collapsed">
-                          <a href="javascript:void(0)" onclick="applyFilters({ category: '<%= categories[i].name %>' })">
-                            <%= categories[i].name %>
-                          </a>
-                        </li>
-                      <% } %>
-                    </ul>
-                  </div>
-                  <% } %>
+              <div class="catagories-menu">
+                <ul id="menu-content2" class="menu-content collapse show">
+                  <% for (let i=0; i < categories.length; i++) { %>
+                    <li data-toggle="collapse" data-target="#category-<%= i %>" class="collapsed">
+                      <a href="javascript:void(0)" onclick="applyFilters({ category: '<%= categories[i].name %>' })">
+                        <%= categories[i].name %>
+                      </a>
+                    </li>
+                    <% } %>
+                </ul>
+              </div>
+
             </div>
 
             <!-- ##### Single Widget ##### -->
@@ -58,15 +57,17 @@
 
               <div class="widget-desc">
                 <div class="slider-range">
-                  <div data-min="49" data-max="360" data-unit="$"
+                  <div id="price-slider"
                     class="slider-range-price ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all"
-                    data-value-min="49" data-value-max="360" data-label-result="Range:">
+                    data-min="49" data-max="360" data-unit="$" data-value-min="49" data-value-max="360"
+                    data-label-result="Range:">
                     <div class="ui-slider-range ui-widget-header ui-corner-all"></div>
                     <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
                     <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
                   </div>
-                  <div class="range-price">Range: $49.00 - $360.00</div>
+                  <div class="range-price" id="priceRangeDisplay">Range: $49.00 - $360.00</div>
                 </div>
+
               </div>
             </div>
 
@@ -96,11 +97,12 @@
               <p class="widget-title2 mb-30">Brands</p>
               <div class="widget-desc">
                 <ul>
-                  <li><a href="#">Asos</a></li>
-                  <li><a href="#">Mango</a></li>
-                  <li><a href="#">River Island</a></li>
-                  <li><a href="#">Topshop</a></li>
-                  <li><a href="#">Zara</a></li>
+                  <% for(let i=0 ; i< brands.length ; i++){ %>
+                    <li><a href="/filter/brand=<%=brands[i].brandName  %>">
+                        <%= brands[i].brandName %>
+                      </a></li>
+                    <% } %>
+
                 </ul>
               </div>
             </div>
@@ -122,12 +124,14 @@
                   <div class="product-sorting d-flex">
                     <p>Sort by:</p>
                     <form action="#" method="get">
-                      <select name="select" id="sortByselect">
-                        <option value="value">Highest Rated</option>
-                        <option value="value">Newest</option>
-                        <option value="value">Price: $$ - $</option>
-                        <option value="value">Price: $ - $$</option>
+                      <select id="sortByselect" onchange="applySortAndFilters()">
+                        <option value="">Default</option>
+                        <option value="highest-rated">Highest Rated</option>
+                        <option value="newest">Newest</option>
+                        <option value="price-low-high">Price: $ - $$</option>
+                        <option value="price-high-low">Price: $$ - $</option>
                       </select>
+
                       <input type="submit" class="d-none" value="" />
                     </form>
                   </div>
@@ -136,7 +140,7 @@
             </div>
 
             <div class="row">
-              <% for (let i = 0; i < products.length; i++) { %>
+              <% for (let i=0; i < products.length; i++) { %>
                 <!-- Single Product -->
                 <div class="col-12 col-sm-6 col-lg-4">
                   <div class="single-product-wrapper">
@@ -152,7 +156,7 @@
                         <a href="#" class="favme fa fa-heart"></a>
                       </div>
                     </div>
-            
+
                     <!-- Product Description -->
                     <div class="product-description">
                       <span>topshop</span>
@@ -165,7 +169,7 @@
                         <span class="old-price">$<%= products[i].regularPrice %></span>
                         $<%= products[i].salePrice %>
                       </p>
-            
+
                       <!-- Hover Content -->
                       <div class="hover-content">
                         <!-- Add to Cart -->
@@ -176,9 +180,9 @@
                     </div>
                   </div>
                 </div>
-              <% } %>
+                <% } %>
             </div>
-            
+
 
             <!-- Pagination -->
             <nav aria-label="navigation">
@@ -212,5 +216,35 @@
     </div>
   </section>
   <!-- ##### Shop Grid Area End ##### -->
+
+
+
+  <script>
+    function applySortAndFilters(extraFilters = {}) {
+      const sort = document.getElementById("sortByselect").value;
+      const minPrice = document.getElementById("minPrice").value;
+      const maxPrice = document.getElementById("maxPrice").value;
+
+      const params = new URLSearchParams(window.location.search);
+
+      // Update query parameters with filters
+      if (sort) params.set("sort", sort);
+      else params.delete("sort");
+
+      if (minPrice) params.set("minPrice", minPrice);
+      else params.delete("minPrice");
+
+      if (maxPrice) params.set("maxPrice", maxPrice);
+      else params.delete("maxPrice");
+
+      for (const [key, value] of Object.entries(extraFilters)) {
+        if (value) params.set(key, value);
+        else params.delete(key);
+      }
+
+      window.location.search = params.toString();
+    }
+
+  </script>
 
   <%- include("../partials/footer") %>

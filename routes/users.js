@@ -38,6 +38,11 @@ router.get('/address',checkBan,isLoggedOut, profileController.loadAddressPage);
 router.get('/wallet',isLoggedOut,profileController.loadWalletPage);
 
 router.post('/add-address',isLoggedOut,profileController.addAddress)
+router.get('/get-address/:id',profileController.getAddressById)
+router.put('/edit-address',profileController.editAddress)
+router.delete('/delete-address/:id',profileController.deleteAddress )
+
+
 
 router.put('/profile/update',isLoggedOut,profileController.updateProfile)
 router.put('/profile/change-password',isLoggedOut,profileController.updatePassword)
@@ -55,6 +60,9 @@ router.get('/auth/google/callback',isLoggedIn,passport.authenticate('google',{fa
 router.get('/',checkBan,userController.loadHome)
 router.get('/shop',checkBan,userController.loadShop)
 router.get('/product-details/:id',checkBan, productController.loadProductDetail)
+
+router.get('/filter',productController.filterProducts)
+
 
 
 //---- CART ROUTES ----//

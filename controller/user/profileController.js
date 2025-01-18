@@ -2,7 +2,7 @@ const { User } = require("../../model/User");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const session = require("express-session");
-const Address=require('../../model/Address');
+const Address = require("../../model/Address");
 const { single } = require("../../middleware/multer");
 require("dotenv").config();
 
@@ -97,12 +97,10 @@ const verifyOtp = async (req, res) => {
     }
   } catch (error) {
     console.error("Error verifying OTP:", error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "Internal server error. Please try again later.",
-      });
+    res.status(500).json({
+      success: false,
+      message: "Internal server error. Please try again later.",
+    });
   }
 };
 
@@ -126,12 +124,10 @@ const resendOtp = async (req, res) => {
         .status(200)
         .json({ success: true, message: "OTP Resent Successfully" });
     } else {
-      res
-        .status(500)
-        .json({
-          success: false,
-          message: "Failed to resend OTP. Please try again.",
-        });
+      res.status(500).json({
+        success: false,
+        message: "Failed to resend OTP. Please try again.",
+      });
     }
   } catch (error) {
     console.error("Error Resending OTP:", error);
@@ -229,12 +225,12 @@ const loadProfilePage = async (req, res) => {
 const loadAddressPage = async (req, res) => {
   try {
     const user = req.session.user || null;
-    console.log(user)
+    console.log(user);
     const addressesDoc = await Address.findOne({ userId: user._id });
-    const addresses = addressesDoc ? addressesDoc.address : []; 
+    const addresses = addressesDoc ? addressesDoc.address : [];
     // Extract the address array or default to an empty array
     const addressId = addresses.map((address) => address._id).toString();
-    console.log(addressId)
+    console.log(addressId);
     res.render("user/account/address", { user, addresses });
   } catch (error) {
     console.error("Error loading address page", error);
@@ -271,7 +267,7 @@ const updateProfile = async (req, res) => {
         message: "User not found or update failed",
       });
     }
-    
+
     req.session.user = {
       ...req.session.user,
       username: name,
@@ -353,7 +349,7 @@ const updatePassword = async (req, res) => {
 
 const addAddress = async (req, res) => {
   try {
-    console.log(req.body)
+    console.log(req.body);
     const {
       addressType,
       name,
@@ -366,9 +362,7 @@ const addAddress = async (req, res) => {
     } = req.body;
 
     const userId = req.session.user._id || req.body.userId;
-    console.log(userId)
-
-
+    console.log(userId);
 
     // Validate required fields
     if (
@@ -423,7 +417,32 @@ const addAddress = async (req, res) => {
     res
       .status(201)
       .json({ message: "Address added successfully", address: addressDoc });
-      
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const getAddressById = async (req, res) => {
+  try {
+    const addressId = req.params.id;
+    const userId = req.session.user._id;
+
+    const addressDoc = await Address.findOne(
+      {
+        userId,
+        "address._id": addressId,
+      },
+      { "address.$": 1 }
+    );
+
+    console.log('Edit Address details' ,addressDoc )
+
+    if (!addressDoc) {
+      return res.status(404).json({ error: "Address not found" });
+    }
+
+    res.json({ address: addressDoc.address[0] });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error" });
@@ -431,11 +450,46 @@ const addAddress = async (req, res) => {
 };
 
 const editAddress = async (req, res) => {
+  try {
+    const {
+      addressId, // You'll need to add this to identify which address to update
+      addressType,
+      name,
+      city,
+      landMark,
+      state,
+      pincode,
+      phone,
+      altPhone,
+    } = req.body;
 
-    try {
+    const userId = req.session.user._id || req.body.userId;
 
-        const addressId  = req.params;
-        const {
+    // Validate required fields
+    if (
+      !userId ||
+      !addressId ||
+      !addressType ||
+      !name ||
+      !city ||
+      !landMark ||
+      !state ||
+      !pincode ||
+      !phone ||
+      !altPhone
+    ) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+
+    // Find and update the specific address in the array
+    const result = await Address.findOneAndUpdate(
+      {
+        userId,
+        "address._id": addressId,
+      },
+      {
+        $set: {
+          "address.$": {
             addressType,
             name,
             city,
@@ -444,70 +498,52 @@ const editAddress = async (req, res) => {
             pincode,
             phone,
             altPhone,
-        } = req.body;
+          },
+        },
+      },
+      { new: true }
+    );
 
-        const userId = req.session.user._id || req.body.userId;
-
-        // Validate required fields
-        if (
-            !userId ||
-            !addressType ||
-            !name ||
-            !city ||
-            !landMark ||
-            !state ||
-            !pincode ||
-            !phone ||
-            !altPhone
-        ) {
-            return res.status(400).json({ error: "All fields are required" });
-        }
-
-        // Check if the user exists
-        const user = await User.findById(userId);
-        if (!user) {
-            return res.status(404).json({ error: "User not found" });
-        }
-
-        // Prepare the new address object
-        const newAddress = {
-            addressType,
-            name,
-            city,
-            landMark,
-            state,
-            pincode,
-            phone,
-            altPhone,
-        };
-
-        // Check if the user already has an address document
-        let addressDoc = await Address.findOne({ userId });
-        
-        if (addressDoc) {
-            // Add the new address to the existing document
-            addressDoc.address.push(newAddress);
-        } else {
-            // Create a new address document
-            addressDoc = new Address({
-                userId,
-                address: [newAddress],
-            });
-        }
-
-        // Save the address document
-        await addressDoc.save();
-
-        res
-            .status(201)
-            .json({ message: "Address added successfully", address: addressDoc });
+    if (!result) {
+      return res.status(404).json({ error: "Address not found" });
     }
-    catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Internal server error" });
-    }
-}
 
+    res.status(200).json({
+      message: "Address updated successfully",
+      address: result,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const deleteAddress = async (req, res) => {
+  try {
+    const addressId = req.params.id;
+    const userId = req.session.user._id;
+
+    // Find the address document and pull the specific address from the array
+    const result = await Address.findOneAndUpdate(
+      { userId },
+      { $pull: { address: { _id: addressId } } },
+      { new: true }
+    );
+
+    if (!result) {
+      return res.status(404).json({ error: "Address not found" });
+    }
+
+    res.status(200).json({ 
+      message: "Address deleted successfully", 
+      address: result 
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 
 module.exports = {
   loadForgetPasswordPage,
@@ -522,5 +558,8 @@ module.exports = {
   loadWalletPage,
   updateProfile,
   updatePassword,
-  addAddress
+  addAddress,
+  getAddressById,
+  editAddress,
+  deleteAddress
 };

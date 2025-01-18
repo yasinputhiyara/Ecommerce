@@ -97,7 +97,7 @@ const updateCart = async (req, res) => {
     if (!user) {
       return res
         .status(401)
-        .json({ success: false, message: "User not logged in" });
+        .json({ success: false, message: 'User not logged in' });
     }
 
     // Find the user's cart
@@ -105,43 +105,55 @@ const updateCart = async (req, res) => {
     if (!cart) {
       return res
         .status(404)
-        .json({ success: false, message: "Cart not found" });
+        .json({ success: false, message: 'Cart not found' });
     }
 
-    // Fetch the product to check its available stock
+    // Fetch the product to check stock
     const product = await Product.findById(productId);
     if (!product) {
       return res
         .status(404)
-        .json({ success: false, message: "Product not found" });
+        .json({ success: false, message: 'Product not found' });
     }
 
-    // Check if the quantity exceeds available stock
+    // Ensure requested quantity doesn't exceed stock
     if (quantity > product.quantity) {
       return res.status(400).json({
         success: false,
-        message: `Only ${product.quantity} items available in stock`,
+        message: `Only ${product.quantity} items available in stock.`,
       });
     }
 
-    // Find the item in the cart and update its quantity
-    const cartItem = cart.items.find(
-      (item) => item.productId.toString() === productId
-    );
+    // Update cart item quantity
+    const cartItem = cart.items.find((item) => item.productId.toString() === productId);
     if (cartItem) {
       cartItem.quantity = quantity;
       await cart.save();
-      return res.json({ success: true, message: "Cart updated successfully" });
+
+      // Calculate totals
+      const updatedItemTotal = cartItem.quantity * cartItem.price;
+      const updatedSubtotal = cart.items.reduce(
+        (acc, item) => acc + item.quantity * item.price,
+        0
+      );
+
+      return res.json({
+        success: true,
+        updatedItemTotal,
+        updatedSubtotal,
+        message: 'Cart updated successfully.',
+      });
     }
 
     return res
       .status(404)
-      .json({ success: false, message: "Item not found in cart" });
+      .json({ success: false, message: 'Item not found in cart.' });
   } catch (error) {
-    console.error("Update cart error", error);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
+    console.error('Update cart error:', error);
+    res.status(500).json({ success: false, message: 'Internal Server Error.' });
   }
 };
+
 
 const removeFromCart = async (req, res) => {
   try {

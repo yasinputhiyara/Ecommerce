@@ -120,7 +120,7 @@
               </div>
             </div>
 
-            <!-- Address Modal -->
+            <!--Add Address Modal -->
             <div class="modal fade" id="addressModal" tabindex="-1">
               <div class="modal-dialog">
                 <div class="modal-content">
@@ -203,57 +203,54 @@
                       aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
-                    <form id="addressForm" action="/edit-address" method="POST">
-                      <input type="hidden" id="addressId" name="id" value="<%=user._id  %>">
+                    <!-- In the edit modal, change all IDs to be unique -->
+                    <form id="editAddressForm" action="/edit-address" method="POST">
+                      <input type="hidden" id="editAddressId" name="id" value="<%=user._id %>">
+                      <input type="hidden" id="addressToEditId" name="addressId">
 
-                      <!-- Address Type Dropdown -->
                       <div class="mb-3">
-                        <label for="addressTypeInput" class="form-label">Address Type</label>
-                        <select class="form-control" id="addressTypeInput" name="addressType" required
-                          aria-describedby="addressTypeHelp">
+                        <label for="editAddressTypeInput" class="form-label">Address Type</label>
+                        <select class="form-control" id="editAddressTypeInput" name="addressType" required>
                           <option value="" selected>Select Address Type</option>
                           <option value="Home">Home</option>
                           <option value="Office">Office</option>
                           <option value="School">School / College</option>
-                          <!-- <option value="College">College</option> -->
                         </select>
                       </div>
 
-                      <!-- Other Input Fields -->
                       <div class="mb-3">
-                        <label for="nameInput" class="form-label">Name</label>
-                        <input type="text" class="form-control" id="nameInput" name="name" required
-                          aria-describedby="nameHelp">
+                        <label for="editNameInput" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="editNameInput" name="name" required>
                       </div>
+
                       <div class="mb-3">
-                        <label for="cityInput" class="form-label">City</label>
-                        <input type="text" class="form-control" id="cityInput" name="city" required
-                          aria-describedby="cityHelp">
+                        <label for="editCityInput" class="form-label">City</label>
+                        <input type="text" class="form-control" id="editCityInput" name="city" required>
                       </div>
+
                       <div class="mb-3">
-                        <label for="landmarkInput" class="form-label">Landmark</label>
-                        <input type="text" class="form-control" id="landmarkInput" name="landMark" required
-                          aria-describedby="landmarkHelp">
+                        <label for="editLandmarkInput" class="form-label">Landmark</label>
+                        <input type="text" class="form-control" id="editLandmarkInput" name="landMark" required>
                       </div>
+
                       <div class="mb-3">
-                        <label for="stateInput" class="form-label">State</label>
-                        <input type="text" class="form-control" id="stateInput" name="state" required
-                          aria-describedby="stateHelp">
+                        <label for="editStateInput" class="form-label">State</label>
+                        <input type="text" class="form-control" id="editStateInput" name="state" required>
                       </div>
+
                       <div class="mb-3">
-                        <label for="pincodeInput" class="form-label">Pincode</label>
-                        <input type="number" class="form-control" id="pincodeInput" name="pincode" required
-                          aria-describedby="pincodeHelp">
+                        <label for="editPincodeInput" class="form-label">Pincode</label>
+                        <input type="number" class="form-control" id="editPincodeInput" name="pincode" required>
                       </div>
+
                       <div class="mb-3">
-                        <label for="phoneInput" class="form-label">Phone</label>
-                        <input type="text" class="form-control" id="phoneInput" name="phone" required
-                          aria-describedby="phoneHelp">
+                        <label for="editPhoneInput" class="form-label">Phone</label>
+                        <input type="text" class="form-control" id="editPhoneInput" name="phone" required>
                       </div>
+
                       <div class="mb-3">
-                        <label for="altPhoneInput" class="form-label">Alternate Phone</label>
-                        <input type="text" class="form-control" id="altPhoneInput" name="altPhone" required
-                          aria-describedby="altPhoneHelp">
+                        <label for="editAltPhoneInput" class="form-label">Alternate Phone</label>
+                        <input type="text" class="form-control" id="editAltPhoneInput" name="altPhone" required>
                       </div>
                     </form>
                   </div>
@@ -340,26 +337,114 @@
     }
 
     // Prepare modal for edit or create
-    function editPrepareModal(addressId) {
-      const form = document.getElementById('addressForm');
-      const address = addresses.find(address => address._id === addressId);
+    async function editPrepareModal(addressId) {
+      try {
+        const response = await fetch(`/get-address/${addressId}`);
+        const result = await response.json();
 
-      // Set the form values
-      form.addressId.value = address._id;
-      form.addressType.value = address.addressType;
-      form.name.value = address.name;
-      form.city.value = address.city;
-      form.landMark.value = address.landMark;
-      form.state.value = address.state;
-      form.pincode.value = address.pincode;
-      form.phone.value = address.phone;
-      form.altPhone.value = address.altPhone;
+        if (!response.ok) {
+          throw new Error(result.error || 'Failed to fetch address data');
+        }
 
-      // Change the modal title
-      document.getElementById('modalTitle').textContent = 'Update Address';
-      document.getElementById('saveButton').textContent = 'Update Address';
-      document.getElementById('saveButton').setAttribute('onclick', 'updateAddress()');
+        const addressData = result.address;
 
+        // Set address ID in hidden input
+        document.getElementById('addressToEditId').value = addressId;
+
+        // Populate form fields with unique IDs
+        document.getElementById('editAddressTypeInput').value = addressData.addressType;
+        document.getElementById('editNameInput').value = addressData.name;
+        document.getElementById('editCityInput').value = addressData.city;
+        document.getElementById('editLandmarkInput').value = addressData.landMark;
+        document.getElementById('editStateInput').value = addressData.state;
+        document.getElementById('editPincodeInput').value = addressData.pincode;
+        document.getElementById('editPhoneInput').value = addressData.phone;
+        document.getElementById('editAltPhoneInput').value = addressData.altPhone;
+
+      } catch (error) {
+        console.error('Error:', error);
+        Swal.fire({
+          title: 'Error!',
+          text: 'Failed to load address data. Please try again.',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+      }
+    }
+
+    // Function to populate the edit form with existing address data
+    function populateEditForm(addressData) {
+      const editForm = document.getElementById('editAddressModal').querySelector('#addressForm');
+
+      // Add the address ID to the form
+      const addressIdInput = document.createElement('input');
+      addressIdInput.type = 'hidden';
+      addressIdInput.name = 'addressId';
+      addressIdInput.value = addressData._id;
+      editForm.appendChild(addressIdInput);
+
+      // Populate other fields
+      editForm.querySelector('#addressTypeInput').value = addressData.addressType;
+      editForm.querySelector('#nameInput').value = addressData.name;
+      editForm.querySelector('#cityInput').value = addressData.city;
+      editForm.querySelector('#landmarkInput').value = addressData.landMark;
+      editForm.querySelector('#stateInput').value = addressData.state;
+      editForm.querySelector('#pincodeInput').value = addressData.pincode;
+      editForm.querySelector('#phoneInput').value = addressData.phone;
+      editForm.querySelector('#altPhoneInput').value = addressData.altPhone;
+    }
+
+    // Add click event listener for the edit form's save button
+    document.querySelector('#editAddressModal #saveButton').addEventListener('click', async () => {
+      const form = document.getElementById('editAddressForm');
+      const formData = new FormData(form);
+
+      // Convert form data to a JSON object
+      const data = Object.fromEntries(formData.entries());
+
+      try {
+        const response = await fetch('/edit-address', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          Swal.fire({
+            title: 'Success!',
+            text: result.message || 'Address updated successfully.',
+            icon: 'success',
+            confirmButtonText: 'OK'
+          }).then(() => {
+            location.reload();
+          });
+        } else {
+          Swal.fire({
+            title: 'Error!',
+            text: result.error || 'Failed to update address. Please try again.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+        }
+      } catch (error) {
+        Swal.fire({
+          title: 'Error!',
+          text: 'Something went wrong. Please check your connection and try again.',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+        console.error('Error:', error);
+      }
+    });
+
+    function editAddress(addressData) {
+      populateEditForm(addressData);
+      const editModal = new bootstrap.Modal(document.getElementById('editAddressModal'));
+      editModal.show();
     }
 
 
