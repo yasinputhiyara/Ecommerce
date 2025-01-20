@@ -79,6 +79,8 @@ const loadCart = async (req, res) => {
       "items.productId"
     );
 
+    console.log("Cart ", cartData)
+
     res.render("user/cart", {
       user,
       cartData,

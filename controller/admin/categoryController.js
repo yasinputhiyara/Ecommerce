@@ -14,7 +14,8 @@ const loadCategory = async (req, res) => {
 const addCategory = async (req, res) => {
   try {
     const { name, description } = req.body;
-    const existingCategory = await Category.findOne({ name });
+    const regex = new RegExp(`^${name}$`, "i") 
+    const existingCategory = await Category.findOne({ name:regex });
     if (existingCategory) {
       return res.status(400).json({ error: "Category already exists" });
     }
@@ -107,45 +108,55 @@ const removeCategoryOffer = async (req, res) => {
 
 const getListCategory = async (req, res) => {
   try {
-    let id = req.query.id;
-    await Category.updateOne({ _id: id }, { $set: { isListed: false } });
-    res.redirect("/admin/view-category");
+    const id = req.query.id;
+    await Category.updateOne({ _id: id }, { $set: { isListed: true } });
+    res.redirect('/admin/view-category');
   } catch (error) {
-    console.error('Category list Error' ,error)
+    console.error("Error listing brand:", error);
+    res.status(500).send("An error occurred while listing the brand.");
   }
+
 };
 
 const getUnlistCategory = async (req, res) => {
   try {
-    let id = req.query.id;
-    await Category.updateOne({ _id: id }, { $set: { isListed: true } });
-    res.redirect("/admin/view-category");
+    const id = req.query.id;
+    await Category.updateOne({ _id: id }, { $set: { isListed: false } });
+    res.redirect('/admin/view-category');
   } catch (error) {
-    console.error('Category Unlist Error' ,error)
+    console.error("Error listing brand:", error);
+    res.status(500).send("An error occurred while listing the brand.");
   }
+
 };
 
 
 const editCategory = async (req, res) => {
   try {
-    const { id, name, description } = req.body;
+    const id = req.params.id
+    const {  name, description } = req.body;
     console.log(req.body);
+    console.log("Category Id " , id);
     // Check if the category exists
-    const category = await Category.findById(id);
+    const category = await Category.findOne({_id: id});
     if (!category) {
       return res.status(404).json({ error: "Category not found" });
     }
 
     // Check for duplicate category name
-    const duplicateCategory = await Category.findOne({ name, _id: { $ne: id } });
+    const regex = new RegExp(`^${name}$`, "i")
+
+    const duplicateCategory = await Category.findOne({ name : regex ,_id: { $ne: id }, });
     if (duplicateCategory) {
       return res.status(400).json({ error: "A category with this name already exists " });
     }
 
-    // Update the category details
-    category.name = name;
-    category.description = description;
-    await category.save();
+    const updatedData = {
+      name: name,
+      description: description
+    }
+
+    await Category.findByIdAndUpdate(id,updatedData)
 
     return res.status(200).json({ message: "Category updated successfully" });
   } catch (error) {

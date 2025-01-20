@@ -1,176 +1,181 @@
 <%- include("../partials/adminheader") %>
 
-<style>
-    /* General Styles */
-    body {
-        font-family: 'Arial', sans-serif;
-        background-color: #f8f9fa;
-    }
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+        }
 
-    .container-scroller {
-        padding: 20px;
-    }
+        .container-scroller {
+            padding: 20px;
+        }
 
-    .form-label {
-        font-weight: bold;
-        color: #495057;
-    }
+        .form-label {
+            font-weight: bold;
+            color: #495057;
+        }
 
-    .form-control {
-        padding: 10px;
-        border-radius: 8px;
-        border: 1px solid #ced4da;
-        font-size: 14px;
-    }
+        .form-control {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            font-size: 14px;
+        }
 
-    .form-control:focus {
-        border-color: #80bdff;
-        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-    }
+        .form-control:focus {
+            border-color: #80bdff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
 
-    .btn-primary {
-        background-color: #007bff;
-        border: none;
-        border-radius: 8px;
-        padding: 10px 20px;
-        font-size: 14px;
-        font-weight: bold;
-        text-transform: uppercase;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
 
-    .btn-primary:hover {
-        background-color: #0056b3;
-    }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
 
-    .card {
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        background-color: #ffffff;
-        overflow: hidden;
-    }
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+            overflow: hidden;
+        }
 
-    .card-header {
-        background-color: #007bff;
-        color: #ffffff;
-        padding: 15px;
-        text-align: center;
-        font-size: 18px;
-        font-weight: bold;
-        text-transform: uppercase;
-    }
+        .card-header {
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 15px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
 
-    .card-body {
-        padding: 20px;
-    }
+        .card-body {
+            padding: 20px;
+        }
 
-    .table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 20px 0;
-    }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
 
-    .table th, .table td {
-        padding: 10px;
-        text-align: left;
-        border-bottom: 1px solid #e9ecef;
-    }
+        .table th,
+        .table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
 
-    .table th {
-        background-color: #f1f1f1;
-        font-weight: bold;
-    }
+        .table th {
+            background-color: #f1f1f1;
+            font-weight: bold;
+        }
 
-    .badge {
-        padding: 5px 10px;
-        border-radius: 12px;
-        font-size: 12px;
-        font-weight: bold;
-        text-transform: uppercase;
-    }
+        .badge {
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
 
-    .badge-success {
-        background-color: #28a745;
-        color: #ffffff;
-    }
+        .badge-success {
+            background-color: #28a745;
+            color: #ffffff;
+        }
 
-    .badge-danger {
-        background-color: #dc3545;
-        color: #ffffff;
-    }
+        .badge-danger {
+            background-color: #dc3545;
+            color: #ffffff;
+        }
 
-    /* Table Actions */
-    .btn-action {
-        border-radius: 8px;
-        padding: 5px 10px;
-        font-size: 12px;
-        cursor: pointer;
-        text-transform: uppercase;
-    }
+        /* Table Actions */
+        .btn-action {
+            border-radius: 8px;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
 
-    .btn-info {
-        background-color: #17a2b8;
-        color: #ffffff;
-        border: none;
-        transition: background-color 0.3s ease;
-    }
+        .btn-info {
+            background-color: #17a2b8;
+            color: #ffffff;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
 
-    .btn-info:hover {
-        background-color: #117a8b;
-    }
+        .btn-info:hover {
+            background-color: #117a8b;
+        }
 
-    .btn-danger {
-        background-color: #dc3545;
-        color: #ffffff;
-        border: none;
-        transition: background-color 0.3s ease;
-    }
+        .btn-danger {
+            background-color: #dc3545;
+            color: #ffffff;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
 
-    .btn-danger:hover {
-        background-color: #bd2130;
-    }
+        .btn-danger:hover {
+            background-color: #bd2130;
+        }
 
-    .btn-success {
-        background-color: #28a745;
-        color: #ffffff;
-        border: none;
-        transition: background-color 0.3s ease;
-    }
+        .btn-success {
+            background-color: #28a745;
+            color: #ffffff;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
 
-    .btn-success:hover {
-        background-color: #218838;
-    }
+        .btn-success:hover {
+            background-color: #218838;
+        }
 
-    /* Pagination */
-    .pagination-container {
-        margin: 20px 0;
-        text-align: center;
-    }
+        /* Pagination */
+        .pagination-container {
+            margin: 20px 0;
+            text-align: center;
+        }
 
-    .pagination a {
-        display: inline-block;
-        margin: 0 5px;
-        padding: 8px 12px;
-        background-color: #007bff;
-        color: #ffffff;
-        border-radius: 5px;
-        text-decoration: none;
-    }
+        .pagination a {
+            display: inline-block;
+            margin: 0 5px;
+            padding: 8px 12px;
+            background-color: #007bff;
+            color: #ffffff;
+            border-radius: 5px;
+            text-decoration: none;
+        }
 
-    .pagination a:hover {
-        background-color: #0056b3;
-    }
+        .pagination a:hover {
+            background-color: #0056b3;
+        }
 
-    .pagination .current-page {
-        display: inline-block;
-        margin: 0 5px;
-        padding: 8px 12px;
-        background-color: #6c757d;
-        color: #ffffff;
-        border-radius: 5px;
-    }
-</style>
+        .pagination .current-page {
+            display: inline-block;
+            margin: 0 5px;
+            padding: 8px 12px;
+            background-color: #6c757d;
+            color: #ffffff;
+            border-radius: 5px;
+        }
+
+        .error-message {
+            color: red;
+        }
+    </style>
 
 
     <div class="container-scroller">
@@ -280,8 +285,7 @@
                                                                     <td class="text-start">
 
                                                                         <% if(category.isListed){ %>
-                                                                            <span
-                                                                                class="badge rounded-pill bg-success "
+                                                                            <span class="badge rounded-pill bg-success "
                                                                                 style="width: 60px">Listed</span>
                                                                             <% }else { %>
 
@@ -291,28 +295,23 @@
                                                                                 <% } %>
                                                                     </td>
                                                                     <td class="text-start">
-
-                                                                        <% if(category.isListed ) {%>
-                                                                            <button class="btn btn-danger"
-                                                                                style="width: 70px">
-                                                                                <a href="/admin/listCategory?id=<%= category._id %>"
-                                                                                    class="text-white">Unlist</a>
+                                                                        <% if (!category.isListed) { %>
+                                                                            <button class="btn btn-success"
+                                                                                style="width: 90px"
+                                                                                onclick="confirmAction('<%= category._id %>', 'list')">
+                                                                                List
                                                                             </button>
-
-                                                                            <% }else {%>
-                                                                                <button class="btn btn-success"
-                                                                                    style="width: 70px">
-                                                                                    <a href="/admin/unlistCategory?id=<%= category._id %>"
-                                                                                        class="text-white">List</a>
+                                                                            <% } else { %>
+                                                                                <button class="btn btn-danger"
+                                                                                    style="width: 90px"
+                                                                                    onclick="confirmAction('<%= category._id %>', 'unlist')">
+                                                                                    Unlist
                                                                                 </button>
-
                                                                                 <% } %>
-
-
-
                                                                     </td>
                                                                     <td class="text-start">
-                                                                        <button class="btn btn-info text-white" onclick="openEditModal('<%= category._id %>', '<%= category.name %>', '<%= category.description %>')">
+                                                                        <button class="btn btn-info text-white"
+                                                                            onclick="openEditModal('<%= category._id %>', '<%= category.name %>', '<%= category.description %>')">
                                                                             Edit
                                                                         </button>
                                                                     </td>
@@ -327,36 +326,43 @@
                                 </div>
 
                                 <!-- Edit Category Modal -->
-                                <div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
+                                <div class="modal fade" id="editCategoryModal" tabindex="-1"
+                                    aria-labelledby="editCategoryModalLabel" aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <form onsubmit="submitEditForm(event)">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="editCategoryModalLabel">Edit Category</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    <h5 class="modal-title" id="editCategoryModalLabel">Edit Category
+                                                    </h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
                                                 </div>
                                                 <div class="modal-body">
                                                     <input type="hidden" id="editCategoryId">
                                                     <div class="mb-3">
-                                                        <label for="editCategoryName" class="form-label">Category Name</label>
+                                                        <label for="editCategoryName" class="form-label">Category
+                                                            Name</label>
                                                         <input type="text" id="editCategoryName" class="form-control">
                                                         <div id="edit-name-error" class="text-danger"></div>
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label for="editCategoryDescription" class="form-label">Description</label>
-                                                        <textarea id="editCategoryDescription" class="form-control"></textarea>
+                                                        <label for="editCategoryDescription"
+                                                            class="form-label">Description</label>
+                                                        <textarea id="editCategoryDescription"
+                                                            class="form-control"></textarea>
                                                         <div id="edit-description-error" class="text-danger"></div>
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Close</button>
                                                     <button type="submit" class="btn btn-primary">Save changes</button>
                                                 </div>
                                             </form>
                                         </div>
                                     </div>
                                 </div>
-                                
+
 
 
                                 <!-- <div class="pagination-container">
@@ -545,74 +551,106 @@
     </script>
 
 
-<script>
-    // Function to open the modal and populate it with category data
-    function openEditModal(id, name, description) {
-        document.getElementById('editCategoryId').value = id;
-        document.getElementById('editCategoryName').value = name;
-        document.getElementById('editCategoryDescription').value = description;
-        const editModal = new bootstrap.Modal(document.getElementById('editCategoryModal'));
-        editModal.show();
-    }
-
-    // Form submission for editing category
-    function submitEditForm(event) {
-        event.preventDefault();
-
-        const id = document.getElementById('editCategoryId').value;
-        const name = document.getElementById('editCategoryName').value.trim();
-        const description = document.getElementById('editCategoryDescription').value.trim();
-
-        // Validation
-        let isValid = true;
-        if (!name) {
-            document.getElementById('edit-name-error').textContent = "Please enter a name.";
-            isValid = false;
-        } else {
-            document.getElementById('edit-name-error').textContent = "";
+    <script>
+        // Function to open the modal and populate it with category data
+        function openEditModal(id, name, description) {
+            document.getElementById('editCategoryId').value = id;
+            document.getElementById('editCategoryName').value = name;
+            document.getElementById('editCategoryDescription').value = description;
+            const editModal = new bootstrap.Modal(document.getElementById('editCategoryModal'));
+            editModal.show();
         }
 
-        if (!description) {
-            document.getElementById('edit-description-error').textContent = "Please enter a description.";
-            isValid = false;
-        } else {
-            document.getElementById('edit-description-error').textContent = "";
-        }
+        // Form submission for editing category
+        function submitEditForm(event) {
+            event.preventDefault();
 
-        if (!isValid) return;
+            const id = document.getElementById('editCategoryId').value;
+            const name = document.getElementById('editCategoryName').value.trim();
+            const description = document.getElementById('editCategoryDescription').value.trim();
 
-        // Send data to the server
-        fetch(`/admin/edit-category/${id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, description })
-        })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
+            // Validation
+            let isValid = true;
+
+            // Name Validation: Only allow letters, spaces, and dots
+            const namePattern = /^[a-zA-Z]+$/;
+            if (!name) {
+                document.getElementById('edit-name-error').textContent = "Please enter a name.";
+                isValid = false;
+            } else if (!namePattern.test(name)) {
+                document.getElementById('edit-name-error').textContent =
+                    "Name must only contain letters"
+                isValid = false;
             } else {
-                return response.json().then(errorData => {
-                    throw new Error(errorData.error || 'An unknown error occurred.');
-                });
+                document.getElementById('edit-name-error').textContent = "";
             }
-        })
-        .then(data => {
+
+            // Description Validation
+            if (!description) {
+                document.getElementById('edit-description-error').textContent =
+                    "Please enter a description.";
+                isValid = false;
+            } else {
+                document.getElementById('edit-description-error').textContent = "";
+            }
+
+            if (!isValid) return;
+
+            // Send data to the server
+            fetch(`/admin/edit-category/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, description })
+            })
+                .then((response) => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        return response.json().then((errorData) => {
+                            throw new Error(errorData.error || 'An unknown error occurred.');
+                        });
+                    }
+                })
+                .then((data) => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: data.message || 'Category updated successfully!',
+                    }).then(() => {
+                        location.reload(); // Reload after success
+                    });
+                })
+                .catch((error) => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: error.message || 'Something went wrong!',
+                    });
+                });
+        }
+
+
+        function confirmAction(categoryId, action) {
+            const actionText = action === 'list' ? 'List' : 'Unlist';
+            const actionUrl = `/admin/${action}Category?id=${categoryId}`;
+
             Swal.fire({
-                icon: 'success',
-                title: 'Success',
-                text: data.message || 'Category updated successfully!',
-            }).then(() => {
-                location.reload(); // Reload after success
+                title: `Are you sure you want to ${actionText.toLowerCase()} this brand?`,
+                text: `This action will ${actionText.toLowerCase()} the brand.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: action === 'list' ? '#28a745' : '#d33', // Green for List, Red for Unlist
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: `Yes, ${actionText} it!`,
+                cancelButtonText: 'Cancel',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Perform the action by redirecting to the appropriate URL
+                    window.location.href = actionUrl;
+                }
             });
-        })
-        .catch(error => {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: error.message || 'Something went wrong!',
-            });
-        });
-    }
-</script>
+        }
+
+    </script>
 
     <%- include("../partials/adminfooter") %>

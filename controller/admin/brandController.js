@@ -7,12 +7,16 @@ const loadBrand = async (req, res) => {
         errorMessage:null,
       data: brandData,
     });
-  } catch (error) {}
+  } catch (error) {
+    console.error(" Load Brand Page Error ", error)
+  }
 };
 
 const addBrand = async (req, res) => {
     try {
       const brand = req.body.name;
+      console.log("Name" ,brand)
+      
       const regex = new RegExp(`^${brand}$`, "i")
       const findBrand = await Brand.findOne({ brandName: regex });
   
@@ -64,9 +68,9 @@ const editBrand = async (req, res) => {
         data: await Brand.find({}),
       });
     }
+    const regex = new RegExp(`^${name}$`, "i")
 
-    
-    const existingBrand = await Brand.findOne({ brandName: name });
+    const existingBrand = await Brand.findOne({ brandName: regex });
     if (existingBrand && existingBrand._id.toString() !== id) {
       return res.status(400).render("admin/view-brand", {
         errorMessage: "Brand with this name already exists!",

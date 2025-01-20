@@ -25,6 +25,12 @@
 
     .error-message {
       color: red;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+
+    .is-invalid {
+      border-color: red;
     }
 
     input.form-control {
@@ -62,15 +68,19 @@
                   <div class="card-body">
                     <div class="row">
                       <div class="col-md-3">
-                        <form method="post" action="/admin/addBrand" enctype="multipart/form-data">
+                        <form id="addBrandForm" method="post" action="/admin/addBrand" enctype="multipart/form-data"
+                          novalidate>
                           <div class="mb-4">
-                            <label for="product_name" class="form-label">Brand Name</label>
-                            <input type="text" name="name" placeholder="Type here" class="form-control" required />
+                            <label for="brand_name" class="form-label">Brand Name</label>
+                            <input type="text" id="brand_name" name="name" placeholder="Type here" class="form-control"
+                              required />
+                            <div class="error-message" id="name-error"></div>
                           </div>
-                          <label for="product_name" class="form-label">Brand Image</label>
+                          <label for="brand_image" class="form-label">Brand Image</label>
                           <div class="input-upload">
-                            <img src="" alt="" />
-                            <input class="form-control border" name="image" type="file" required/>
+                            <img id="preview-image" src="" alt="" style="display: none; max-width: 100px;" />
+                            <input class="form-control border" id="brand_image" name="image" type="file" required />
+                            <div class="error-message" id="image-error"></div>
                           </div>
                           <div class="d-grid">
                             <button class="btn btn-primary mt-20" style="width: 100%; margin-top: 20px;" type="submit">
@@ -78,6 +88,21 @@
                             </button>
                           </div>
                         </form>
+
+
+
+                        <style>
+                          .error-message {
+                            color: red;
+                            font-size: 0.875rem;
+                            margin-top: 0.25rem;
+                          }
+
+                          .is-invalid {
+                            border-color: red;
+                          }
+                        </style>
+
                       </div>
                       <div class="col-md-7 ml-105">
                         <div class="table-responsive">
@@ -121,22 +146,22 @@
 
                                   </td>
                                   <td class="text-start">
-                                    <% if(brand.isBlocked===false){ %>
-                                      <button class="btn btn-danger" style="width: 90px">
-                                        <a href="/admin/blockBrand?id=<%= brand._id  %>" class="text-white">Block</a>
+                                    <% if (brand.isBlocked===false) { %>
+                                      <button class="btn btn-danger" style="width: 90px"
+                                        onclick="confirmAction('<%= brand._id %>', 'block')">
+                                        Block
                                       </button>
-                                      <button 
-                                        class="btn btn-warning text-white" 
-                                        data-bs-toggle="modal" 
-                                        data-bs-target="#editCategoryModal" 
+                                      <button class="btn btn-warning text-white" data-bs-toggle="modal"
+                                        data-bs-target="#editCategoryModal"
                                         onclick="populateEditModal('<%= brand._id %>', '<%= brand.brandName %>', '<%= brand.brandImage[0] %>')">
                                         Edit
                                       </button>
-                                    <% } else { %>
-                                      <button class="btn btn-success" style="width: 90px">
-                                        <a href="/admin/unblockBrand?id=<%= brand._id  %>" class="text-white">Unblock</a>
-                                      </button>
-                                    <% } %>
+                                      <% } else { %>
+                                        <button class="btn btn-success" style="width: 90px"
+                                          onclick="confirmAction('<%= brand._id %>', 'unblock')">
+                                          Unblock
+                                        </button>
+                                        <% } %>
                                   </td>
                                 </tr>
                                 <% }) %>
@@ -156,36 +181,37 @@
 
 
   <!-- Edit Category Modal -->
-<div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="editCategoryModalLabel">Edit Brand</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  <div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editCategoryModalLabel">Edit Brand</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form method="post" action="/admin/editBrand" id="editBrand" enctype="multipart/form-data">
+          <div class="modal-body">
+            <input type="hidden" name="id" id="brandId">
+            <div class="mb-3">
+              <label for="brandName" class="form-label">Brand Name</label>
+              <input type="text" class="form-control" id="brandName" name="name" >
+            </div>
+            <div class="mb-3">
+              <label for="brandImage" class="form-label">Brand Image</label>
+              <input type="file" class="form-control" id="brandImage" name="image">
+            </div>
+            <div class="text-center">
+              <img id="brandPreview" src="" alt="Brand Image" class="img-thumbnail" style="max-width: 100px;">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+          </div>
+        </form>
       </div>
-      <form method="post" action="/admin/editBrand" enctype="multipart/form-data">
-        <div class="modal-body">
-          <input type="hidden" name="id" id="brandId">
-          <div class="mb-3">
-            <label for="brandName" class="form-label">Brand Name</label>
-            <input type="text" class="form-control" id="brandName" name="name" required>
-          </div>
-          <div class="mb-3">
-            <label for="brandImage" class="form-label">Brand Image</label>
-            <input type="file" class="form-control" id="brandImage" name="image">
-          </div>
-          <div class="text-center">
-            <img id="brandPreview" src="" alt="Brand Image" class="img-thumbnail" style="max-width: 100px;">
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary">Save Changes</button>
-        </div>
-      </form>
     </div>
   </div>
-</div>
 
 
   <% if (errorMessage) { %>
@@ -197,14 +223,166 @@
         text: '<%= errorMessage %>',
       });
     </script>
-  <% } %>
+    <% } %>
 
-  <script>
-     function populateEditModal(id, name, image) {
-    document.getElementById('brandId').value = id; // Populate hidden input
-    document.getElementById('brandName').value = name; // Populate name input
-    document.getElementById('brandPreview').src = '/product-images/' + image; // Show current image
-  }
-  </script>
+      <script>
+        function populateEditModal(id, name, image) {
+          document.getElementById('brandId').value = id; // Populate hidden input
+          document.getElementById('brandName').value = name; // Populate name input
+          document.getElementById('brandPreview').src = '/product-images/' + image; // Show current image
+        }
+      </script>
 
-  <%- include("../partials/adminfooter") %>
+      <script>
+        document.getElementById("addBrandForm").addEventListener("submit", function (e) {
+          const nameInput = document.getElementById("brand_name");
+          const nameError = document.getElementById("name-error");
+          const imageInput = document.getElementById("brand_image");
+          const imageError = document.getElementById("image-error");
+
+          // Clear previous errors
+          nameError.textContent = "";
+          imageError.textContent = "";
+
+          // Validate Brand Name
+          const namePattern = /^[a-zA-Z]+$/;
+          if (!namePattern.test(nameInput.value)) {
+            e.preventDefault();
+            nameError.textContent =
+              "Brand Name must contain only letters, no spaces or dots allowed.";
+            nameInput.classList.add("is-invalid");
+          } else {
+            nameInput.classList.remove("is-invalid");
+          }
+
+          // Validate Image File
+          const file = imageInput.files[0];
+          if (!file) {
+            e.preventDefault();
+            imageError.textContent = "Please select an image.";
+          } else {
+            const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+            const maxFileSize = 5 * 1024 * 1024; // 5MB in bytes
+
+            if (!allowedTypes.includes(file.type)) {
+              e.preventDefault();
+              imageError.textContent = "Only image files (JPEG, PNG, GIF, WEBP) are allowed.";
+              imageInput.classList.add("is-invalid");
+            } else if (file.size > maxFileSize) {
+              e.preventDefault();
+              imageError.textContent = "Image size must be less than 5MB.";
+              imageInput.classList.add("is-invalid");
+            } else {
+              imageInput.classList.remove("is-invalid");
+            }
+          }
+        });
+
+        // Optional: Image Preview
+        document.getElementById("brand_image").addEventListener("change", function () {
+          const file = this.files[0];
+          const previewImage = document.getElementById("preview-image");
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+              previewImage.src = e.target.result;
+              previewImage.style.display = "block";
+            };
+            reader.readAsDataURL(file);
+          } else {
+            previewImage.style.display = "none";
+          }
+        });
+      </script>
+      <script>
+        function confirmAction(brandId, action) {
+          const actionText = action === 'block' ? 'Block' : 'Unblock';
+          const actionUrl = `/admin/${action}Brand?id=${brandId}`;
+
+          Swal.fire({
+            title: `Are you sure you want to ${actionText} this brand?`,
+            text: `This action will ${actionText.toLowerCase()} the brand.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: action === 'block' ? '#d33' : '#28a745', // Red for Block, Green for Unblock
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: `Yes, ${actionText} it!`,
+            cancelButtonText: 'Cancel',
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.location.href = actionUrl; // Redirect to the block/unblock route
+            }
+          });
+        }
+      </script>
+
+      <script>
+        document.getElementById("editBrand").addEventListener("submit", function (e) {
+          const nameInput = document.getElementById("brandName");
+          const imageInput = document.getElementById("brandImage");
+          const brandPreview = document.getElementById("brandPreview");
+
+          const nameError = document.createElement("div");
+          const imageError = document.createElement("div");
+
+          // Clear previous errors
+          nameError.textContent = "";
+          imageError.textContent = "";
+          nameInput.classList.remove("is-invalid");
+          imageInput.classList.remove("is-invalid");
+
+          // Ensure error elements are properly inserted
+          if (!nameInput.nextElementSibling) {
+            nameInput.parentNode.appendChild(nameError);
+            nameError.classList.add("error-message");
+          }
+          if (!imageInput.nextElementSibling) {
+            imageInput.parentNode.appendChild(imageError);
+            imageError.classList.add("error-message");
+          }
+
+          // Validate Brand Name
+          const namePattern = /^[a-zA-Z]+$/;
+          if (!namePattern.test(nameInput.value)) {
+            e.preventDefault();
+            nameError.textContent = "Brand Name must contain only letters, no spaces or dots allowed.";
+            nameInput.classList.add("is-invalid");
+          }
+
+          // Validate Image File (only if a new file is uploaded)
+          const file = imageInput.files[0];
+          if (file) {
+            const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+            const maxFileSize = 5 * 1024 * 1024; // 5MB in bytes
+
+            if (!allowedTypes.includes(file.type)) {
+              e.preventDefault();
+              imageError.textContent = "Only image files (JPEG, PNG, GIF, WEBP) are allowed.";
+              imageInput.classList.add("is-invalid");
+            } else if (file.size > maxFileSize) {
+              e.preventDefault();
+              imageError.textContent = "Image size must be less than 5MB.";
+              imageInput.classList.add("is-invalid");
+            }
+          }
+
+          // Optional: Image Preview for newly uploaded files
+          imageInput.addEventListener("change", function () {
+            const file = this.files[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onload = function (e) {
+                brandPreview.src = e.target.result;
+                brandPreview.style.display = "block";
+              };
+              reader.readAsDataURL(file);
+            } else {
+              brandPreview.src = "";
+              brandPreview.style.display = "none";
+            }
+          });
+        });
+
+      </script>
+
+      <%- include("../partials/adminfooter") %>

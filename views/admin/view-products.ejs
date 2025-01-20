@@ -52,9 +52,11 @@
                   </thead>
                   <tbody>
                     <% for (let i=0; i < data.length; i++) { %>
-                      
+
                       <tr>
-                        <td><%= i+1  %></td>
+                        <td>
+                          <%= i+1 %>
+                        </td>
                         <!-- Product Name -->
                         <td>
                           <%= data[i].productName %>
@@ -115,8 +117,11 @@
                               <p><strong>Regular Price:</strong>
                                 <%= data[i].regularPrice %>
                               </p>
-                              <p><strong>Quantity:</strong>
-                                <%= data[i].quantity %>
+                              <p><strong>Varients:</strong>
+                                <br>
+                                <% for(let j=0; j < data[i].variants.length; j++) { %>
+                                  Size <%= data[i].variants[j].size %>: Quantity <%= data[i].variants[j].quantity %> <br>
+                                      <% } %>
                               </p>
                               <p><strong>Description:</strong>
                                 <%= data[i].description %>

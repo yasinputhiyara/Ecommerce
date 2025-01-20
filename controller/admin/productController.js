@@ -51,7 +51,7 @@ const loadProducts = async (req, res) => {
 
 const loadAddProduct = async (req, res) => {
   try {
-    const category = await Category.find({});
+    const category = await Category.find({ isListed : true});
     const brand = await Brand.find({ isBlocked: false });
     res.render("admin/add-product", {
       cat: category,
@@ -149,75 +149,6 @@ const addProduct = async (req, res) => {
   }
 };
 
-// const addProduct = async (req, res) => {
-//   try {
-//     const products = req.body;
-
-//     const productExists = await Product.findOne({
-//       productName: products.productName,
-//     });
-
-//     if (productExists) {
-//       return res
-//         .status(400)
-//         .json("Product already exists, please try with another name");
-//     }
-
-//     const images = [];
-//     if (req.files && req.files.length > 0) {
-//       for (let i = 0; i < req.files.length; i++) {
-//         const originaImagePath = path.join(
-//           "public",
-//           "product-images",
-//           req.files[i].filename
-//         );
-//         const resizedImagePath = path.join(
-//           "public",
-//           "resized-images",
-//           req.files[i].filename
-//         );
-//         await sharp(originaImagePath)
-//           .resize({ width: 440, height: 440 })
-//           .toFile(resizedImagePath);
-
-//         // Replace backslashes with forward slashes
-//         const imagePath = path.join(req.files[i].filename);
-//         images.push(imagePath);
-//       }
-//     }
-//     // else {
-//     //   return res.status(400).json("Please upload at least one image.");
-//     // }
-
-//     const categoryId = await Category.findOne({ name: products.category });
-//     if (!categoryId) {
-//       return res.status(400).json({ message: "Invalid category name" });
-//     }
-
-//     // Create new product object
-//     const newProduct = new Product({
-//       productName: products.productName,
-//       description: products.description,
-//       brand: products.brand,
-//       category: categoryId._id,
-//       subCategory: products.subCategory,
-//       regularPrice: products.regularPrice,
-//       salePrice: products.salePrice,
-//       createdOn: Date.now(),
-//       quantity: products.quantity,
-//       color: products.color,
-//       productImages: images,
-//       status: "Available",
-//     });
-
-//     await newProduct.save();
-//     console.log(newProduct);
-//     return res.redirect("/admin/view-products");
-//   } catch (error) {
-//     console.error("Error adding product: ", error);
-//     return res.status(500).json({ message: "Server error" });
-//   }
-// };
 
 const blockProduct = async (req, res) => {
   try {
@@ -243,8 +174,8 @@ const loadEditProduct = async (req, res) => {
       return res.redirect("/admin/view-products");
     }
     const categoryId = await Category.findOne({ _id: product.category });
-    const category = await Category.find({});
-    const brand = await Brand.find({});
+    const category = await Category.find({isListed : true});
+    const brand = await Brand.find({ isBlocked : false});
 
     res.render("admin/sample/edit-product", {
       product: product,
