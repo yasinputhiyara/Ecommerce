@@ -1,250 +1,476 @@
 <%- include("../partials/header") %>
 
-  <link rel="stylesheet" href="/user/essence/css/core-style.css">
+<link rel="stylesheet" href="/user/essence/css/core-style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.min.css">
 
 
+<style>
+/* Add this CSS to your existing styles */
+.single-product-wrapper {
+  position: relative;
+  margin-bottom: 50px;
+  transition: all 0.3s;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+}
 
+.single-product-wrapper:hover {
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
+}
 
-  <!-- ##### Breadcumb Area Start ##### -->
-  <div class="breadcumb_area bg-img" style="background-image: url(/user/essence/img/bg-img/breadcumb.jpg)">
-    <div class="container h-100">
-      <div class="row h-100 align-items-center">
-        <div class="col-12">
-          <div class="page-title text-center">
-            <h2>Shop</h2>
-          </div>
+.product-img {
+  position: relative;
+  overflow: hidden;
+  padding-top: 10%; /* Maintain aspect ratio */
+}
+
+.image-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.product-img img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: all 0.5s;
+}
+
+.hover-img {
+  opacity: 0;
+  transform: scale(1.1);
+}
+
+.single-product-wrapper:hover .product-img img:first-child {
+  opacity: 0;
+}
+
+.single-product-wrapper:hover .hover-img {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.product-badge {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  z-index: 2;
+}
+
+.badge-new {
+  background: #ff084e;
+  color: #fff;
+  padding: 5px 12px;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.product-actions {
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  opacity: 0;
+  transform: translateX(20px);
+  transition: all 0.3s;
+}
+
+.single-product-wrapper:hover .product-actions {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.product-actions a {
+  width: 35px;
+  height: 35px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+}
+
+.product-actions a:hover {
+  background: #ff084e;
+  color: #fff;
+}
+
+.product-description {
+  padding: 20px;
+  text-align: center;
+}
+
+.product-title h6 {
+  font-size: 16px;
+  margin: 0;
+  font-weight: 600;
+  color: #333;
+  transition: color 0.3s;
+}
+
+.product-title:hover h6 {
+  color: #ff084e;
+}
+
+.product-price {
+  margin: 10px 0;
+}
+
+.old-price {
+  color: #999;
+  text-decoration: line-through;
+  margin-right: 10px;
+  font-size: 14px;
+}
+
+.current-price {
+  color: #ff084e;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.hover-content {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.3s;
+}
+
+.single-product-wrapper:hover .hover-content {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.add-to-cart-btn {
+  margin-top: 15px;
+}
+
+.essence-btn {
+  display: inline-block;
+  min-width: 170px;
+  height: 50px;
+  color: #ffffff;
+  border: none;
+  border-radius: 25px;
+  padding: 0 40px;
+  text-transform: uppercase;
+  font-size: 12px;
+  line-height: 50px;
+  background-color: #ff084e;
+  letter-spacing: 1.5px;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.essence-btn:hover {
+  background-color: #333;
+  color: #fff;
+}
+
+/* Responsive adjustments */
+@media only screen and (max-width: 767px) {
+  .single-product-wrapper {
+    margin-bottom: 30px;
+  }
+  
+  .product-description {
+    padding: 15px;
+  }
+  
+  .essence-btn {
+    min-width: 140px;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 20px;
+  }
+}
+</style>
+
+<!-- Hero Section -->
+<div class="breadcumb_area bg-img" style="background-image: url(/user/essence/img/bg-img/breadcumb.jpg)">
+  <div class="container h-100">
+    <div class="row h-100 align-items-center">
+      <div class="col-12">
+        <div class="page-title text-center">
+          <h2 class="text-dark">Shop Collection</h2>
         </div>
       </div>
     </div>
   </div>
-  <!-- ##### Breadcumb Area End ##### -->
+</div>
 
-  <!-- ##### Shop Grid Area Start ##### -->
-  <section class="shop_grid_area section-padding-80">
-    <div class="container">
-      <div class="row">
-        <div class="col-12 col-md-4 col-lg-3">
-          <div class="shop_sidebar_area">
-
-
-            <!-- ##### Single Widget ##### -->
-            <div class="widget catagory mb-50">
-              <!-- Widget Title -->
-              <h6 class="widget-title mb-30">Catagories</h6>
-
-              <!--  Catagories  -->
-
-              <div class="catagories-menu">
-                <ul id="menu-content2" class="menu-content collapse show">
-                  <% for (let i=0; i < categories.length; i++) { %>
-                    <li data-toggle="collapse" data-target="#category-<%= i %>" class="collapsed">
-                      <a href="javascript:void(0)" onclick="applyFilters({ category: '<%= categories[i].name %>' })">
-                        <%= categories[i].name %>
-                      </a>
-                    </li>
-                    <% } %>
-                </ul>
+<!-- Shop Grid Area -->
+<section class="shop_grid_area section-padding-80">
+  <div class="container">
+    <div class="row">
+      <!-- Sidebar -->
+      <div class="col-12 col-md-4 col-lg-3">
+        <div class="shop_sidebar_area">
+          <!-- Categories -->
+          <div class="widget category mb-50">
+            <h6 class="widget-title mb-30">Categories</h6>
+            <div class="widget-desc">
+              <div class="custom-control custom-radio">
+                <input type="radio" id="categoryAll" name="category" class="custom-control-input" 
+                       value="" <%= !filters.category ? 'checked' : '' %>>
+                <label class="custom-control-label" for="categoryAll">All Categories</label>
               </div>
-
-            </div>
-
-            <!-- ##### Single Widget ##### -->
-            <div class="widget price mb-50">
-              <!-- Widget Title -->
-              <h6 class="widget-title mb-30">Filter by</h6>
-              <!-- Widget Title 2 -->
-              <p class="widget-title2 mb-30">Price</p>
-
-              <div class="widget-desc">
-                <div class="slider-range">
-                  <div id="price-slider"
-                    class="slider-range-price ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all"
-                    data-min="49" data-max="360" data-unit="$" data-value-min="49" data-value-max="360"
-                    data-label-result="Range:">
-                    <div class="ui-slider-range ui-widget-header ui-corner-all"></div>
-                    <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
-                    <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
-                  </div>
-                  <div class="range-price" id="priceRangeDisplay">Range: $49.00 - $360.00</div>
+              <% categories.forEach((category, index) => { %>
+                <div class="custom-control custom-radio">
+                  <input type="radio" id="category<%= index %>" name="category" 
+                         class="custom-control-input" value="<%= category.name %>"
+                         <%= filters.category === category.name ? 'checked' : '' %>>
+                  <label class="custom-control-label" for="category<%= index %>">
+                    <%= category.name %>
+                  </label>
                 </div>
-
-              </div>
+              <% }); %>
             </div>
+          </div>
 
-            <!-- ##### Single Widget ##### -->
-            <div class="widget color mb-50">
-              <!-- Widget Title 2 -->
-              <p class="widget-title2 mb-30">Color</p>
-              <div class="widget-desc">
-                <ul class="d-flex">
-                  <li><a href="#" class="color1"></a></li>
-                  <li><a href="#" class="color2"></a></li>
-                  <li><a href="#" class="color3"></a></li>
-                  <li><a href="#" class="color4"></a></li>
-                  <li><a href="#" class="color5"></a></li>
-                  <li><a href="#" class="color6"></a></li>
-                  <li><a href="#" class="color7"></a></li>
-                  <li><a href="#" class="color8"></a></li>
-                  <li><a href="#" class="color9"></a></li>
-                  <li><a href="#" class="color10"></a></li>
-                </ul>
-              </div>
-            </div>
-
-            <!-- ##### Single Widget ##### -->
-            <div class="widget brands mb-50">
-              <!-- Widget Title 2 -->
-              <p class="widget-title2 mb-30">Brands</p>
-              <div class="widget-desc">
-                <ul>
-                  <% for(let i=0 ; i< brands.length ; i++){ %>
-                    <li><a href="/filter/brand=<%=brands[i].brandName  %>">
-                        <%= brands[i].brandName %>
-                      </a></li>
-                    <% } %>
-
-                </ul>
+          <!-- Price Filter -->
+          <div class="widget price mb-50">
+            <h6 class="widget-title mb-30">Price Range</h6>
+            <div class="widget-desc">
+              <div id="price-range"></div>
+              <div class="range-info mt-3">
+                <span>Range: </span>
+                <span id="price-min"></span> - <span id="price-max"></span>
               </div>
             </div>
           </div>
+
+          <!-- Brands -->
+          <div class="widget brands mb-50">
+            <h6 class="widget-title mb-30">Brands</h6>
+            <div class="widget-desc">
+              <div class="custom-control custom-radio">
+                <input type="radio" id="brandAll" name="brand" class="custom-control-input" 
+                       value="" <%= !filters.brand ? 'checked' : '' %>>
+                <label class="custom-control-label" for="brandAll">All Brands</label>
+              </div>
+              <% brands.forEach((brand, index) => { %>
+                <div class="custom-control custom-radio">
+                  <input type="radio" id="brand<%= index %>" name="brand" 
+                         class="custom-control-input" value="<%= brand.brandName %>"
+                         <%= filters.brand === brand.brandName ? 'checked' : '' %>>
+                  <label class="custom-control-label" for="brand<%= index %>">
+                    <%= brand.brandName %>
+                  </label>
+                </div>
+              <% }); %>
+            </div>
+          </div>
+
+          <button class="btn essence-btn w-100" onclick="applyFilters()">Apply Filters</button>
         </div>
+      </div>
 
-        <div class="col-12 col-md-8 col-lg-9">
-          <div class="shop_grid_product_area">
-            <div class="row">
-              <div class="col-12">
-                <div class="product-topbar d-flex align-items-center justify-content-between">
-                  <!-- Total Products -->
-                  <div class="total-products">
-                    <p><span>
-                        <%= totalProducts %>
-                      </span> products found</p>
+      <!-- Products Grid -->
+      <div class="col-12 col-md-8 col-lg-9">
+        <div class="shop_grid_product_area">
+          <!-- Top Bar -->
+          <div class="product-topbar d-flex align-items-center justify-content-between mb-4">
+            <div class="total-products">
+              <p><span><%= totalProducts %></span> products found</p>
+            </div>
+            <div class="product-sorting d-flex align-items-center">
+              <label class="mr-2">Sort by:</label>
+              <select id="sortByselect" class="form-control" onchange="applyFilters()">
+                <option value="" <%= !filters.sort ? 'selected' : '' %>>Default</option>
+                <option value="newest" <%= filters.sort === 'newest' ? 'selected' : '' %>>Newest</option>
+                <option value="a-z" <%= filters.sort === 'a-z' ? 'selected' : '' %>>Name: A to Z</option>
+                <option value="z-a" <%= filters.sort === 'z-a' ? 'selected' : '' %>>Name: Z to A</option>
+                <option value="price-low-high" <%= filters.sort === 'price-low-high' ? 'selected' : '' %>>Price: Low to High</option>
+                <option value="price-high-low" <%= filters.sort === 'price-high-low' ? 'selected' : '' %>>Price: High to Low</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <button onclick="resetFilters()" class="btn essence-btn">Reset Filters</button>
+            <% if (totalProducts === 0) { %>
+              <div class="alert alert-info mb-0" role="alert">
+                No products found matching your criteria
+              </div>
+            <% } %>
+          </div>
+
+          <!-- Products Grid -->
+          <div class="row">
+            <% for (let product of products) { %>
+              <!-- Single Product -->
+              <div class="col-12 col-sm-6 col-lg-4">
+                <div class="single-product-wrapper">
+                  <!-- Product Image -->
+                  <div class="product-img">
+                    <div class="image-wrapper">
+                      <img src="/product-images/<%= product.productImages[0] %>" alt="<%= product.productName %>" />
+                      <!-- Hover Thumb -->
+                      <img class="hover-img" src="/product-images/<%= product.productImages[1] %>" alt="<%= product.productName %>" />
+                    </div>
+                    
+                    <!-- Product Badge -->
+                    <% if (product.regularPrice > product.salePrice) { %>
+                      <div class="product-badge bg-white">
+                        <span class="badge-new ">-<%= Math.round((product.regularPrice - product.salePrice) / product.regularPrice * 100) %>%</span>
+                      </div>
+                    <% } %>
+                    
+                    <!-- Quick View & Wishlist -->
+                    <div class="product-actions">
+                      <a href="/product-details/<%= product._id %>" class="quick-view-btn">
+                        <i class="fa fa-eye"></i>
+                      </a>
+                      <a href="#" class="wishlist-btn">
+                        <i class="fa fa-heart"></i>
+                      </a>
+                    </div>
                   </div>
-                  <!-- Sorting -->
-                  <div class="product-sorting d-flex">
-                    <p>Sort by:</p>
-                    <form action="#" method="get">
-                      <select id="sortByselect" onchange="applySortAndFilters()">
-                        <option value="">Default</option>
-                        <option value="highest-rated">Highest Rated</option>
-                        <option value="newest">Newest</option>
-                        <option value="price-low-high">Price: $ - $$</option>
-                        <option value="price-high-low">Price: $$ - $</option>
-                      </select>
-
-                      <input type="submit" class="d-none" value="" />
-                    </form>
+          
+                  <!-- Product Description -->
+                  <div class="product-description">
+                    <a href="/product-details/<%= product._id %>" class="product-title">
+                      <h6><%= product.productName %></h6>
+                    </a>
+                    <div class="product-price">
+                      <% if (product.regularPrice > product.salePrice) { %>
+                        <span class="old-price">₹<%= product.regularPrice %></span>
+                      <% } %>
+                      <span class="current-price">₹<%= product.salePrice %></span>
+                    </div>
+          
+                    <!-- Add to Cart -->
+                    <div class="hover-content">
+                      <div class="add-to-cart-btn">
+                        <a href="#" class="btn essence-btn">Add to Cart</a>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-
-            <div class="row">
-              <% for (let i=0; i < products.length; i++) { %>
-                <!-- Single Product -->
-                <div class="col-12 col-sm-6 col-lg-4">
-                  <div class="single-product-wrapper">
-                    <!-- Product Image -->
-                    <div class="product-img">
-                      <div class="image-wrapper">
-                        <img src="/product-images/<%= products[i].productImages[0] %>" alt="" />
-                        <!-- Hover Thumb -->
-                        <img class="hover-img" src="/product-images/<%= products[i].productImages[1] %>" alt="" />
-                      </div>
-                      <!-- Favourite -->
-                      <div class="product-favourite">
-                        <a href="#" class="favme fa fa-heart"></a>
-                      </div>
-                    </div>
-
-                    <!-- Product Description -->
-                    <div class="product-description">
-                      <span>topshop</span>
-                      <a href="/product-details/<%= products[i]._id %>">
-                        <h6>
-                          <%= products[i].productName %>
-                        </h6>
-                      </a>
-                      <p class="product-price">
-                        <span class="old-price">$<%= products[i].regularPrice %></span>
-                        $<%= products[i].salePrice %>
-                      </p>
-
-                      <!-- Hover Content -->
-                      <div class="hover-content">
-                        <!-- Add to Cart -->
-                        <div class="add-to-cart-btn">
-                          <a href="#" class="btn bg-primary essence-btn">Add to Cart</a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <% } %>
-            </div>
-
-
-            <!-- Pagination -->
-            <nav aria-label="navigation">
-              <ul class="pagination mt-50 mb-70">
-                <% if (currentPage> 1) { %>
-                  <li class="page-item">
-                    <a class="page-link" href="?page=<%= currentPage - 1 %>"><i class="fa fa-angle-left"></i></a>
-                  </li>
-                  <% } %>
-                    <% for (let i=1; i <=totalPages; i++) { %>
-                      <li class="page-item <%= i === currentPage ? 'active' : '' %>">
-                        <a class="page-link" href="?page=<%= i %>">
-                          <%= i %>
-                        </a>
-                      </li>
-                      <% } %>
-                        <% if (currentPage < totalPages) { %>
-                          <li class="page-item">
-                            <a class="page-link" href="?page=<%= currentPage + 1 %>"><i
-                                class="fa fa-angle-right"></i></a>
-                          </li>
-                          <% } %>
-              </ul>
-            </nav>
-
-
-
+            <% } %>
           </div>
+
+          <!-- Pagination -->
+          <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+              <% if (currentPage > 1) { %>
+                <li class="page-item">
+                  <a class="page-link" href="#" onclick="changePage(`<%= currentPage - 1 %>`)">Previous</a>
+                </li>
+              <% } %>
+              
+              <% for(let i = 1; i <= totalPages; i++) { %>
+                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                  <a class="page-link" href="#" onclick="changePage(`<%= i %>`)"><%= i %></a>
+                </li>
+              <% } %>
+              
+              <% if (currentPage < totalPages) { %>
+                <li class="page-item">
+                  <a class="page-link" href="#" onclick="changePage(`<%= currentPage + 1 %>`)">Next</a>
+                </li>
+              <% } %>
+            </ul>
+          </nav>
         </div>
       </div>
     </div>
-  </section>
-  <!-- ##### Shop Grid Area End ##### -->
+  </div>
+</section>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Initialize price range slider
+  const priceRange = document.getElementById('price-range');
+  const minPrice = document.getElementById('price-min');
+  const maxPrice = document.getElementById('price-max');
 
-
-  <script>
-    function applySortAndFilters(extraFilters = {}) {
-      const sort = document.getElementById("sortByselect").value;
-      const minPrice = document.getElementById("minPrice").value;
-      const maxPrice = document.getElementById("maxPrice").value;
-
-      const params = new URLSearchParams(window.location.search);
-
-      // Update query parameters with filters
-      if (sort) params.set("sort", sort);
-      else params.delete("sort");
-
-      if (minPrice) params.set("minPrice", minPrice);
-      else params.delete("minPrice");
-
-      if (maxPrice) params.set("maxPrice", maxPrice);
-      else params.delete("maxPrice");
-
-      for (const [key, value] of Object.entries(extraFilters)) {
-        if (value) params.set(key, value);
-        else params.delete(key);
-      }
-
-      window.location.search = params.toString();
+  noUiSlider.create(priceRange, {
+    start: [`<%= filters.minPrice || 0 %>`, `<%= filters.maxPrice || 1000 %>`],
+    connect: true,
+    range: {
+      'min': 0,
+      'max': 1000
+    },
+    format: {
+      to: value => Math.round(value),
+      from: value => parseInt(value)
     }
+  });
 
-  </script>
+  priceRange.noUiSlider.on('update', function(values) {
+    minPrice.innerHTML = '$' + values[0];
+    maxPrice.innerHTML = '$' + values[1];
+  });
+});
 
-  <%- include("../partials/footer") %>
+function applyFilters() {
+  const category = document.querySelector('input[name="category"]:checked').value;
+  const brand = document.querySelector('input[name="brand"]:checked').value;
+  const sort = document.getElementById('sortByselect').value;
+  const priceRange = document.getElementById('price-range');
+  const [minPrice, maxPrice] = priceRange.noUiSlider.get();
+
+  const params = new URLSearchParams(window.location.search);
+  
+  if (category) params.set('category', category);
+  else params.delete('category');
+  
+  if (brand) params.set('brand', brand);
+  else params.delete('brand');
+  
+  if (sort) params.set('sort', sort);
+  else params.delete('sort');
+  
+  params.set('minPrice', minPrice);
+  params.set('maxPrice', maxPrice);
+  
+  // Maintain current page if it exists
+  const currentPage = params.get('page');
+  if (currentPage) params.set('page', 1); // Reset to page 1 when filtering
+  
+  window.location.search = params.toString();
+}
+
+function changePage(page) {
+  const params = new URLSearchParams(window.location.search);
+  params.set('page', page);
+  window.location.search = params.toString();
+}
+
+// Add this to your existing script
+function resetFilters() {
+  // Reset all radio buttons to "All" options
+  document.getElementById('categoryAll').checked = true;
+  document.getElementById('brandAll').checked = true;
+  
+  // Reset sort dropdown
+  document.getElementById('sortByselect').value = '';
+  
+  // Reset price range slider
+  const priceRange = document.getElementById('price-range');
+  priceRange.noUiSlider.set([0, 1000]);
+  
+  // Apply the reset filters
+  applyFilters();
+}
+</script>
+
+<%- include("../partials/footer") %>

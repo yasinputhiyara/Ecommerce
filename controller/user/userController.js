@@ -245,32 +245,73 @@ const loadHome = async (req, res) => {
   }
 };
 
+
 const loadShop = async (req, res) => {
   try {
     const user = req.session.user;
+    const itemsPerPage = 9;
+    const page = parseInt(req.query.page) || 1;
 
-    // Pagination Logic
-    const itemsPerPage = 9; // Number of products per page
-    const page = parseInt(req.query.page) || 1; // Current page, default is 1
+    // Build filter query
+    const filterQuery = { isBlocked: false };
 
-    // Fetch total count of products (excluding blocked ones)
-    const totalProducts = await Product.countDocuments();
+    // Resolve category filter
+    if (req.query.category) {
+      const category = await Category.findOne({ name: req.query.category });
+      if (category) {
+        filterQuery.category = category._id; // Use the ObjectId of the category
+      } else {
+        filterQuery.category = null; // No matching category
+      }
+    }
 
-    // Calculate the total number of pages
+    // Brand filter
+    if (req.query.brand) {
+      filterQuery.brand = req.query.brand;
+    }
+
+    // Price range filter
+    if (req.query.minPrice || req.query.maxPrice) {
+      filterQuery.salePrice = {};
+      if (req.query.minPrice) filterQuery.salePrice.$gte = parseInt(req.query.minPrice);
+      if (req.query.maxPrice) filterQuery.salePrice.$lte = parseInt(req.query.maxPrice);
+    }
+
+    // Build sort query
+    let sortQuery = {};
+    switch (req.query.sort) {
+      case 'price-low-high':
+        sortQuery = { salePrice: 1 };
+        break;
+      case 'price-high-low':
+        sortQuery = { salePrice: -1 };
+        break;
+      case 'newest':
+        sortQuery = { createdAt: -1 };
+        break;
+      case 'a-z':
+        sortQuery = { productName: 1 };
+        break;
+      case 'z-a':
+        sortQuery = { productName: -1 };
+        break;
+      default:
+        sortQuery = { createdAt: -1 }; // Default sort
+    }
+
+    // Count total filtered products
+    const totalProducts = await Product.countDocuments(filterQuery);
     const totalPages = Math.ceil(totalProducts / itemsPerPage);
 
-    // Fetch products for the current page
-    const products = await Product.find({ isBlocked: false })
+    // Fetch filtered and sorted products
+    const products = await Product.find(filterQuery)
+      .sort(sortQuery)
       .skip((page - 1) * itemsPerPage)
       .limit(itemsPerPage);
 
-    // Fetch categories and brands
     const categories = await Category.find({});
     const brands = await Brand.find({ isBlocked: false });
 
-    // console.log(totalProducts, totalPages , categories , brands);
-
-    // Render the shop view
     res.render("user/shop", {
       products,
       categories,
@@ -279,12 +320,20 @@ const loadShop = async (req, res) => {
       totalPages,
       currentPage: page,
       user,
+      filters: {
+        category: req.query.category || '',
+        brand: req.query.brand || '',
+        minPrice: req.query.minPrice || '',
+        maxPrice: req.query.maxPrice || '',
+        sort: req.query.sort || ''
+      }
     });
   } catch (err) {
     console.error(err);
     res.status(500).send("Server Error");
   }
 };
+
 
 module.exports = {
   loadLogin,
