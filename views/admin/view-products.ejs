@@ -82,7 +82,7 @@
                               <% } %>
 
                                 <!-- Edit Button -->
-                                <a href="/admin/edit-product/?id=<%= data[i]._id %>" class="btn btn-primary text-white"
+                                <a href="/admin/edit-product/<%= data[i]._id %>" class="btn btn-primary text-white"
                                   style="text-decoration: none;">
                                   Edit
                                 </a>
@@ -128,7 +128,7 @@
                                 <strong>Product Images:</strong>
                                 <div class="d-flex flex-wrap">
                                   <% for (let image of data[i].productImages) { %>
-                                    <img src="/resized-images/<%= image %>" alt="Product Image"
+                                    <img src="/product-images/<%= image %>" alt="Product Image"
                                       class="img-thumbnail m-2" style="width: 150px; height: 150px;">
                                     <% } %>
                                 </div>

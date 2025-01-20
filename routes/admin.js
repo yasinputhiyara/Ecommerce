@@ -26,14 +26,13 @@ router.get('/unblock-user',adminAuth ,userController.unBlockUser )
 
 //------Product------///
 router.get('/view-products',adminAuth ,productController.loadProducts )
-router.get('/add-product',adminAuth, productController.loadAddProduct)
-router.post('/add-product',adminAuth,upload.array("images", 4),productController.addProduct)
+router.get('/add-product', productController.loadAddProduct)
+router.post('/add-product',upload.array("images", 4),productController.addProduct)
 router.get('/blockProduct',adminAuth ,productController.blockProduct )
 router.get('/unblockProduct' ,adminAuth, productController.unblockProduct)
-router.get('/edit-product',adminAuth,productController.loadEditProduct);
-router.put('/edit-product/:id',adminAuth ,upload.array('images',4), productController.editProduct)
+router.get('/edit-product/:id',productController.loadEditProduct);
+router.put('/edit-product/:id' ,upload.array('images',4), productController.editProduct)
 router.delete('/delete-product-image/:productId/:imageName', productController.deleteProductImage);
-
 
 
 //-----Category------//
@@ -44,6 +43,7 @@ router.post('/removeCategoryOffer',adminAuth,categoryController.removeCategoryOf
 router.get("/listCategory",adminAuth , categoryController.getListCategory);
 router.get('/unlistCategory',adminAuth , categoryController.getUnlistCategory)
 router.put('/edit-category/:id',adminAuth,categoryController.editCategory)
+
 
 //-------Brand----------//
 router.get('/view-brands',adminAuth,brandcontroller.loadBrand)
