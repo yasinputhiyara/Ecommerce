@@ -1,0 +1,428 @@
+<%- include('../partials/header') %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/product-details.css">
+
+    <style>
+
+      /* Layout and General Styles */
+.product-container {
+    padding: 2rem 0;
+    background-color: #f8f9fa;
+}
+
+.product-wrapper {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+    padding: 2rem;
+}
+
+/* Image Gallery Styles */
+.gallery-section {
+    position: relative;
+}
+
+.main-image-container {
+    position: relative;
+    text-align: center;
+    margin-bottom: 1rem;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+}
+
+.main-image {
+    width: 100%;
+    height: 500px;
+    object-fit: contain;
+    border-radius: 8px;
+    cursor: crosshair;
+}
+
+.thumbnail-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.thumbnail {
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.thumbnail.active {
+    border-color: #007bff;
+    transform: scale(1.05);
+}
+
+.thumbnail img {
+    width: 100%;
+    height: 80px;
+    object-fit: cover;
+}
+
+/* Magnifier Styles */
+.magnifier {
+    position: absolute;
+    border: 2px solid #007bff;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: none;
+    pointer-events: none;
+    z-index: 100;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.magnifier img {
+    position: absolute;
+    width: 400%;
+    height: 400%;
+    pointer-events: none;
+}
+
+/* Product Info Styles */
+.product-info {
+    padding: 0 1rem;
+}
+
+.product-category {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.product-brand {
+    font-weight: 600;
+    color: #343a40;
+    margin-bottom: 1rem;
+}
+
+.product-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: #212529;
+}
+
+.pricing {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.sale-price {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #007bff;
+}
+
+.regular-price {
+    text-decoration: line-through;
+    color: #6c757d;
+    font-size: 1.2rem;
+}
+
+.discount-badge {
+    background: #dc3545;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+/* Size and Quantity Styles */
+.variant-section {
+    margin: 2rem 0;
+}
+
+.size-options {
+    display: flex;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+.size-btn {
+    min-width: 50px;
+    height: 40px;
+    border: 1px solid #dee2e6;
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 600;
+}
+
+.size-btn.active {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.size-btn.out-of-stock {
+    background: #f8f9fa;
+    color: #6c757d;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+.stock-info {
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+.stock-info.in-stock { color: #28a745; }
+.stock-info.low { color: #ffc107; }
+.stock-info.out { color: #dc3545; }
+
+/* Reviews Section */
+.reviews-section {
+    margin-top: 3rem;
+    padding: 2rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+}
+
+.review-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.star-rating {
+    color: #ffd700;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Similar Products Section */
+.similar-products {
+    margin-top: 3rem;
+    padding: 2rem 0;
+}
+
+.product-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    height: 100%;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+.product-card img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+}
+
+.product-card-body {
+    padding: 1.5rem;
+}
+
+/* Coupon Section */
+.coupon-section {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: #f1f8ff;
+    border-radius: 8px;
+    border:2px solid black
+
+}
+      
+    </style>
+
+
+</head>
+<body>
+    <div class="container-fluid product-container">
+        <div class="container">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item"><a href="/category/<%= product.category._id %>"><%= product.category.name %></a></li>
+                    <li class="breadcrumb-item active" aria-current="page"><%= product.productName %></li>
+                </ol>
+            </nav>
+
+            <div class="product-wrapper">
+                <div class="row">
+                    <!-- Product Gallery -->
+                    <div class="col-lg-6 gallery-section">
+                        <div class="main-image-container">
+                            <img id="mainImage" src="/product-images/<%= product.productImages[0] %>" alt="Main Product Image" class="main-image">
+                            <div id="magnifier" class="magnifier">
+                                <img id="magnifierImage" src="/product-images/<%= product.productImages[0] %>" alt="Zoomed Product Image">
+                            </div>
+                        </div>
+
+                        <div class="thumbnail-container">
+                            <% product.productImages.forEach((image, index) => { %>
+                                <div class="thumbnail <%= index === 0 ? 'active' : '' %>">
+                                    <img src="/product-images/<%= image %>" alt="Thumbnail <%= index + 1 %>" onclick="updateMainImage(this)">
+                                </div>
+                            <% }); %>
+                        </div>
+                    </div>
+
+                    <!-- Product Info -->
+                    <div class="col-lg-6 product-info">
+                        <div class="product-category">
+                            <%= product.category.name %> / <%= product.subCategory %>
+                        </div>
+                        <div class="product-brand"><%= product.brand %></div>
+                        <h1 class="product-title"><%= product.productName %></h1>
+
+                        <div class="pricing">
+                            <span class="sale-price">$<%= product.salePrice %></span>
+                            <% if (product.regularPrice > product.salePrice) { %>
+                                <span class="regular-price">$<%= product.regularPrice %></span>
+                                <span class="discount-badge">
+                                    <%= Math.round((product.regularPrice - product.salePrice) / product.regularPrice * 100) %>% OFF
+                                </span>
+                            <% } %>
+                        </div>
+
+                        <p class="description mb-4"><%= product.description %></p>
+
+                        <!-- Size Selection Form -->
+                        <form action="/addToCart/<%= product._id %>" method="post">
+                            <div class="variant-section">
+                                <h6>Available Sizes:</h6>
+                                <div class="size-options">
+                                    <% product.variants.forEach(variant => { %>
+                                        <button type="button" 
+                                                class="size-btn <%= variant.quantity === 0 ? 'out-of-stock' : '' %>"
+                                                data-size="<%= variant.size %>"
+                                                data-quantity="<%= variant.quantity %>"
+                                                onclick="selectSize(this)"
+                                                <%= variant.quantity === 0 ? 'disabled' : '' %>>
+                                            <%= variant.size %>
+                                        </button>
+                                    <% }); %>
+                                </div>
+                                <div id="stockInfo" class="stock-info"></div>
+
+                                <input type="hidden" name="size" id="selectedSize" required>
+                                <div class="quantity-select mt-3" style="display: none;">
+                                    <h6>Quantity:</h6>
+                                    <select name="quantity" id="quantitySelect" class="form-select" style="width: 100px;" required>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-lg w-100 mb-4" id="addToCartBtn" disabled>
+                                Add to Cart
+                            </button>
+                        </form>
+
+                        <!-- Coupon Section -->
+                        <div class="coupon-section">
+                            <h5><i class="fas fa-tag me-2"></i>Available Offers</h5>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <span class="coupon-code">WELCOME20</span>
+                                    <span class="ms-2">- Get 20% off on your first purchase</span>
+                                </li>
+                                <li>
+                                    <span class="coupon-code">FREESHIP</span>
+                                    <span class="ms-2">- Free shipping on orders above $50</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Reviews Section -->
+                        <div class="reviews-section">
+                            <h4>Ratings & Reviews</h4>
+                            <div class="overall-rating mb-4">
+                                <div class="star-rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star-half-alt"></i>
+                                    <span class="ms-2">4.5 out of 5</span>
+                                </div>
+                                <p class="text-muted">12 reviews</p>
+                            </div>
+
+                            <div class="reviews-list">
+                                <!-- Review Cards -->
+                                <div class="review-card">
+                                    <div class="star-rating">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    <h6>John Doe</h6>
+                                    <p class="text-muted small">01/15/2025</p>
+                                    <p>Great product! Exceeded my expectations.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Similar Products Section -->
+            <div class="similar-products">
+                <h3 class="mb-4">Similar Products</h3>
+                <div class="row">
+                    <% similarProducts.forEach(product => { %>
+                        <div class="col-12 col-sm-6 col-lg-4 mb-4">
+                            <div class="product-card">
+                                <div class="product-img position-relative">
+                                    <img src="/product-images/<%= product.productImages[0] %>" alt="<%= product.productName %>">
+                                    <% if (product.regularPrice > product.salePrice) { %>
+                                        <div class="position-absolute top-0 start-0 m-3">
+                                            <span class="badge bg-danger">
+                                                -<%= Math.round((product.regularPrice - product.salePrice) / product.regularPrice * 100) %>%
+                                            </span>
+                                        </div>
+                                    <% } %>
+                                </div>
+                                <div class="product-card-body">
+                                    <h5 class="mb-2"><%= product.productName %></h5>
+                                    <div class="product-price">
+                                        <% if (product.regularPrice > product.salePrice) { %>
+                                            <span class="old-price">$<%= product.regularPrice %></span>
+                                        <% } %>
+                                        <span class="current-price">$<%= product.salePrice %></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/product-details.js"></script>
+    <%- include('../partials/footer') %>
+</body>
+</html>

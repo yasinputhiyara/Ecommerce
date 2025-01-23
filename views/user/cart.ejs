@@ -1,297 +1,404 @@
 <%- include("../partials/header") %>
 
-<link rel="stylesheet" href="/user/stylesheets/cart.css">
-<link rel="stylesheet" href="/user/essence/css/core-style.css">
+  <link rel="stylesheet" href="/user/stylesheets/cart.css">
+  <link rel="stylesheet" href="/user/essence/css/core-style.css">
 
-<!-- Hero Section -->
-<div class="breadcumb_area bg-img" style="background-image: url(/user/essence/img/bg-img/breadcumb.jpg)">
-  <div class="container h-100">
-    <div class="row h-100 align-items-center">
-      <div class="col-12">
-        <div class="page-title text-center">
-          <h2 class="text-black shadow-sm">Your Shopping Cart</h2>
+  <!-- Hero Section -->
+  <div class="breadcumb_area bg-img" style="background-image: url(/user/essence/img/bg-img/breadcumb.jpg)">
+    <div class="container h-100">
+      <div class="row h-100 align-items-center">
+        <div class="col-12">
+          <div class="page-title text-center">
+            <h2 class="text-black shadow-sm">Your Shopping Cart</h2>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<section class="shopping-cart py-5">
-  <div class="container">
-    <div class="content">
-      <div class="row">
-        <!-- Left Column: Product Table -->
-        <div class="col-md-8">
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                  <thead class="bg-light">
-                    <tr>
-                      <th>Product</th>
-                      <th>Details</th>
-                      <th>Price</th>
-                      <th>Quantity</th>
-                      <th>Total</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <% if (cartData && cartData.items.length > 0) { %>
-                      <% cartData.items.forEach(item => { %>
-                        <tr class="cart-item" data-item-id="<%= item._id %>">
-                          <td>
-                            <img src="/product-images/<%= item.productId.productImages[0] %>" 
-                                 alt="<%= item.productId.productName %>" 
-                                 class="img-thumbnail" 
-                                 style="width: 80px; height: 80px; object-fit: cover;">
-                          </td>
-                          <td>
-                            <h6 class="mb-1"><%= item.productId.productName %></h6>
-                            <small class="text-muted">Size: <%= item.size %></small>
-                          </td>
-                          <td>
-                            <span class="item-price">&#8377;<%= item.price %></span>
-                          </td>
-                          <td>
-                            <div class="quantity-control d-flex align-items-center">
-                              <button class="btn btn-outline-secondary btn-sm decrement" 
-                                      data-item-id="<%= item._id %>"
-                                      data-product-id="<%= item.productId._id %>">
-                                <i class="fas fa-minus"></i>
-                              </button>
-                              <span class="quantity mx-2" 
-                                    data-item-id="<%= item._id %>"
-                                    data-product-id="<%= item.productId._id %>">
-                                <%= item.quantity %>
-                              </span>
-                              <button class="btn btn-outline-secondary btn-sm increment" 
-                                      data-item-id="<%= item._id %>"
-                                      data-product-id="<%= item.productId._id %>">
-                                <i class="fas fa-plus"></i>
-                              </button>
-                            </div>
-                          </td>
-                          <td>
-                            <span class="item-total">&#8377;<%= item.price * item.quantity %></span>
-                          </td>
-                          <td>
-                            <button class="btn btn-outline-danger btn-sm remove-item" 
-                                    onclick="removeCartItem('<%= item._id %>')">
-                              <i class="fas fa-trash"></i>
-                            </button>
-                          </td>
-                        </tr>
-                      <% }) %>
-                    <% } else { %>
+  <section class="shopping-cart py-5">
+    <div class="container">
+      <div class="content">
+        <div class="row">
+          <!-- Left Column: Product Table -->
+          <div class="col-md-8">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table cart-table table-hover align-middle">
+                    <thead class="bg-light">
                       <tr>
-                        <td colspan="6" class="text-center py-5">
-                          <div class="empty-cart-message">
-                            <i class="fas fa-shopping-cart fa-3x mb-3 text-muted"></i>
-                            <h5 class="text-muted">Your cart is empty</h5>
-                            <a href="/shop" class="btn btn-primary mt-3">Continue Shopping</a>
-                          </div>
-                        </td>
+                        <th>Product</th>
+                        <th>Details</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                        <th></th>
                       </tr>
-                    <% } %>
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      <% if (cartData && cartData.items.length> 0) { %>
+                        <% cartData.items.forEach(item=> { %>
+                          <tr class="cart-item" data-item-id="<%= item._id %>">
+                            <td>
+                              <% if (item.productId) { %>
+                                <img src="/product-images/<%= item.productId.productImages[0] %>"
+                                  alt="<%= item.productId.productName %>" class="img-thumbnail"
+                                  style="width: 80px; height: 80px; object-fit: cover;">
+                                <% } else { %>
+                                  <span class="text-danger">Product not found</span>
+                                  <% } %>
+                            </td>
+                            <td>
+                              <h6 class="mb-1">
+                                <%= item.productId ? item.productId.productName : 'Unavailable Product' %>
+                              </h6>
+                              <small class="text-muted">Size: <%= item.size %></small>
+                            </td>
+                            <td>
+                              <span class="item-price">
+                                &#8377;<%= item.price %>
+                              </span>
+                            </td>
+                            <td>
+                              <div class="quantity-control d-flex align-items-center">
+                                <button class="btn btn-outline-secondary btn-sm decrement"
+                                  data-item-id="<%= item._id %>"
+                                  data-product-id="<%= item.productId ? item.productId._id : '' %>"
+                                  data-size="<%= item.size %>">
+                                  <i class="fas fa-minus"></i>
+                                </button>
+                                <span class="quantity mx-2">
+                                  <%= item.quantity %>
+                                </span>
+                                <button class="btn btn-outline-secondary btn-sm increment"
+                                  data-item-id="<%= item._id %>"
+                                  data-product-id="<%= item.productId ? item.productId._id : '' %>"
+                                  data-size="<%= item.size %>">
+                                  <i class="fas fa-plus"></i>
+                                </button>
+                              </div>
+                            </td>
+                            <td>
+                              <span class="item-total">
+                                &#8377;<%= item.price * item.quantity %>
+                              </span>
+                            </td>
+                            <td>
+                              <button class="btn btn-outline-danger btn-sm remove-item"
+                                onclick="removeCartItem('<%= item._id %>')">
+                                <i class="fas fa-trash"></i>
+                              </button>
+                            </td>
+                          </tr>
+                          <% }) %>
+                            <% } else { %>
+                              <tr>
+                                <td colspan="6" class="text-center py-5">
+                                  <div class="empty-cart-message">
+                                    <i class="fas fa-shopping-cart fa-3x mb-3 text-muted"></i>
+                                    <h5 class="text-muted">Your cart is empty</h5>
+                                    <a href="/shop" class="btn btn-primary mt-3">Continue Shopping</a>
+                                  </div>
+                                </td>
+                              </tr>
+                              <% } %>
+
+                    </tbody>
+
+                  </table>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Right Column: Order Summary -->
-        <div class="col-md-4">
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h5 class="card-title mb-4">Order Summary</h5>
-              <div class="summary-items">
-                <div class="d-flex justify-content-between mb-2">
-                  <span>Subtotal</span>
-                  <span class="subtotal">&#8377;<%= cartData ? cartData.items.reduce((acc, item) => acc + (item.price * item.quantity), 0) : 0 %></span>
+          <!-- Right Column: Order Summary -->
+          <div class="col-md-4">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title mb-4">Order Summary</h5>
+                <div class="summary-items">
+                  <div class="d-flex justify-content-between mb-2">
+                    <span>Subtotal</span>
+                    <span class="subtotal">
+                      &#8377;<%= cartData ? cartData.items.reduce((acc, item)=> acc + (item.price * item.quantity), 0) :
+                        0 %>
+                    </span>
+                  </div>
+                  <div class="d-flex justify-content-between mb-2">
+                    <span>Discount</span>
+                    <span class="discount">₹0</span>
+                  </div>
+                  <div class="d-flex justify-content-between mb-2">
+                    <span>Shipping</span>
+                    <span class="shipping">₹50</span>
+                  </div>
+                  <hr>
+                  <div class="d-flex justify-content-between mb-3">
+                    <strong>Total</strong>
+                    <strong class="total">
+                      &#8377;<%= cartData ? cartData.items.reduce((acc, item)=> acc + (item.price * item.quantity), 0) +
+                        50 : 0 %>
+                    </strong>
+                  </div>
                 </div>
-                <div class="d-flex justify-content-between mb-2">
-                  <span>Discount</span>
-                  <span class="discount">&#8377;0</span>
-                </div>
-                <div class="d-flex justify-content-between mb-2">
-                  <span>Shipping</span>
-                  <span class="shipping">&#8377;50</span>
-                </div>
-                <hr>
-                <div class="d-flex justify-content-between mb-3">
-                  <strong>Total</strong>
-                  <strong class="total">&#8377;<%= cartData ? cartData.items.reduce((acc, item) => acc + (item.price * item.quantity), 0) + 50 : 0 %></strong>
-                </div>
+
+                <% if(cartData && cartData.items.length> 0){ %>
+                  <a href="/checkout" class="btn btn-primary w-100">Proceed to Checkout</a>
+                  <% }else{ %>
+                    <a href="" onclick="validateCart()" class="btn btn-primary w-100">Proceed to Checkout</a>
+                    <% } %>
+
+
               </div>
-              <a href="/checkout" class="btn btn-primary w-100">Proceed to Checkout</a>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const MAX_QUANTITY = 5; // Set maximum quantity limit
-  
-  const updateItemPrice = (itemRow, quantity) => {
-    const priceElement = itemRow.querySelector('.item-price');
-    const totalElement = itemRow.querySelector('.item-total');
-    const price = parseInt(priceElement.textContent.replace('₹', ''));
-    const newTotal = price * quantity;
-    totalElement.textContent = `₹${newTotal}`;
-    updateOrderSummary();
-  };
+  <script>
+    // Wait for DOM to be fully loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      const MAX_QUANTITY = 5;
 
-  const updateOrderSummary = () => {
-    let subtotal = 0;
-    document.querySelectorAll('.cart-item').forEach(item => {
-      const total = parseInt(item.querySelector('.item-total').textContent.replace('₹', ''));
-      subtotal += total;
-    });
+      const validateStockAvailability = async () => {
+        try {
+          const response = await fetch('/validate-cart-stock');
+          const data = await response.json();
 
-    const shipping = 50;
-    const total = subtotal + shipping;
+          if (!data.success) {
+            const outOfStockItems = data.outOfStockItems || [];
+            if (outOfStockItems.length > 0) {
+              Swal.fire({
+                icon: 'error',
+                title: 'Stock Not Available',
+                html: `The following items have insufficient stock:<br><br>${outOfStockItems.join('<br>')}`,
+                confirmButtonText: 'Update Cart'
+              });
+              return false;
+            }
+          }
+          return true;
+        } catch (error) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to validate stock availability',
+            confirmButtonText: 'Okay'
+          });
+          return false;
+        }
+      };
 
-    document.querySelector('.subtotal').textContent = `₹${subtotal}`;
-    document.querySelector('.total').textContent = `₹${total}`;
-  };
+      // Function to handle quantity updates via AJAX
+      const updateQuantity = async (productId, itemId, newQuantity, size) => {
+        if (newQuantity < 1 || newQuantity > MAX_QUANTITY) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Invalid Quantity',
+            text: `Quantity must be between 1 and ${MAX_QUANTITY}`,
+            confirmButtonText: 'Okay'
+          });
+          return false;
+        }
 
-  const updateQuantity = async (productId, itemId, newQuantity) => {
-    if (newQuantity < 1 || newQuantity > MAX_QUANTITY) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Invalid Quantity',
-        text: `Quantity must be between 1 and ${MAX_QUANTITY}`,
-        confirmButtonText: 'Okay'
-      });
-      return false;
-    }
+        try {
+          const response = await fetch('/update-cart', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ productId, quantity: newQuantity, size }),
+          });
 
-    try {
-      const response = await fetch('/update-cart', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ productId, quantity: newQuantity }),
-      });
-      
-      const data = await response.json();
-      if (data.success) {
+          const data = await response.json();
+
+          if (data.success) {
+            // Update UI elements
+            updateCartItemUI(itemId, newQuantity);
+            updateOrderSummary();
+            return true;
+          } else {
+            throw new Error(data.message || 'Failed to update quantity');
+          }
+        } catch (error) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: error.message,
+            confirmButtonText: 'Okay'
+          });
+          return false;
+        }
+      };
+
+      // Function to update cart item UI
+      const updateCartItemUI = (itemId, newQuantity) => {
         const itemRow = document.querySelector(`tr[data-item-id="${itemId}"]`);
         const quantityElement = itemRow.querySelector('.quantity');
+        const price = parseFloat(itemRow.querySelector('.item-price').textContent.replace('₹', ''));
+        const totalElement = itemRow.querySelector('.item-total');
+
         quantityElement.textContent = newQuantity;
-        updateItemPrice(itemRow, newQuantity);
-        return true;
-      } else {
-        throw new Error(data.message || 'Failed to update cart');
-      }
-    } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: error.message || 'An unexpected error occurred',
-        confirmButtonText: 'Okay'
-      });
-      return false;
-    }
-  };
+        totalElement.textContent = `₹${(price * newQuantity).toFixed(2)}`;
 
-  // Event Listeners
-  document.querySelectorAll('.increment').forEach(button => {
-    button.addEventListener('click', async () => {
-      const productId = button.getAttribute('data-product-id');
-      const itemId = button.getAttribute('data-item-id');
-      const quantityElement = document.querySelector(`.quantity[data-item-id="${itemId}"]`);
-      const currentQuantity = parseInt(quantityElement.textContent);
-      
-      if (currentQuantity < MAX_QUANTITY) {
-        const success = await updateQuantity(productId, itemId, currentQuantity + 1);
-        if (success) {
-          button.disabled = currentQuantity + 1 >= MAX_QUANTITY;
+        // Update increment/decrement button states
+        const incrementBtn = itemRow.querySelector('.increment');
+        const decrementBtn = itemRow.querySelector('.decrement');
+
+        incrementBtn.disabled = newQuantity >= MAX_QUANTITY;
+        decrementBtn.disabled = newQuantity <= 1;
+      };
+
+      // Function to remove cart item via AJAX
+      const removeCartItem = async (itemId) => {
+        try {
+          const result = await Swal.fire({
+            title: 'Remove Item?',
+            text: 'Are you sure you want to remove this item from your cart?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, remove it!'
+          });
+
+          if (result.isConfirmed) {
+            const response = await fetch(`/remove-from-cart/${itemId}`, {
+              method: 'DELETE',
+              headers: { 'Content-Type': 'application/json' }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+              const itemRow = document.querySelector(`tr[data-item-id="${itemId}"]`);
+              itemRow.remove();
+
+              updateCartDisplay();
+              updateOrderSummary();
+
+              Swal.fire({
+                icon: 'success',
+                title: 'Item Removed',
+                text: 'The item has been removed from your cart.',
+                confirmButtonText: 'Okay'
+              });
+            } else {
+              throw new Error(data.message || 'Failed to remove item');
+            }
+          }
+        } catch (error) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: error.message || 'Failed to remove item from cart',
+            confirmButtonText: 'Okay'
+          });
         }
-      }
-    });
-  });
+      };
 
-  document.querySelectorAll('.decrement').forEach(button => {
-    button.addEventListener('click', async () => {
-      const productId = button.getAttribute('data-product-id');
-      const itemId = button.getAttribute('data-item-id');
-      const quantityElement = document.querySelector(`.quantity[data-item-id="${itemId}"]`);
-      const currentQuantity = parseInt(quantityElement.textContent);
-      
-      if (currentQuantity > 1) {
-        const success = await updateQuantity(productId, itemId, currentQuantity - 1);
-        if (success) {
-          const incrementButton = button.parentElement.querySelector('.increment');
-          incrementButton.disabled = false;
+      // Function to update cart display when empty
+      const updateCartDisplay = () => {
+        const cartItems = document.querySelectorAll('.cart-item');
+        const cartTable = document.querySelector('.cart-table tbody');
+
+        if (cartItems.length === 0) {
+          cartTable.innerHTML = `
+        <tr>
+          <td colspan="6" class="text-center py-5">
+            <div class="empty-cart-message">
+              <i class="fas fa-shopping-cart fa-3x mb-3 text-muted"></i>
+              <h5 class="text-muted">Your cart is empty</h5>
+              <a href="/shop" class="btn btn-primary mt-3">Continue Shopping</a>
+            </div>
+          </td>
+        </tr>
+      `;
+
+          // Update checkout button
+          const checkoutBtn = document.querySelector('a[href="/checkout"]');
+          if (checkoutBtn) {
+            checkoutBtn.href = '#';
+            checkoutBtn.setAttribute('onclick', 'validateCart()');
+          }
         }
-      }
-    });
-  });
-});
+      };
 
-const removeCartItem = async (itemId) => {
-  try {
-    const result = await Swal.fire({
-      title: 'Remove Item?',
-      text: 'Are you sure you want to remove this item from your cart?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Yes, remove it!'
-    });
+      // Function to update order summary
+      const updateOrderSummary = () => {
+        let subtotal = 0;
+        const shippingCost = 50;
 
-    if (result.isConfirmed) {
-      const response = await fetch(`/remove-from-cart/${itemId}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      const data = await response.json();
-      if (data.success) {
-        const itemRow = document.querySelector(`tr[data-item-id="${itemId}"]`);
-        itemRow.remove();
-        updateOrderSummary();
-        
-        Swal.fire({
-          icon: 'success',
-          title: 'Item Removed',
-          text: 'The item has been removed from your cart.',
-          confirmButtonText: 'Okay'
+        document.querySelectorAll('.cart-item').forEach(item => {
+          const price = parseFloat(item.querySelector('.item-price').textContent.replace('₹', ''));
+          const quantity = parseInt(item.querySelector('.quantity').textContent);
+          subtotal += price * quantity;
         });
 
-        // Check if cart is empty
-        if (document.querySelectorAll('.cart-item').length === 0) {
-          location.reload(); // Reload to show empty cart message
+        const total = subtotal + shippingCost;
+
+        document.querySelector('.subtotal').textContent = `₹${subtotal.toFixed(2)}`;
+        document.querySelector('.total').textContent = `₹${total.toFixed(2)}`;
+      };
+
+      // Updated validateCart function with stock check
+      const validateCart = async () => {
+        const cartItems = document.querySelectorAll('.cart-item');
+
+        if (cartItems.length === 0) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Empty Cart',
+            text: 'Please add items to your cart before proceeding to checkout.',
+            confirmButtonText: 'Continue Shopping',
+            confirmButtonColor: '#3085d6'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.location.href = '/shop';
+            }
+          });
+          return false;
         }
-      } else {
-        throw new Error(data.message || 'Failed to remove item');
-      }
-    }
-  } catch (error) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: error.message || 'An unexpected error occurred',
-      confirmButtonText: 'Okay'
+        // Check stock availability before proceeding
+        const stockAvailable = await validateStockAvailability();
+        if (stockAvailable) {
+          window.location.href = '/checkout';
+        }
+        return false;
+      };
+
+      // Add event listeners for quantity controls with error handling
+      document.querySelectorAll('.increment, .decrement').forEach(button => {
+        button.addEventListener('click', async () => {
+          const productId = button.getAttribute('data-product-id');
+          const itemId = button.getAttribute('data-item-id');
+          const size = button.getAttribute('data-size');
+          const quantityElement = button.parentElement.querySelector('.quantity');
+          const currentQuantity = parseInt(quantityElement.textContent);
+          const isIncrement = button.classList.contains('increment');
+
+          const newQuantity = isIncrement ? currentQuantity + 1 : currentQuantity - 1;
+
+          if (newQuantity >= 1 && newQuantity <= MAX_QUANTITY) {
+            const success = await updateQuantity(productId, itemId, newQuantity, size);
+            if (!success) {
+              // Revert the quantity display if update failed
+              quantityElement.textContent = currentQuantity;
+            }
+          }
+        });
+      });
+
+      // Make removeCartItem and validateCart globally available
+      window.removeCartItem = removeCartItem;
+      window.validateCart = validateCart;
     });
-  }
-};
-</script>
+  </script>
 
-<!-- Font Awesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-<!-- SweetAlert2 -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<%- include("../partials/footer") %>
+  <%- include("../partials/footer") %>

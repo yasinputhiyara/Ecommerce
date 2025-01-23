@@ -403,11 +403,11 @@ document.addEventListener('DOMContentLoaded', function() {
   const maxPrice = document.getElementById('price-max');
 
   noUiSlider.create(priceRange, {
-    start: [`<%= filters.minPrice || 0 %>`, `<%= filters.maxPrice || 1000 %>`],
+    start: [`<%= filters.minPrice || 100 %>`, `<%= filters.maxPrice || 4000 %>`],
     connect: true,
     range: {
-      'min': 0,
-      'max': 1000
+      'min': 100,
+      'max': 4000
     },
     format: {
       to: value => Math.round(value),
@@ -466,7 +466,7 @@ function resetFilters() {
   
   // Reset price range slider
   const priceRange = document.getElementById('price-range');
-  priceRange.noUiSlider.set([0, 1000]);
+  priceRange.noUiSlider.set([100, 4000]);
   
   // Apply the reset filters
   applyFilters();

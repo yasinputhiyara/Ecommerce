@@ -13,8 +13,6 @@ const orderSchema = new Schema({
         type:String,
         default:()=>uuidv4(),
         unique:true
-
-
     },
 
     orderedItems:[{
@@ -23,6 +21,11 @@ const orderSchema = new Schema({
             ref:'Product',
             required:true
         },
+        size:{
+            type:Number,
+            required:true
+        },
+
         quantity:{
             type:Number,
             required:true
@@ -30,7 +33,13 @@ const orderSchema = new Schema({
         price:{
             type:Number,
             default:0
-        }
+        },
+        status:{
+            type:String,
+            required:true,
+            default:"Pending",
+            enum:["Pending","Processing","Shipped","Delivered","Cancelled","Return Request","Returned"]
+        },
     }],
     totalPrice:{
         type:Number,

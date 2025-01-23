@@ -61,7 +61,7 @@ router.get('/',checkBan,userController.loadHome)
 router.get('/shop',checkBan,userController.loadShop)
 router.get('/product-details/:id',checkBan, productController.loadProductDetail)
 
-router.get('/filter',productController.filterProducts)
+// router.get('/filter',productController.filterProducts)
 
 
 
@@ -72,6 +72,7 @@ router.get('/cart',checkBan,cartController.loadCart)
 router.post('/update-cart', cartController.updateCart)
 router.delete('/remove-from-cart/:itemId', cartController.removeFromCart)
 
+
 //----- CHECKOUT ROUTES ---///
 
 router.get('/checkout',checkBan , cartController.loadCheckoutPage)
@@ -79,6 +80,12 @@ router.post('/place-order' ,cartController.checkout)
 
 //------- ORDER ROUTES --------//
 router.get('/orders',orderController.loadOrders )
+router.get('/order-details/:id',orderController.loadOrderDetails)
+router.post('/orders/:orderId/products/:productIndex/cancel',orderController.cancelProduct)
+router.post('/orders/:orderId/cancel', orderController.cancelOrder);
+router.get('/validateCartStock', cartController.validateCartStock)
+
+
 
 
 //---- LOGOUT ROUTES ----//

@@ -1,6 +1,7 @@
 <%- include("../partials/header") %>
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/user/essence/css/core-style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.min.css">
 
   <style>
     /* Container for the main image */
@@ -145,8 +146,8 @@
     .magnifier {
       position: absolute;
       border: 2px solid #007bff;
-      width: 150px;
-      height: 150px;
+      width: 200px;
+      height: 200px;
       overflow: hidden;
       border-radius: 50%;
       display: none;
@@ -160,9 +161,9 @@
     /* Zoomed image inside magnifier */
     .magnifier img {
       position: absolute;
-      width: 400%;
+      width: 300%;
       /* Adjust for zoom level */
-      height: 400%;
+      height: 300%;
       /* Adjust for zoom level */
       pointer-events: none;
     }
@@ -185,6 +186,238 @@
     }
   </style>
 
+  <style>
+    /* Product Variants Styling */
+    .variants-section {
+      margin: 20px 0;
+    }
+
+    .variant-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .variant-option {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+
+    .variant-option:hover {
+      border-color: #007bff;
+    }
+
+    .variant-option input[type="radio"] {
+      margin-right: 5px;
+    }
+
+    /* Discount Section Styling */
+    .discount-section {
+      margin: 15px 0;
+      padding: 10px;
+      background: #f8f9fa;
+      border-radius: 4px;
+    }
+
+    .discount-tag {
+      display: inline-block;
+      padding: 5px 10px;
+      margin: 5px;
+      background: #007bff;
+      color: white;
+      border-radius: 20px;
+      font-size: 0.9em;
+    }
+
+    /* Review Section Styling */
+    .reviews-section {
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .review-item {
+      padding: 15px;
+      border-bottom: 1px solid #eee;
+      margin-bottom: 15px;
+    }
+
+    .review-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .reviewer-name {
+      font-weight: bold;
+    }
+
+    .review-date {
+      color: #666;
+      font-size: 0.9em;
+    }
+
+    .review-rating {
+      margin-bottom: 10px;
+    }
+
+    .review-content {
+      line-height: 1.6;
+    }
+
+    /* Review Modal Styling */
+    .rating-input {
+      display: flex;
+      flex-direction: row-reverse;
+      justify-content: center;
+      gap: 5px;
+    }
+
+    .rating-input input[type="radio"] {
+      display: none;
+    }
+
+    .rating-input label {
+      cursor: pointer;
+      font-size: 25px;
+      color: #ddd;
+      transition: color 0.3s ease;
+    }
+
+    .rating-input label:hover,
+    .rating-input label:hover~label,
+    .rating-input input[type="radio"]:checked~label {
+      color: #ffd700;
+    }
+
+    .modal-content {
+      border-radius: 8px;
+    }
+
+    .modal-header {
+      background: #f8f9fa;
+      border-radius: 8px 8px 0 0;
+    }
+
+    .modal-footer {
+      background: #f8f9fa;
+      border-radius: 0 0 8px 8px;
+    }
+  </style>
+
+  <style>
+    .quantity-wrapper {
+      display: flex;
+      align-items: center;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      width: fit-content;
+      overflow: hidden;
+    }
+
+    .quantity-btn {
+      padding: 8px 15px;
+      background: #f8f9fa;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.2s;
+    }
+
+    .quantity-btn:hover {
+      background: #e9ecef;
+    }
+
+    .quantity-btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    #quantityInput {
+      width: 50px;
+      text-align: center;
+      border: none;
+      border-left: 1px solid #ddd;
+      border-right: 1px solid #ddd;
+      padding: 8px 0;
+      -moz-appearance: textfield;
+    }
+
+    #quantityInput::-webkit-outer-spin-button,
+    #quantityInput::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    /* Size and Quantity Styles */
+    .variant-section {
+      margin: 2rem 0;
+    }
+
+    .size-options {
+      display: flex;
+      gap: 0.5rem;
+      margin: 1rem 0;
+    }
+
+    .size-btn {
+      min-width: 50px;
+      height: 40px;
+      border: 1px solid #dee2e6;
+      background: white;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 600;
+    }
+
+    .size-btn.active {
+      background: #007bff;
+      color: white;
+      border-color: #007bff;
+    }
+
+    .size-btn.out-of-stock {
+      background: #f8f9fa;
+      color: #6c757d;
+      cursor: not-allowed;
+      text-decoration: line-through;
+    }
+
+    .stock-info {
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+
+    .stock-info.in-stock {
+      color: #28a745;
+    }
+
+    .stock-info.low {
+      color: #ffc107;
+    }
+
+    .stock-info.out {
+      color: #dc3545;
+    }
+
+    .text-success {
+      color: #28a745;
+    }
+
+    .text-warning {
+      color: #ffc107;
+    }
+
+    .text-danger {
+      color: #dc3545;
+    }
+  </style>
+
 
   <!-- ##### Breadcumb Area Start ##### -->
   <div class="breadcumb_area bg-img" style="background-image: url(/user/essence/img/bg-img/breadcumb.jpg)">
@@ -192,7 +425,7 @@
       <div class="row h-100 align-items-center">
         <div class="col-12">
           <div class="page-title text-center">
-            <h2>dresses</h2>
+            <h2>Product Details</h2>
           </div>
         </div>
       </div>
@@ -200,238 +433,408 @@
   </div>
   <!-- ##### Breadcumb Area End ##### -->
 
-
   <section class="single_product_details_area d-flex align-items-center mt-50">
-
     <!-- Single Product Thumb -->
     <div class="single_product_thumb clearfix">
       <div class="main-image-container">
-        <!-- Main Image -->
         <img id="mainImage" src="/product-images/<%= product.productImages[0] %>" alt="Main Product Image"
           class="main-image">
-
-        <!-- Magnifier -->
         <div id="magnifier" class="magnifier">
           <img id="magnifierImage" src="/product-images/<%= product.productImages[0] %>" alt="Zoomed Product Image">
         </div>
       </div>
 
       <div class="thumbnail-container">
-        <!-- Thumbnail Images Rendered Using a Loop -->
         <% product.productImages.forEach((image, index)=> { %>
           <div class="thumbnail">
             <img src="/product-images/<%= image %>" alt="Thumbnail <%= index + 1 %>" onclick="updateMainImage(this)">
           </div>
           <% }); %>
       </div>
-
-      <!-- Navigation Buttons -->
-      <!-- <div class="image-nav-buttons">
-        <button id="prevButton" onclick="changeImage(-1)">&#10094;</button>
-        <button id="nextButton" onclick="changeImage(1)">&#10095;</button>
-      </div> -->
     </div>
-
-
 
     <!-- Single Product Description -->
     <div class="single_product_desc clearfix">
-      <span>
+      <span class="brand">
         <%= product.brand %>
       </span>
-      <a href="cart.html">
-        <h2>
-          <%= product.productName %>
-        </h2>
-      </a>
-      <p class="product-price"><span class="old-price">$<%= product.regularPrice %></span> $<%= product.salePrice %>
-      </p>
+      <h2>
+        <%= product.productName %>
+      </h2>
+
+      <!-- Category -->
+      <div class="product-category">
+        <span>Category: </span>
+        <a href="/category/<%= product.category._id %>">
+          <p>
+            <%= product.category.name %> / <%= product.subCategory %>
+          </p>
+        </a>
+      </div>
+
+      <!-- Price and Discount Section -->
+      <div class="price-section">
+        <p class="product-price">
+          <span class="old-price">$<%= product.regularPrice %></span>
+          <span class="sale-price text-decoration-none">$<%= product.salePrice %></span>
+        </p>
+
+        <!-- Discounts/Coupons Section -->
+        <div class="discount-section">
+          <% if (product.discounts && product.discounts.length> 0) { %>
+            <div class="available-discounts">
+              <h6>Available Discounts:</h6>
+              <% product.discounts.forEach(discount=> { %>
+                <div class="discount-tag ">
+                  <span class="discount-code text-white">
+                    <%= discount.code %>
+                  </span>
+                  <span class="discount-value text-danger">-<%= discount.value %>%</span>
+                </div>
+                <% }); %>
+            </div>
+            <% } %>
+        </div>
+      </div>
+
       <p class="product-desc">
         <%= product.description %>
       </p>
 
-
-      <!-- Form -->
       <!-- Form -->
       <form class="cart-form clearfix" method="post" action="/addToCart/<%= product._id %>">
-        <!-- Select Box -->
-        <div class="selection-box d-flex flex-wrap mt-50 mb-30">
-          <!-- Size Selection -->
-          <div class="size-selection mr-5">
-            <h6>Size:</h6>
-            <div class="options">
-              <label>
-                <input type="radio" name="size" value="XL" required> XL
-              </label>
-              <label>
-                <input type="radio" name="size" value="L"> L
-              </label>
-              <label>
-                <input type="radio" name="size" value="M"> M
-              </label>
-              <label>
-                <input type="radio" name="size" value="S"> S
-              </label>
-            </div>
+        <!-- Variants Selection -->
+        <div class="variant-section">
+          <h6>Available Sizes:</h6>
+          <div class="size-options">
+            <% product.variants.forEach(variant=> { %>
+              <button type="button" class="size-btn <%= variant.quantity === 0 ? 'out-of-stock' : '' %>"
+                data-size="<%= variant.size %>" data-quantity="<%= variant.quantity %>" onclick="selectSize(this)"
+                <%=variant.quantity===0 ? 'disabled' : '' %>>
+                <%= variant.size %>
+                  <% if (variant.quantity===0) { %>
+                    <small class="d-block">(Out of Stock)</small>
+                    <% } %>
+              </button>
+              <% }); %>
           </div>
 
-          <!-- Quantity Selection -->
-          <div class="quantity-selection">
+          <div id="stockInfo" class="stock-info mt-2"></div>
+
+          <input type="hidden" name="size" id="selectedSize" required>
+          <input type="hidden" name="price" id="price" value="<%= product.salePrice %>" required>
+
+
+          <!-- New Quantity Selector -->
+          <div class="quantity-select mt-3" style="display: none;">
             <h6>Quantity:</h6>
-            <% if (product.quantity===0) { %>
-              <p style="color: red; font-size: 30px; font-weight: 500;">Out of Stock</p>
-              <% } else { %>
-                <select name="quantity" id="quantity" class="form-control" required>
-                  <% for (let i=1; i <=product.quantity; i++) { %>
-                    <option value="<%= i %>">
-                      <%= i %>
-                    </option>
-                    <% } %>
-                </select>
-                
+            <div class="quantity-wrapper">
+              <button type="button" class="quantity-btn minus" onclick="decrementQuantity()">-</button>
+              <input type="number" name="quantity" id="quantityInput" value="1" min="1" readonly required>
+              <button type="button" class="quantity-btn plus" onclick="incrementQuantity()">+</button>
+            </div>
+            <small id="maxQuantityInfo" class="text-muted"></small>
           </div>
         </div>
 
-        
-
         <!-- Cart & Favourite Box -->
-        <div class="cart-fav-box d-flex align-items-center">
-          <!-- Cart -->
-          <button type="submit" name="addtocart" class="btn bg-primary essence-btn">Add to cart</button>
-          <!-- Favourite -->
+        <div class="cart-fav-box d-flex align-items-center mt-4">
+          <button id="addToCartBtn" type="submit" name="addtocart" class="btn bg-primary essence-btn" disabled>
+            Add to cart
+          </button>
           <div class="product-favourite ml-4">
             <a href="#" class="favme fa fa-heart"></a>
           </div>
         </div>
-
-        <% } %>
-
-        <!-- Hidden Field for Price -->
-        <input type="hidden" name="price" value="<%= product.salePrice %>">
       </form>
 
     </div>
-
-    <!-- Review -->
-
-    <div class="container mt-4">
-      <div class="row">
-        <div class="col-12 text-center">
-          <h4>Customer Reviews</h4>
-          <!-- Star Rating Display -->
-          <div class="rating mt-2">
-            <i class="fa fa-star text-warning"></i>
-            <i class="fa fa-star text-warning"></i>
-            <i class="fa fa-star text-warning"></i>
-            <i class="fa fa-star-half-alt text-warning"></i>
-            <i class="fa fa-star text-muted"></i>
-            <span class="ml-2">(3.5/5)</span> <!-- Example rating -->
-          </div>
-          <!-- Write a Review Link -->
-          <div class="mt-3">
-            <a href="#" class="text-primary" data-toggle="modal" data-target="#reviewModal">
-              <i class="fa fa-pencil-alt"></i> Write a Review
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
-    <!-- Review Modal -->
-    <div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="reviewModalLabel"
-      aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="reviewModalLabel">Write a Review</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <form action="" method="post">
-            <div class="modal-body">
-              <!-- Star Rating Input -->
-              <div class="form-group text-center">
-                <label for="rating" class="d-block">Rate this product:</label>
-                <div id="starRating" class="rating-input">
-                  <i class="fa fa-star" data-value="1"></i>
-                  <i class="fa fa-star" data-value="2"></i>
-                  <i class="fa fa-star" data-value="3"></i>
-                  <i class="fa fa-star" data-value="4"></i>
-                  <i class="fa fa-star" data-value="5"></i>
-                </div>
-                <input type="hidden" id="ratingInput" name="rating" required>
-              </div>
-              <!-- Review Text -->
-              <div class="form-group">
-                <label for="reviewText">Your Review:</label>
-                <textarea class="form-control" id="reviewText" name="review" rows="4"
-                  placeholder="Write your review here..." required></textarea>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button type="submit" class="btn btn-primary">Submit Review</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-
   </section>
 
+  <!-- Review Section -->
+  <div class="container mt-4">
+    <div class="row">
+      <div class="col-12">
+        <div class="reviews-section">
+          <h4 class="text-center mb-4">Customer Reviews</h4>
+
+          <!-- Average Rating Display -->
+          <div class="average-rating text-center mb-4">
+            <div class="rating-stars">
+              <% for(let i=1; i <=5; i++) { %>
+                <i class="fa fa-star <%= i <= product.averageRating ? 'text-warning' : 'text-muted' %>"></i>
+                <% } %>
+            </div>
+            <div class="rating-text">
+              <span class="rating-value">
+                <%= product.averageRating.toFixed(1) %>
+              </span>/5
+              <span class="review-count">(<%= product.reviews.length %> reviews)</span>
+            </div>
+          </div>
+
+          <!-- Write Review Button -->
+          <div class="text-center mb-4">
+            <button class="btn btn-primary" data-toggle="modal" data-target="#reviewModal">
+              <i class="fa fa-pencil-alt"></i> Write a Review
+            </button>
+          </div>
+
+          <!-- Reviews List -->
+          <div class="reviews-list">
+            <% if (product.reviews && product.reviews.length> 0) { %>
+              <% product.reviews.forEach(review=> { %>
+                <div class="review-item">
+                  <div class="review-header">
+                    <div class="reviewer-name">
+                      <%= review.userName %>
+                    </div>
+                    <div class="review-date">
+                      <%= new Date(review.createdAt).toLocaleDateString() %>
+                    </div>
+                  </div>
+                  <div class="review-rating">
+                    <% for(let i=1; i <=5; i++) { %>
+                      <i class="fa fa-star <%= i <= review.rating ? 'text-warning' : 'text-muted' %>"></i>
+                      <% } %>
+                  </div>
+                  <div class="review-content">
+                    <%= review.comment %>
+                  </div>
+                </div>
+                <% }); %>
+                  <% } else { %>
+                    <p class="text-center">No reviews yet. Be the first to review this product!</p>
+                    <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Review Modal -->
+  <div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="reviewModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="reviewModalLabel">Write a Review</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="/product/<%= product._id %>/review" method="post" id="reviewForm">
+          <div class="modal-body">
+            <div class="form-group text-center">
+              <label for="rating">Your Rating</label>
+              <div class="rating-input">
+                <% for(let i=5; i>= 1; i--) { %>
+                  <input type="radio" id="star<%= i %>" name="rating" value="<%= i %>" required>
+                  <label for="star<%= i %>" title="<%= i %> stars">
+                    <i class="fa fa-star"></i>
+                  </label>
+                  <% } %>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="reviewText">Your Review</label>
+              <textarea class="form-control" id="reviewText" name="comment" rows="4" required minlength="10"
+                maxlength="500" placeholder="Share your experience with this product..."></textarea>
+              <small class="text-muted">Minimum 10 characters required</small>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary">Submit Review</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 
 
 
+<% if(products && products.length > 0){ %>
   <!-- ##### New Arrivals Area Start ##### -->
   <section class="new-arrivals-area section-padding-80 clearfix">
     <div class="container">
       <div class="row">
         <div class="col-12">
           <div class="section-heading text-center">
-            <h2>Popular Products</h2>
+            <h2>Similiar Products From <%= product.category.name %> </h2>
           </div>
         </div>
       </div>
 
       <div class="row">
-        <!-- Single Product Card -->
+        <% for (let product of products) { %>
+          <div class="col-12 col-sm-3 col-lg-3">
+            <div class="single-product-wrapper">
+              <!-- Product Image -->
+              <div class="product-img">
+                <div class="image-wrapper">
+                  <img src="/product-images/<%= product.productImages[0] %>" alt="<%= product.productName %>" />
+                  <!-- Hover Thumb -->
+                  <img class="hover-img" src="/product-images/<%= product.productImages[1] %>"
+                    alt="<%= product.productName %>" />
+                </div>
 
-        <% for(let i=0 ; i < products.length ; i++){ %>
-          <div class="col-md-4 col-sm-6 col-lg-3 mb-4">
-            <div class="card product-card">
-              <div class="product-img-container">
-                <img src="\resized-images\<%= products[i].productImages[0] %>" class="card-img-top"
-                  alt="Product Image" />
-                <!-- Hover Thumb -->
-                <img src="\resized-images\<%= products[i].productImages[1] %>" class="hover-img" alt="Hover Image" />
+                <!-- Product Badge -->
+                <% if (product.regularPrice> product.salePrice) { %>
+                  <div class="product-badge bg-white">
+                    <span class="badge-new">-<%= Math.round((product.regularPrice - product.salePrice) /
+                        product.regularPrice * 100) %>%</span>
+                  </div>
+                  <% } %>
+
+                    <!-- Quick View & Wishlist -->
+                    <div class="product-actions">
+                      <a href="/product-details/<%= product._id %>" class="quick-view-btn">
+                        <i class="fa fa-eye"></i>
+                      </a>
+                      <a href="#" class="wishlist-btn">
+                        <i class="fa fa-heart"></i>
+                      </a>
+                    </div>
               </div>
-              <div class="card-body text-center">
-                <span class="product-brand d-block">
-                  <%= products[i].brand %>
-                </span>
-                <h6 class="product-title"><a href="single-product-details.html">
-                    <%= products[i].productName %>
-                  </a></h6>
-                <p class="product-price">$<%= products[i].salePrice %>
-                </p>
-                <a href="#" class="btn essence-btn">Add to Cart</a>
+
+              <!-- Product Description -->
+              <div class="product-description">
+                <a href="/product-details/<%= product._id %>" class="product-title">
+                  <h6>
+                    <%= product.productName %>
+                  </h6>
+                </a>
+                <div class="product-price">
+                  <% if (product.regularPrice> product.salePrice) { %>
+                    <span class="old-price">₹<%= product.regularPrice %></span>
+                    <% } %>
+                      <span class="current-price">₹<%= product.salePrice %></span>
+                </div>
+
+                <!-- Add to Cart -->
+                <div class="hover-content">
+                  <div class="add-to-cart-btn">
+                    <a href="#" class="btn essence-btn">Add to Cart</a>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
           <% } %>
-
-
-            <!-- Repeat as necessary -->
       </div>
     </div>
   </section>
+  <% } %>
 
   <!-- ##### New Arrivals Area End ##### -->
 
   <script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
 
+  <script>
 
+    let currentMaxQuantity = 0;
+
+    function selectSize(button) {
+      // Deselect all size buttons
+      document.querySelectorAll('.size-btn').forEach(btn => btn.classList.remove('active'));
+
+      // Highlight the selected button
+      button.classList.add('active');
+
+      const size = button.dataset.size;
+      const quantity = parseInt(button.dataset.quantity);
+      currentMaxQuantity = Math.min(quantity, 5); // Limit to 5 items max
+
+      // Update hidden input for size
+      document.getElementById('selectedSize').value = size;
+
+      // Update stock information
+      const stockInfo = document.getElementById('stockInfo');
+      const quantityContainer = document.querySelector('.quantity-select');
+      const addToCartBtn = document.getElementById('addToCartBtn');
+      const quantityInput = document.getElementById('quantityInput');
+      const maxQuantityInfo = document.getElementById('maxQuantityInfo');
+
+      if (quantity > 0) {
+        // Show stock information
+        if (quantity > 10) {
+          stockInfo.textContent = `In Stock  ${quantity} products available`;
+          stockInfo.className = 'stock-info text-success';
+          maxQuantityInfo.textContent = 'Maximum 10 items per order';
+        } else {
+          stockInfo.textContent = `Only ${quantity} left in stock!`;
+          stockInfo.className = 'stock-info text-warning';
+          maxQuantityInfo.textContent = `Maximum ${quantity} items available`;
+        }
+
+        // Show quantity selector
+        quantityContainer.style.display = 'block';
+        quantityInput.value = 1;
+
+        // Enable buttons based on quantity
+        updateQuantityButtons();
+        addToCartBtn.disabled = false;
+      } else {
+        // Handle out of stock
+        stockInfo.textContent = 'Out of Stock';
+        stockInfo.className = 'stock-info text-danger';
+        quantityContainer.style.display = 'none';
+        maxQuantityInfo.textContent = '';
+        addToCartBtn.disabled = true;
+      }
+    }
+
+    function incrementQuantity() {
+      const input = document.getElementById('quantityInput');
+      const currentValue = parseInt(input.value);
+      if (currentValue < currentMaxQuantity) {
+        input.value = currentValue + 1;
+        updateQuantityButtons();
+      }
+    }
+
+    function decrementQuantity() {
+      const input = document.getElementById('quantityInput');
+      const currentValue = parseInt(input.value);
+      if (currentValue > 1) {
+        input.value = currentValue - 1;
+        updateQuantityButtons();
+      }
+    }
+
+    function updateQuantityButtons() {
+      const currentValue = parseInt(document.getElementById('quantityInput').value);
+      const minusBtn = document.querySelector('.quantity-btn.minus');
+      const plusBtn = document.querySelector('.quantity-btn.plus');
+
+      // Disable minus button if at minimum
+      minusBtn.disabled = currentValue <= 1;
+
+      // Disable plus button if at maximum
+      plusBtn.disabled = currentValue >= currentMaxQuantity;
+    }
+
+    // Form submission handler
+    document.querySelector('.cart-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const size = document.getElementById('selectedSize').value;
+      const quantity = document.getElementById('quantityInput').value;
+
+      if (!size || !quantity) {
+        alert('Please select both size and quantity');
+        return;
+      }
+
+      // Submit the form
+      this.submit();
+    });
+
+
+  </script>
+
+  <!-- ZOOM FEATURE -->
   <script>
     const productImages = `<%- JSON.stringify(product.productImages) %>`;
     let currentImageIndex = 0;

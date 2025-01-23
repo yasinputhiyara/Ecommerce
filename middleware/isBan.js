@@ -6,7 +6,7 @@ let checkBan = async (req, res, next) => {
     if (req.session.loggedIn) {
         
       const email = req.session.user?.currentEmail || req.session?.userData?.email;
-      console.log("Email found in session:", email);
+      // console.log("Email found in session:", email);
 
       // Ensure email exists in the session
       if (!email) {

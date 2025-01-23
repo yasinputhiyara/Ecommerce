@@ -1,303 +1,307 @@
 <%- include("../../partials/header") %>
 
-<link rel="stylesheet" href="/user/stylesheets/profile.css" />
+  <link rel="stylesheet" href="/user/stylesheets/profile.css" />
 
-<style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-                Ubuntu, Cantarell, sans-serif;
-        }
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+        Ubuntu, Cantarell, sans-serif;
+    }
 
-        body {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            padding: 20px;
-        }
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      padding: 20px;
+    }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            /* background: white; */
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      /* background: white; */
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-        }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+    }
 
-        th,
-        td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
+    th,
+    td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
 
-        th {
-            background-color: #f8f9fa;
-            font-weight: 600;
-            color: #2c3e50;
-        }
+    th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+      color: #2c3e50;
+    }
 
-        tr:hover {
-            background-color: #f8f9fa;
-        }
+    tr:hover {
+      background-color: #f8f9fa;
+    }
 
-        .status {
-            padding: 6px 12px;
-            border-radius: 15px;
-            font-size: 14px;
-            font-weight: 500;
-        }
+    .status {
+      padding: 6px 12px;
+      border-radius: 15px;
+      font-size: 14px;
+      font-weight: 500;
+    }
 
-        .status.completed {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
+    .status.completed {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
 
-        .status.pending {
-            background: #fff3e0;
-            color: #ef6c00;
-        }
+    .status.pending {
+      background: #fff3e0;
+      color: #ef6c00;
+    }
 
-        .view-btn {
-            padding: 8px 16px;
-            background: #4caf50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
+    .view-btn {
+      padding: 8px 16px;
+      background: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
 
-        .view-btn:hover {
-            background: #388e3c;
-        }
+    .view-btn:hover {
+      background: #388e3c;
+    }
 
-        .cancel-btn {
-            background: #ff5252;
-            color: white;
-        }
+    .cancel-btn {
+      background: #ff5252;
+      color: white;
+    }
 
-        .cancel-btn:hover {
-            background: #d32f2f;
-        }
+    .cancel-btn:hover {
+      background: #d32f2f;
+    }
 
-        .action-buttons {
-            display: flex;
-            gap: 8px;
-        }
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+    }
 
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
 
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
-        }
+    .modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+    }
 
-        .close-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 24px;
-            cursor: pointer;
-            color: #666;
-            background: none;
-            border: none;
-        }
+    .close-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-size: 24px;
+      cursor: pointer;
+      color: #666;
+      background: none;
+      border: none;
+    }
 
-        .product-details {
-            margin-top: 20px;
-        }
+    .product-details {
+      margin-top: 20px;
+    }
 
-        .detail-row {
-            display: flex;
-            margin: 10px 0;
-            padding: 10px 0;
-            border-bottom: 1px solid #eee;
-        }
+    .detail-row {
+      display: flex;
+      margin: 10px 0;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
 
-        .detail-label {
-            width: 150px;
-            font-weight: 600;
-            color: #666;
-        }
+    .detail-label {
+      width: 150px;
+      font-weight: 600;
+      color: #666;
+    }
 
-        .detail-value {
-            flex: 1;
-            color: #2c3e50;
-        }
+    .detail-value {
+      flex: 1;
+      color: #2c3e50;
+    }
 
-        .close-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 24px;
-            cursor: pointer;
-            color: #666;
-            background: none;
-            border: none;
-        }
-    </style>
+    .close-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-size: 24px;
+      cursor: pointer;
+      color: #666;
+      background: none;
+      border: none;
+    }
+  </style>
 
 
-</style>
+  </style>
 
-<div class="profile-session-container">
-  <div class="container-fluid">
-    <div class="dashboard">
-      <!-- Sidebar -->
-      <div class="sidebar">
-        <a href="/dashboard" class="w-100">
-          <button class="nav-button w-100">Dashboard</button>
-        </a>
-        <a href="/orders" class="w-100">
-          <button class="nav-button active w-100">Orders</button>
-        </a>
-        <a href="/update-profile" class="w-100">
-          <button class="nav-button w-100">Update Profile</button>
-        </a>
-        <a href="/address" class="w-100">
-          <button class="nav-button w-100">My Address</button>
-        </a>
-        <a href="/wallet" class="w-100">
-          <button class="nav-button w-100">Wallet</button>
-        </a>
-        <a href="/logout" class="w-100">
-          <button class="nav-button w-100">Logout</button>
-        </a>
-      </div>
-
-      <!-- Main Content -->
-      <div class="container w-75 h-100 my-5 py-4 rounded shadow-lg bg-light">
-        <h2 class="section-title">Orders</h2>
-        <div class="container">
-          <table>
-            <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Products</th>
-                <th>Total</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% if (orders && orders.length > 0) { %>
-                <% orders.forEach((order) => { %>
-                  <tr>
-                    <!-- Order ID -->
-                    <td><%= order._id %></td>
-
-                    <!-- Products -->
-                    <td>
-                      <% if (order.orderedItems && order.orderedItems.length > 0) { %>
-                        <% order.orderedItems.forEach((item) => { %>
-                          <div><%= item.product.productName %> x <%= item.quantity %></div>
-                        <% }); %>
-                      <% } else { %>
-                        <div>No products</div>
-                      <% } %>
-                    </td>
-
-                    <!-- Total -->
-                    <td>₹<%= order.finalAmount.toFixed(2) %></td>
-
-                    <!-- Status -->
-                    <td>
-                      <span class="status <%= order.status.toLowerCase() %>">
-                        <%= order.status %>
-                      </span>
-                    </td>
-
-                    <!-- Actions -->
-                    <td>
-                      <button
-                        class="view-btn"
-                        onclick="openModal('<%= order._id %>')"
-                      >
-                        View Details
-                      </button>
-                      <% if (order.status.toLowerCase() === 'pending') { %>
-                        <button
-                          class="btn cancel-btn"
-                          onclick="confirmCancel('<%= order._id %>')"
-                        >
-                          Cancel Order
-                        </button>
-                      <% } %>
-                    </td>
-                  </tr>
-                <% }); %>
-              <% } else { %>
-                <tr>
-                  <td colspan="5" class="text-center">No orders found</td>
-                </tr>
-              <% } %>
-            </tbody>
-          </table>
+  <div class="profile-session-container">
+    <div class="container-fluid">
+      <div class="dashboard">
+        <!-- Sidebar -->
+        <div class="sidebar">
+          <a href="/dashboard" class="w-100">
+            <button class="nav-button w-100">Dashboard</button>
+          </a>
+          <a href="/orders" class="w-100">
+            <button class="nav-button active w-100">Orders</button>
+          </a>
+          <a href="/update-profile" class="w-100">
+            <button class="nav-button w-100">Update Profile</button>
+          </a>
+          <a href="/address" class="w-100">
+            <button class="nav-button w-100">My Address</button>
+          </a>
+          <a href="/wallet" class="w-100">
+            <button class="nav-button w-100">Wallet</button>
+          </a>
+          <a href="/logout" class="w-100">
+            <button class="nav-button w-100">Logout</button>
+          </a>
         </div>
 
-        <!-- Modal -->
-        <div id="orderModal" class="modal">
-          <div class="modal-content">
-            <button class="close-btn" onclick="closeModal()">&times;</button>
-            <h2>Order Details</h2>
-            <div class="product-details">
-              <div class="detail-row">
-                <div class="detail-label">Order ID:</div>
-                <div class="detail-value" id="modalOrderId"></div>
-              </div>
-              <div class="detail-row">
-                <div class="detail-label">Customer Name:</div>
-                <div class="detail-value" id="modalCustomer"></div>
-              </div>
-              <div class="detail-row">
-                <div class="detail-label">Order Date:</div>
-                <div class="detail-value" id="modalDate"></div>
-              </div>
-              <div class="detail-row">
-                <div class="detail-label">Status:</div>
-                <div class="detail-value" id="modalStatus"></div>
-              </div>
-              <div class="detail-row">
-                <div class="detail-label">Products:</div>
-                <div class="detail-value" id="modalProducts"></div>
-              </div>
-              <div class="detail-row">
-                <div class="detail-label">Shipping Address:</div>
-                <div class="detail-value" id="modalAddress"></div>
-              </div>
-              <div class="detail-row">
-                <div class="detail-label">Total Amount:</div>
-                <div class="detail-value" id="modalTotal"></div>
+        <!-- Main Content -->
+        <div class="container w-75 h-100 my-5 py-4 rounded shadow-lg bg-light">
+          <h2 class="section-title">Orders</h2>
+          <div class="container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Products</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (orders && orders.length> 0) { %>
+                  <% orders.forEach((order)=> { %>
+                    <tr>
+                      <!-- Order ID -->
+                      <td>
+                        <%= order._id %>
+                      </td>
+
+                      <!-- Products -->
+                      <td>
+                        <% if (order.orderedItems && order.orderedItems.length> 0) { %>
+                          <% order.orderedItems.forEach((item)=> { %>
+                            <% if (item.status !=='Cancelled' ) { %>
+                              <div>
+                                <%= item.product.productName %> x <%= item.quantity %>
+                              </div>
+                              <% } %>
+                                <% }); %>
+                                  <% } else { %>
+                                    <div>No products</div>
+                                    <% } %>
+                      </td>
+
+                      <!-- Total -->
+                      <td>₹<%= order.finalAmount.toFixed(2) %>
+                      </td>
+
+                      <!-- Status -->
+                      <td>
+                        <span class="status <%= order.status.toLowerCase() %>">
+                          <%= order.status %>
+                        </span>
+                      </td>
+
+                      <!-- Actions -->
+                      <td>
+                        <a href="/order-details/<%= order._id  %>">
+                          <button class="view-btn">
+                            View Details
+                          </button>
+                        </a>
+                        <% if (order.status.toLowerCase()==='pending' ) { %>
+                          <button class="btn cancel-btn" onclick="confirmCancel('<%= order._id %>')">
+                            Cancel Order
+                          </button>
+                          <% } %>
+                      </td>
+                    </tr>
+                    <% }); %>
+                      <% } else { %>
+                        <tr>
+                          <td colspan="5" class="text-center">No orders found</td>
+                        </tr>
+                        <% } %>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Modal -->
+          <div id="orderModal" class="modal">
+            <div class="modal-content">
+              <button class="close-btn" onclick="closeModal()">&times;</button>
+              <h2>Order Details</h2>
+              <div class="product-details">
+                <div class="detail-row">
+                  <div class="detail-label">Order ID:</div>
+                  <div class="detail-value" id="modalOrderId"></div>
+                </div>
+                <div class="detail-row">
+                  <div class="detail-label">Customer Name:</div>
+                  <div class="detail-value" id="modalCustomer"></div>
+                </div>
+                <div class="detail-row">
+                  <div class="detail-label">Order Date:</div>
+                  <div class="detail-value" id="modalDate"></div>
+                </div>
+                <div class="detail-row">
+                  <div class="detail-label">Status:</div>
+                  <div class="detail-value" id="modalStatus"></div>
+                </div>
+                <div class="detail-row">
+                  <div class="detail-label">Products:</div>
+                  <div class="detail-value" id="modalProducts"></div>
+                </div>
+                <div class="detail-row">
+                  <div class="detail-label">Shipping Address:</div>
+                  <div class="detail-value" id="modalAddress"></div>
+                </div>
+                <div class="detail-row">
+                  <div class="detail-label">Total Amount:</div>
+                  <div class="detail-value" id="modalTotal"></div>
+                </div>
               </div>
             </div>
           </div>
@@ -305,67 +309,89 @@
       </div>
     </div>
   </div>
-</div>
 
-<script>
-  
+  <script>
 
-  function openModal(orderId) {
-    const modal = document.getElementById("orderModal");
-    const order = orderData[orderId];
 
-    if (!order) {
-      console.error(`Order data for ${orderId} not found`);
-      Swal.fire("Error", "Order details not found.", "error");
-      return;
-    }
+    function openModal(orderId) {
+      const modal = document.getElementById("orderModal");
+      const order = orderData[orderId];
 
-    document.getElementById("modalOrderId").textContent = order.orderId || "N/A";
-    document.getElementById("modalCustomer").textContent =
-      order.customer || "N/A";
-    document.getElementById("modalDate").textContent = order.date || "N/A";
-    document.getElementById("modalStatus").textContent = order.status || "N/A";
-    document.getElementById("modalProducts").textContent =
-      order.products || "N/A";
-    document.getElementById("modalAddress").textContent =
-      order.address || "N/A";
-    document.getElementById("modalTotal").textContent = order.total || "N/A";
-
-    modal.style.display = "flex";
-  }
-
-  function closeModal() {
-    document.getElementById("orderModal").style.display = "none";
-  }
-
-  function confirmCancel(orderId) {
-    Swal.fire({
-      title: "Are you sure?",
-      text: `Do you want to cancel order ${orderId}?`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, cancel it!",
-      cancelButtonText: "No, keep it",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        cancelOrder(orderId);
+      if (!order) {
+        console.error(`Order data for ${orderId} not found`);
+        Swal.fire("Error", "Order details not found.", "error");
+        return;
       }
-    });
-  }
 
-  function cancelOrder(orderId) {
-    Swal.fire("Cancelled!", `Order ${orderId} has been cancelled.`, "success");
-  }
+      document.getElementById("modalOrderId").textContent = order.orderId || "N/A";
+      document.getElementById("modalCustomer").textContent =
+        order.customer || "N/A";
+      document.getElementById("modalDate").textContent = order.date || "N/A";
+      document.getElementById("modalStatus").textContent = order.status || "N/A";
+      document.getElementById("modalProducts").textContent =
+        order.products || "N/A";
+      document.getElementById("modalAddress").textContent =
+        order.address || "N/A";
+      document.getElementById("modalTotal").textContent = order.total || "N/A";
 
-  window.onclick = function (event) {
-    const modal = document.getElementById("orderModal");
-    if (event.target == modal) {
-      closeModal();
+      modal.style.display = "flex";
     }
-  };
-</script>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<%- include("../../partials/footer") %>
+    function closeModal() {
+      document.getElementById("orderModal").style.display = "none";
+    }
+
+    function confirmCancel(orderId) {
+      Swal.fire({
+        title: "Are you sure?",
+        text: `Do you want to cancel order ${orderId}?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, cancel it!",
+        cancelButtonText: "No, keep it",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          cancelOrder(orderId);
+        }
+      });
+    }
+
+    function cancelOrder(orderId) {
+
+      fetch(`/orders/${orderId}/cancel`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            Swal.fire('Cancelled!', 'The order has been cancelled.', 'success')
+              .then(() => {
+                window.location.reload();
+              });
+          } else {
+            Swal.fire('Error!', 'Failed to cancel the order.', 'error');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          Swal.fire('Error!', 'Something went wrong.', 'error');
+        });
+
+      // Swal.fire("Cancelled!", `Order ${orderId} has been cancelled.`, "success");
+    }
+
+    window.onclick = function (event) {
+      const modal = document.getElementById("orderModal");
+      if (event.target == modal) {
+        closeModal();
+      }
+    };
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <%- include("../../partials/footer") %>

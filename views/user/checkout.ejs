@@ -135,27 +135,22 @@
                                 <% cart.items.forEach((item)=> { %>
                                     <li>
                                         <span>
-                                            <%= item.productId.productName %> x <%= item.quantity %>
+                                            <% if (item.productId) { %>
+                                                <%= item.productId.productName %> x <%= item.quantity %>
+                                                        <% } %>
                                         </span>
-                                        <span>$<%= (item.productId.salePrice * item.quantity).toFixed(2) %></span>
+                                        <span>
+                                            <% if (item.productId && item.productId.salePrice) { %>
+                                                &#8377;<%= (item.productId.salePrice * item.quantity).toFixed(2) %>
+
+                                                    <% } %>
+                                        </span>
                                     </li>
-                                    <% }); %>
-                                        <li>
-                                            <span>Subtotal</span>
-                                            <span>$<%= cart.items.reduce((acc, item)=> acc + item.productId.salePrice *
-                                                    item.quantity, 0).toFixed(2) %></span>
-                                        </li>
-                                        <li><span>Shipping</span> <span>Free</span></li>
-                                        <li>
-                                            <span>Total</span>
-                                            <span>$<%= cart.items.reduce((acc, item)=> acc + item.productId.salePrice *
-                                                    item.quantity, 0).toFixed(2) %></span>
-                                        </li>
+                                    <% }) %>
                                         <% } else { %>
-                                            <li>
-                                                <span>Your cart is empty</span>
-                                            </li>
+                                            <li>Your cart is empty.</li>
                                             <% } %>
+
                         </ul>
 
                         <!-- Payment Methods -->
@@ -327,6 +322,94 @@
 
         });
 
+    </script>
+
+
+    <script>
+        document.getElementById('orderForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            try {
+                // Get selected values
+                const selectedAddress = document.querySelector('input[name="saved-address"]:checked');
+                const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
+
+                if (!selectedAddress || !paymentMethod) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Required Fields',
+                        text: 'Please select both delivery address and payment method.'
+                    });
+                    return;
+                }
+
+                // Show loading state
+                Swal.fire({
+                    title: 'Processing Order',
+                    text: 'Please wait...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                const response = await fetch('/place-order', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        selectedAddress: selectedAddress.value,
+                        paymentMethod: paymentMethod.value
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    if (paymentMethod.value === 'cod') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Order Placed Successfully!',
+                            text: 'Thank you for your order.',
+                            confirmButtonText: 'View Order'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = `/order-success?orderId=${result.order.orderId}`;
+                            }
+                        });
+                    } else if (paymentMethod.value === 'razorpay') {
+                        // Handle Razorpay payment flow here
+                        console.log('Razorpay payment pending implementation');
+                    }
+                } else {
+                    throw new Error(result.error || 'Failed to place order');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Order Failed',
+                    text: error.message || 'An unexpected error occurred. Please try again.'
+                });
+            }
+        });
+
+        // Add event listeners for payment method radio buttons
+        document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                // Hide all payment details sections
+                document.querySelectorAll('#creditCardDetails, #paypalDetails, #codDetails').forEach(div => {
+                    div.style.display = 'none';
+                });
+
+                // Show the selected payment method details
+                const selectedDetails = document.getElementById(`${e.target.value}Details`);
+                if (selectedDetails) {
+                    selectedDetails.style.display = 'block';
+                }
+            });
+        });
     </script>
 
 

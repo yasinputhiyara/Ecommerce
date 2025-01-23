@@ -2,6 +2,7 @@ const { Brand, Category, Product } = require("../../model/Product");
 const fs = require("fs");
 const path = require("path");
 const sharp = require("sharp");
+const mongoose = require("mongoose");
 
 const loadProducts = async (req, res) => {
   try {
@@ -51,7 +52,7 @@ const loadProducts = async (req, res) => {
 
 const loadAddProduct = async (req, res) => {
   try {
-    const category = await Category.find({ isListed : true});
+    const category = await Category.find({ isListed: true });
     const brand = await Brand.find({ isBlocked: false });
     res.render("admin/add-product", {
       cat: category,
@@ -149,7 +150,6 @@ const addProduct = async (req, res) => {
   }
 };
 
-
 const blockProduct = async (req, res) => {
   try {
     let id = req.query.id;
@@ -174,8 +174,8 @@ const loadEditProduct = async (req, res) => {
       return res.redirect("/admin/view-products");
     }
     const categoryId = await Category.findOne({ _id: product.category });
-    const category = await Category.find({isListed : true});
-    const brand = await Brand.find({ isBlocked : false});
+    const category = await Category.find({ isListed: true });
+    const brand = await Brand.find({ isBlocked: false });
 
     res.render("admin/sample/edit-product", {
       product: product,
@@ -189,6 +189,7 @@ const loadEditProduct = async (req, res) => {
   }
 };
 
+
 const editProduct = async (req, res) => {
   try {
     const { id } = req.params;
@@ -201,6 +202,11 @@ const editProduct = async (req, res) => {
         success: false,
         message: "Product not found",
       });
+    }
+
+    // Convert `category` to ObjectId if it exists
+    if (updatedData.category) {
+      updatedData.category = new mongoose.Types.ObjectId(updatedData.category); // Use 'new'
     }
 
     // Handle variants
@@ -241,7 +247,7 @@ const editProduct = async (req, res) => {
         productName: updatedData.productName,
         description: updatedData.description,
         brand: updatedData.brand,
-        category: updatedData.category,
+        category: updatedData.category, // Ensure it's now an ObjectId
         subCategory: updatedData.subCategory,
         regularPrice: updatedData.regularPrice,
         salePrice: updatedData.salePrice,
