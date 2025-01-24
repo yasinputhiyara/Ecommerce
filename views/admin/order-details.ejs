@@ -1,0 +1,230 @@
+<%- include("../partials/adminheader") %>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+
+
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        .order-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-top: 150px;
+        }
+
+        .info-card {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .status-badge {
+            font-size: 0.9rem;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+
+        .product-image {
+            max-width: 70px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .table> :not(caption)>*>* {
+            padding: 12px 15px;
+        }
+
+        .order-summary-card {
+            border: none;
+            background-color: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .total-breakdown {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid #e9ecef;
+        }
+    </style>
+
+    <div class="container-scroller">
+        <%- include("../partials/adminSidebar") %>
+
+            <div class="container-fluid page-body-wrapper">
+                <%- include("../partials/adminNav") %>
+
+                    <div class="container">
+                        <div class="order-container">
+                            <div class="row mb-4 align-items-center">
+                                <div class="col-md-6">
+                                    <h2 class="mb-0">Order Details <span class="badge bg-secondary ms-2">#<%=
+                                                order.orderId %></span></h2>
+                                </div>
+                                <div class="col-md-6 text-md-end">
+                                    <span class="badge bg-warning status-badge">
+                                        <%= order.orderStatus %>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-3">
+                                    <div class="info-card text-center">
+                                        <h6 class="text-muted mb-2">Order Created</h6>
+                                        <p class="mb-0">
+                                            <%= new Date(order.createdOn).toLocaleString() %>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="info-card text-center">
+                                        <h6 class="text-muted mb-2">Customer Name</h6>
+                                        <p class="mb-0">
+                                            <%= order.userId?.username || 'N/A' %>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="info-card text-center">
+                                        <h6 class="text-muted mb-2">Email</h6>
+                                        <p class="mb-0">
+                                            <%= order.userId?.email || 'N/A' %>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="info-card text-center">
+                                        <h6 class="text-muted mb-2">Contact No</h6>
+                                        <p class="mb-0">
+                                            <%= order.userId?.contactNumber || 'N/A' %>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row g-4 mb-4">
+                                <div class="col-md-6">
+                                    <div class="card h-100 border-0 order-summary-card">
+                                        <div class="card-header bg-transparent border-0 ps-0">
+                                            <h5 class="card-title mb-0">Delivery Address</h5>
+                                        </div>
+
+                                        <div class="card-body ps-0">
+                                            <% if (order.address) { %>
+                                                <div class="total-breakdown">
+                                                    <p class="mb-1"><strong>Name:</strong>
+                                                        <%= order.address.name %>
+                                                    </p>
+                                                    <p class="mb-1"><strong>City:</strong>
+                                                        <%= order.address.city %>
+                                                    </p>
+                                                    <p class="mb-1"><strong>Landmark:</strong>
+                                                        <%= order.address.landMark %>
+                                                    </p>
+                                                    <p class="mb-1"><strong>State:</strong>
+                                                        <%= order.address.state %>
+                                                    </p>
+                                                    <p class="mb-1"><strong>Pincode:</strong>
+                                                        <%= order.address.pincode %>
+                                                    </p>
+                                                    <p class="mb-0"><strong>Phone:</strong>
+                                                        <%= order.address.phone %>
+                                                    </p>
+                                                </div>
+                                                <% } else { %>
+                                                    <p class="text-danger">Address not provided for this order.</p>
+                                                    <% } %>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="card border-0 order-summary-card">
+                                    <div class="card-header bg-transparent border-0 ps-0">
+                                        <h5 class="card-title mb-0">Order Summary</h5>
+                                    </div>
+                                    <div class="card-body ps-0">
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Product</th>
+                                                        <th>Size</th>
+                                                        <th>Quantity</th>
+                                                        <th class="text-end">Price</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <% order.orderedItems.forEach(item=> { %>
+                                                        <tr>
+                                                            <td>
+                                                                <div class="d-flex align-items-center">
+                                                                    <img src="/product-images/<%= item.product?.productImages?.[0] || '/images/default-product.jpg' %>"
+                                                                        alt="<%= item.product?.productName || 'N/A' %>"
+                                                                        class="product-image me-3">
+                                                                    <span>
+                                                                        <%= item.product?.productName || 'N/A' %>
+                                                                    </span>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <%= item.size || 'N/A' %>
+                                                            </td>
+                                                            <td>
+                                                                <%= item.quantity %>
+                                                            </td>
+                                                            <td class="text-end">$<%= item.price.toFixed(2) %>
+                                                            </td>
+                                                        </tr>
+                                                        <% }); %>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="total-breakdown mt-3">
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <span>Total Price</span>
+                                                <span>$<%= order.totalPrice.toFixed(2) %></span>
+                                            </div>
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <span>Discount</span>
+                                                <span>$<%= order.discount.toFixed(2) %></span>
+                                            </div>
+                                            <hr>
+                                            <div class="d-flex justify-content-between fw-bold">
+                                                <span>Total Payable</span>
+                                                <span>$<%= (order.totalPrice - order.discount).toFixed(2) %></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+
+
+
+    </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+
+    <%- include("../partials/adminfooter") %>

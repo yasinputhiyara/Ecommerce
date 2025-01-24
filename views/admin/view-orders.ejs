@@ -1,0 +1,168 @@
+<%- include("../partials/adminheader") %>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        .orders-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-top: 50px;
+        }
+
+        .table-img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 10px;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-completed {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+        }
+
+        .status-progress {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+
+        .table> :not(caption)>*>* {
+            vertical-align: middle;
+        }
+
+        .pagination {
+            justify-content: flex-end;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+    </style>
+
+    <div class="container-scroller">
+        <%- include("../partials/adminSidebar") %>
+
+            <div class="container-fluid page-body-wrapper">
+                <%- include("../partials/adminNav") %>
+
+                    <div class="main-panel">
+
+
+                        <div class="container">
+                            <div class="orders-container">
+                                <div class="row mb-4 align-items-center">
+                                    <div class="col-md-6">
+                                        <h2 class="mb-0">Orders List</h2>
+                                    </div>
+                                    <div class="col-md-6 text-md-end">
+                                        <div class="d-flex justify-content-end align-items-center">
+                                            <label for="entries" class="me-2">Show</label>
+                                            <select id="entries" class="form-select w-auto me-2">
+                                                <option value="10">10</option>
+                                                <option value="25">25</option>
+                                                <option value="50">50</option>
+                                            </select>
+                                            <div class="input-group w-auto">
+                                                <input type="text" id="search" class="form-control"
+                                                    placeholder="Search...">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Order ID</th>
+                                                <th>Item</th>
+                                                <th>Customer Name</th>
+                                                <th>Payment Info</th>
+                                                <th>Price</th>
+                                                <th>Order Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% orders.forEach(order=> { %>
+                                                <% order.orderedItems.forEach(item=> { %>
+                                                    <tr>
+                                                        <td>
+                                                            <%= order.orderId %>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex align-items-center">
+                                                                <img src="/product-images/<%= item.product.productImages[0] || '/api/placeholder/50/50' %>"
+                                                                    alt="<%= item.product.productName %>"
+                                                                    class="table-img">
+                                                                
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <%= order.userId.username %>
+                                                        </td>
+                                                        <td>
+                                                            <%= order.paymentMethod || 'N/A' %>
+                                                        </td>
+                                                        <td>$<%= item.price || '0.00' %>
+                                                        </td>
+                                                        <td>
+                                                            <span
+                                                                class="status-badge <%= order.orderStatus === 'Completed' ? 'status-completed' : 'status-progress' %>">
+                                                                <%= order.orderStatus %>
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <a href="/admin/order-details/<%= order._id %>"
+                                                                ><i class="fa-regular fa-eye"></i></a>
+
+                                                        </td>
+                                                    </tr>
+                                                    <% }); %>
+                                                        <% }); %>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <nav>
+                                    <ul class="pagination">
+                                        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+
+
+
+
+                    </div>
+
+
+            </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+
+    <%- include("../partials/adminfooter") %>

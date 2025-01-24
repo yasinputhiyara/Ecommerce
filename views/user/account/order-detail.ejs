@@ -367,7 +367,7 @@
                                 </div>
                             </div>
                             <div class="status-wrapper">
-                                <span class="order-status status <%= order.status.toLowerCase() %>">
+                                <span class="order-status status <%= order.orderStatus.toLowerCase() %>">
                                     <%= order.status %>
                                 </span>
                             </div>
@@ -406,16 +406,22 @@
                                     <div>₹<%= (item.price * item.quantity).toFixed(2) %>
                                     </div>
                                     <div>
-                                        <% if (order.status.toLowerCase()==='pending' && item.status !=='Cancelled' ){%>
+                                        <% if (order.orderStatus.toLowerCase()==='pending' && item.status !=='Cancelled' ) { %>
                                             <button class="cancel-product-btn"
                                                 onclick="confirmCancelProduct('<%= order._id %>', `<%= index %>`)">
                                                 Cancel Item
                                             </button>
-                                            <% }else{ %>
-                                                <a class="badge rounded-pill bg-danger text-white" disabled>
-                                                    Item cancelled
-                                                </a>
-                                                <% } %>
+                                            <% } else if (order.orderStatus.toLowerCase()==='processing' && item.status!=='Cancelled' ) { %>
+                                                <span class="badge bg-warning text-dark">Processing</span>
+                                                <% } else if (order.orderStatus.toLowerCase()==='shipped' && item.status !=='Cancelled' ) { %>
+                                                    <span class="badge bg-info text-dark">Shipped</span>
+                                                    <% } else if (order.orderStatus.toLowerCase()==='delivered' ) { %>
+                                                        <span class="badge bg-success text-white">Delivered</span>
+                                                        <% } else if (item.status==='Cancelled' ) { %>
+                                                            <a class="badge rounded-pill bg-danger text-white" disabled>
+                                                                Item Cancelled
+                                                            </a>
+                                                            <% } %>
                                     </div>
                                 </div>
                                 <% }); %>
@@ -437,7 +443,7 @@
 
 
                         <div class="timeline-section">
-                            <% if (order.status.toLowerCase() !=='cancelled' ) { %>
+                            <% if (order.orderStatus.toLowerCase() !=='cancelled' ) { %>
                                 <section class="vh-50" style="background-color: #ffffff;">
                                     <div class="container py-5 h-100">
                                         <div class="row d-flex justify-content-center align-items-center h-100">
@@ -460,7 +466,7 @@
 
                                                         <% let steps={ 'pending' : 1, 'processing' : 2, 'shipped' :
                                                             3, 'delivered' : 4 }; let
-                                                            currentStep=steps[order.status.toLowerCase()] || 0; %>
+                                                            currentStep=steps[order.orderStatus.toLowerCase()] || 0; %>
 
                                                             <ul id="progressbar-2"
                                                                 class="d-flex justify-content-between mx-0 mt-0 mb-5 px-0 pt-0 pb-2">
@@ -526,7 +532,7 @@
                         </div>
 
                         <a href="/orders" class="back-btn">Back to Orders</a>
-                        <% if (order.status.toLowerCase()==='pending' ) { %>
+                        <% if (order.orderStatus.toLowerCase()==='pending' ) { %>
                             <button class="cancel-btn" onclick="confirmCancelOrder('<%= order._id %>')">Cancel
                                 Order</button>
                             <% } %>
@@ -543,7 +549,7 @@
     <script>
         function confirmCancelOrder(orderId) {
             // First check if order status is shipped
-            const orderStatus = '<%= order.status.toLowerCase() %>';
+            const orderStatus = '<%= order.orderStatus.toLowerCase() %>';
             if (orderStatus === 'shipped' || orderStatus === 'delivered') {
                 Swal.fire({
                     title: 'Cannot Cancel',
@@ -572,7 +578,7 @@
 
         function confirmCancelProduct(orderId, productIndex) {
             // First check if order status is shipped
-            const orderStatus = '<%= order.status.toLowerCase() %>';
+            const orderStatus = '<%= order.orderStatus.toLowerCase() %>';
             if (orderStatus === 'shipped' || orderStatus === 'delivered') {
                 Swal.fire({
                     title: 'Cannot Cancel',

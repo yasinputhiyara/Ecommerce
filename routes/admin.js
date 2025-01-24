@@ -8,6 +8,7 @@ const userController = require('../controller/admin/userController')
 const productController = require('../controller/admin/productController')
 const categoryController = require ('../controller/admin/categoryController')
 const brandcontroller = require('../controller/admin/brandController')
+const orderController = require('../controller/admin/orderController')
 
 var router = express.Router();
 
@@ -51,6 +52,12 @@ router.post('/addBrand',adminAuth,upload.single('image'),brandcontroller.addBran
 router.get('/blockBrand',adminAuth , brandcontroller.blockBrand)
 router.get('/unblockBrand',adminAuth, brandcontroller.unblockBrand)
 router.post('/editBrand',adminAuth,upload.single('image'),brandcontroller.editBrand)
+
+
+//---------- ORDER MANNAGEMENT --------//
+router.get('/view-orders',orderController.viewOrders)
+
+router.get('/order-details/:id',orderController.orderDetails)
 
 
 router.get('/logout', (req, res) => {

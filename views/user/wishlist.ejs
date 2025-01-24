@@ -1,6 +1,10 @@
 <%- include("../partials/header") %>
 
     <link rel="stylesheet" href="/user/essence/css/core-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+
 
     <style>
         body {
@@ -109,14 +113,14 @@
     </div>
 
 
-
-    <div class="container">
+    <div class="container mb-5">
         <div class="wishlist-container">
-            
-            <span class="badge bg-light text-dark"><%- products.length %> Items</span>
+            <span class="badge bg-light text-dark">
+                <%= products.length %> Items
+            </span>
 
             <div class="table-responsive">
-                <% if (products.length > 0) { %>
+                <% if (products.length> 0) { %>
                     <table class="table align-middle text-center">
                         <thead>
                             <tr>
@@ -127,43 +131,50 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <% products.forEach((item) => { %>
-                                <tr>
+                            <% products.forEach((item)=> { %>
+                                <tr data-product-id="<%= item.productId._id %>">
                                     <td class="product-thumbnail">
-                                        <img src="/product-images/<%= item.productId.productImages[0] %>" 
-                                             alt="<%= item.productId.productName %>" />
+                                        <img src="/product-images/<%= item.productId.productImages[0] %>"
+                                            alt="<%= item.productId.productName %>" />
                                     </td>
                                     <td class="product-name">
                                         <a href="/product-details/<%= item.productId._id %>">
                                             <%= item.productId.productName %>
                                         </a>
                                     </td>
-                                    <td class="price">₹<%= item.productId.salePrice %></td>
+                                    <td class="price">₹<%= item.productId.salePrice %>
+                                    </td>
                                     <td>
-                                        <a href="/product-details/<%= item.productId._id %>" 
-                                           class="btn btn-sm btn-add-to-cart me-2">
+                                        <a href="/product-details/<%= item.productId._id %>"
+                                            class="btn btn-sm btn-add-to-cart me-2">
                                             <i class="fas fa-cart-plus"></i> Buy Now
                                         </a>
-                                        <a href="/wishlist/remove/<%= item.productId._id %>" 
-                                           class="btn btn-sm btn-remove">
+                                        <a href="#" type="button"
+                                            onclick="removeFromWishlist('<%= item.productId._id %>')"
+                                            class="btn btn-remove">
                                             <i class="fas fa-trash-alt"></i> Remove
                                         </a>
                                     </td>
                                 </tr>
-                            <% }); %>
+                                <% }); %>
                         </tbody>
                     </table>
-                <% } else { %>
-                    <div class="empty-wishlist">
-                        <i class="fas fa-heart-broken"></i>
-                        <h3>Your Wishlist is Empty</h3>
-                        <p class="text-muted">Explore our products and add some items to your wishlist!</p>
-                        <a href="/shop" class="btn btn-primary mt-3">Continue Shopping</a>
-                    </div>
-                <% } %>
+                    <% } else { %>
+                        <div class="empty-wishlist">
+                            <i class="fas fa-heart-broken"></i>
+                            <h3>Your Wishlist is Empty</h3>
+                            <p class="text-muted">Explore our products and add some items to your wishlist!</p>
+                            <a href="/shop" class="btn btn-primary mt-3">Continue Shopping</a>
+                        </div>
+                        <% } %>
             </div>
         </div>
     </div>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+
+
+    <script src="/user/js/wishlist.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
     <%- include("../partials/footer") %>

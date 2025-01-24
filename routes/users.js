@@ -98,6 +98,8 @@ router.get('/validateCartStock', cartController.validateCartStock)
 router.get('/wishlist',wishlistController.loadWishlist)
 router.post('/add-to-wishlist',wishlistController.addToWishlist)
 router.post('/remove-from-wishlist',wishlistController.removeFromWishlist)
+router.post('/wishlist/remove',wishlistController.removeFromWishlist)
+
 router.get('/wishlist/check',wishlistController.isProductInWishlist)
 
 
