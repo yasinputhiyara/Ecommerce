@@ -543,8 +543,13 @@
             Add to cart
           </button>
           <div class="product-favourite ml-4">
-            <a href="#" class="favme fa fa-heart"></a>
-          </div>
+            <a href="#" 
+               type="button" 
+               id="wishlist-<%= product._id %>" 
+               class="favme fa <%= isInWishlist ? 'fa-heart text-danger' : 'fa-heart-o' %>" 
+               onclick="toggleWishlist('<%= product._id %>')">
+            </a>
+        </div>
         </div>
       </form>
 
@@ -654,271 +659,280 @@
 
 
 
-<% if(products && products.length > 0){ %>
-  <!-- ##### New Arrivals Area Start ##### -->
-  <section class="new-arrivals-area section-padding-80 clearfix">
-    <div class="container">
-      <div class="row">
-        <div class="col-12">
-          <div class="section-heading text-center">
-            <h2>Similiar Products From <%= product.category.name %> </h2>
+  <% if(products && products.length> 0){ %>
+    <!-- ##### New Arrivals Area Start ##### -->
+    <section class="new-arrivals-area section-padding-80 clearfix">
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <div class="section-heading text-center">
+              <h2>Similiar Products From <%= product.category.name %>
+              </h2>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="row">
-        <% for (let product of products) { %>
-          <div class="col-12 col-sm-3 col-lg-3">
-            <div class="single-product-wrapper">
-              <!-- Product Image -->
-              <div class="product-img">
-                <div class="image-wrapper">
-                  <img src="/product-images/<%= product.productImages[0] %>" alt="<%= product.productName %>" />
-                  <!-- Hover Thumb -->
-                  <img class="hover-img" src="/product-images/<%= product.productImages[1] %>"
-                    alt="<%= product.productName %>" />
-                </div>
-
-                <!-- Product Badge -->
-                <% if (product.regularPrice> product.salePrice) { %>
-                  <div class="product-badge bg-white">
-                    <span class="badge-new">-<%= Math.round((product.regularPrice - product.salePrice) /
-                        product.regularPrice * 100) %>%</span>
+        <div class="row">
+          <% for (let product of products) { %>
+            <div class="col-12 col-sm-3 col-lg-3">
+              <div class="single-product-wrapper">
+                <!-- Product Image -->
+                <div class="product-img">
+                  <div class="image-wrapper">
+                    <img src="/product-images/<%= product.productImages[0] %>" alt="<%= product.productName %>" />
+                    <!-- Hover Thumb -->
+                    <img class="hover-img" src="/product-images/<%= product.productImages[1] %>"
+                      alt="<%= product.productName %>" />
                   </div>
-                  <% } %>
 
-                    <!-- Quick View & Wishlist -->
-                    <div class="product-actions">
-                      <a href="/product-details/<%= product._id %>" class="quick-view-btn">
-                        <i class="fa fa-eye"></i>
-                      </a>
-                      <a href="#" class="wishlist-btn">
-                        <i class="fa fa-heart"></i>
-                      </a>
-                    </div>
-              </div>
-
-              <!-- Product Description -->
-              <div class="product-description">
-                <a href="/product-details/<%= product._id %>" class="product-title">
-                  <h6>
-                    <%= product.productName %>
-                  </h6>
-                </a>
-                <div class="product-price">
+                  <!-- Product Badge -->
                   <% if (product.regularPrice> product.salePrice) { %>
-                    <span class="old-price">₹<%= product.regularPrice %></span>
+                    <div class="product-badge bg-white">
+                      <span class="badge-new">-<%= Math.round((product.regularPrice - product.salePrice) /
+                          product.regularPrice * 100) %>%</span>
+                    </div>
                     <% } %>
-                      <span class="current-price">₹<%= product.salePrice %></span>
+
+                      <!-- Quick View & Wishlist -->
+                      <div class="product-actions">
+                        <a href="/product-details/<%= product._id %>" class="quick-view-btn">
+                          <i class="fa fa-eye"></i>
+                        </a>
+                        <a href="#" class="wishlist-btn">
+                          <i class="fa fa-heart"></i>
+                        </a>
+                      </div>
                 </div>
 
-                <!-- Add to Cart -->
-                <div class="hover-content">
-                  <div class="add-to-cart-btn">
-                    <a href="#" class="btn essence-btn">Add to Cart</a>
+                <!-- Product Description -->
+                <div class="product-description">
+                  <a href="/product-details/<%= product._id %>" class="product-title">
+                    <h6>
+                      <%= product.productName %>
+                    </h6>
+                  </a>
+                  <div class="product-price">
+                    <% if (product.regularPrice> product.salePrice) { %>
+                      <span class="old-price">₹<%= product.regularPrice %></span>
+                      <% } %>
+                        <span class="current-price">₹<%= product.salePrice %></span>
+                  </div>
+
+                  <!-- Add to Cart -->
+                  <div class="hover-content">
+                    <div class="add-to-cart-btn">
+                      <a href="#" class="btn essence-btn">Add to Cart</a>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          <% } %>
+            <% } %>
+        </div>
       </div>
-    </div>
-  </section>
-  <% } %>
+    </section>
+    <% } %>
 
-  <!-- ##### New Arrivals Area End ##### -->
+      <!-- ##### New Arrivals Area End ##### -->
 
-  <script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
+      <script src="/user/js/wishlist.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-  <script>
 
-    let currentMaxQuantity = 0;
+      <script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
 
-    function selectSize(button) {
-      // Deselect all size buttons
-      document.querySelectorAll('.size-btn').forEach(btn => btn.classList.remove('active'));
 
-      // Highlight the selected button
-      button.classList.add('active');
+      
 
-      const size = button.dataset.size;
-      const quantity = parseInt(button.dataset.quantity);
-      currentMaxQuantity = Math.min(quantity, 5); // Limit to 5 items max
 
-      // Update hidden input for size
-      document.getElementById('selectedSize').value = size;
+      <script>
 
-      // Update stock information
-      const stockInfo = document.getElementById('stockInfo');
-      const quantityContainer = document.querySelector('.quantity-select');
-      const addToCartBtn = document.getElementById('addToCartBtn');
-      const quantityInput = document.getElementById('quantityInput');
-      const maxQuantityInfo = document.getElementById('maxQuantityInfo');
+        let currentMaxQuantity = 0;
 
-      if (quantity > 0) {
-        // Show stock information
-        if (quantity > 10) {
-          stockInfo.textContent = `In Stock  ${quantity} products available`;
-          stockInfo.className = 'stock-info text-success';
-          maxQuantityInfo.textContent = 'Maximum 10 items per order';
-        } else {
-          stockInfo.textContent = `Only ${quantity} left in stock!`;
-          stockInfo.className = 'stock-info text-warning';
-          maxQuantityInfo.textContent = `Maximum ${quantity} items available`;
+        function selectSize(button) {
+          // Deselect all size buttons
+          document.querySelectorAll('.size-btn').forEach(btn => btn.classList.remove('active'));
+
+          // Highlight the selected button
+          button.classList.add('active');
+
+          const size = button.dataset.size;
+          const quantity = parseInt(button.dataset.quantity);
+          currentMaxQuantity = Math.min(quantity, 5); // Limit to 5 items max
+
+          // Update hidden input for size
+          document.getElementById('selectedSize').value = size;
+
+          // Update stock information
+          const stockInfo = document.getElementById('stockInfo');
+          const quantityContainer = document.querySelector('.quantity-select');
+          const addToCartBtn = document.getElementById('addToCartBtn');
+          const quantityInput = document.getElementById('quantityInput');
+          const maxQuantityInfo = document.getElementById('maxQuantityInfo');
+
+          if (quantity > 0) {
+            // Show stock information
+            if (quantity > 10) {
+              stockInfo.textContent = `In Stock  ${quantity} products available`;
+              stockInfo.className = 'stock-info text-success';
+              maxQuantityInfo.textContent = 'Maximum 10 items per order';
+            } else {
+              stockInfo.textContent = `Only ${quantity} left in stock!`;
+              stockInfo.className = 'stock-info text-warning';
+              maxQuantityInfo.textContent = `Maximum ${quantity} items available`;
+            }
+
+            // Show quantity selector
+            quantityContainer.style.display = 'block';
+            quantityInput.value = 1;
+
+            // Enable buttons based on quantity
+            updateQuantityButtons();
+            addToCartBtn.disabled = false;
+          } else {
+            // Handle out of stock
+            stockInfo.textContent = 'Out of Stock';
+            stockInfo.className = 'stock-info text-danger';
+            quantityContainer.style.display = 'none';
+            maxQuantityInfo.textContent = '';
+            addToCartBtn.disabled = true;
+          }
         }
 
-        // Show quantity selector
-        quantityContainer.style.display = 'block';
-        quantityInput.value = 1;
+        function incrementQuantity() {
+          const input = document.getElementById('quantityInput');
+          const currentValue = parseInt(input.value);
+          if (currentValue < currentMaxQuantity) {
+            input.value = currentValue + 1;
+            updateQuantityButtons();
+          }
+        }
 
-        // Enable buttons based on quantity
-        updateQuantityButtons();
-        addToCartBtn.disabled = false;
-      } else {
-        // Handle out of stock
-        stockInfo.textContent = 'Out of Stock';
-        stockInfo.className = 'stock-info text-danger';
-        quantityContainer.style.display = 'none';
-        maxQuantityInfo.textContent = '';
-        addToCartBtn.disabled = true;
-      }
-    }
+        function decrementQuantity() {
+          const input = document.getElementById('quantityInput');
+          const currentValue = parseInt(input.value);
+          if (currentValue > 1) {
+            input.value = currentValue - 1;
+            updateQuantityButtons();
+          }
+        }
 
-    function incrementQuantity() {
-      const input = document.getElementById('quantityInput');
-      const currentValue = parseInt(input.value);
-      if (currentValue < currentMaxQuantity) {
-        input.value = currentValue + 1;
-        updateQuantityButtons();
-      }
-    }
+        function updateQuantityButtons() {
+          const currentValue = parseInt(document.getElementById('quantityInput').value);
+          const minusBtn = document.querySelector('.quantity-btn.minus');
+          const plusBtn = document.querySelector('.quantity-btn.plus');
 
-    function decrementQuantity() {
-      const input = document.getElementById('quantityInput');
-      const currentValue = parseInt(input.value);
-      if (currentValue > 1) {
-        input.value = currentValue - 1;
-        updateQuantityButtons();
-      }
-    }
+          // Disable minus button if at minimum
+          minusBtn.disabled = currentValue <= 1;
 
-    function updateQuantityButtons() {
-      const currentValue = parseInt(document.getElementById('quantityInput').value);
-      const minusBtn = document.querySelector('.quantity-btn.minus');
-      const plusBtn = document.querySelector('.quantity-btn.plus');
+          // Disable plus button if at maximum
+          plusBtn.disabled = currentValue >= currentMaxQuantity;
+        }
 
-      // Disable minus button if at minimum
-      minusBtn.disabled = currentValue <= 1;
+        // Form submission handler
+        document.querySelector('.cart-form').addEventListener('submit', function (e) {
+          e.preventDefault();
 
-      // Disable plus button if at maximum
-      plusBtn.disabled = currentValue >= currentMaxQuantity;
-    }
+          const size = document.getElementById('selectedSize').value;
+          const quantity = document.getElementById('quantityInput').value;
 
-    // Form submission handler
-    document.querySelector('.cart-form').addEventListener('submit', function (e) {
-      e.preventDefault();
+          if (!size || !quantity) {
+            alert('Please select both size and quantity');
+            return;
+          }
 
-      const size = document.getElementById('selectedSize').value;
-      const quantity = document.getElementById('quantityInput').value;
-
-      if (!size || !quantity) {
-        alert('Please select both size and quantity');
-        return;
-      }
-
-      // Submit the form
-      this.submit();
-    });
+          // Submit the form
+          this.submit();
+        });
 
 
-  </script>
+      </script>
 
-  <!-- ZOOM FEATURE -->
-  <script>
-    const productImages = `<%- JSON.stringify(product.productImages) %>`;
-    let currentImageIndex = 0;
+      <!-- ZOOM FEATURE -->
+      <script>
+        const productImages = `<%- JSON.stringify(product.productImages) %>`;
+        let currentImageIndex = 0;
 
-    // Update main image and magnifier image
-    function updateMainImage(thumbnail) {
-      const mainImage = document.getElementById("mainImage");
-      const magnifierImage = document.getElementById("magnifierImage");
-      mainImage.src = thumbnail.src;
-      magnifierImage.src = thumbnail.src;
-    }
+        // Update main image and magnifier image
+        function updateMainImage(thumbnail) {
+          const mainImage = document.getElementById("mainImage");
+          const magnifierImage = document.getElementById("magnifierImage");
+          mainImage.src = thumbnail.src;
+          magnifierImage.src = thumbnail.src;
+        }
 
-    // Navigate through images
-    function changeImage(direction) {
-      currentImageIndex = (currentImageIndex + direction + productImages.length) % productImages.length;
-      const mainImage = document.getElementById("mainImage");
-      const magnifierImage = document.getElementById("magnifierImage");
-      mainImage.src = `/product-images/${productImages[currentImageIndex]}`;
-      magnifierImage.src = `/product-images/${productImages[currentImageIndex]}`;
-    }
+        // Navigate through images
+        function changeImage(direction) {
+          currentImageIndex = (currentImageIndex + direction + productImages.length) % productImages.length;
+          const mainImage = document.getElementById("mainImage");
+          const magnifierImage = document.getElementById("magnifierImage");
+          mainImage.src = `/product-images/${productImages[currentImageIndex]}`;
+          magnifierImage.src = `/product-images/${productImages[currentImageIndex]}`;
+        }
 
-    // Zoom functionality
-    const mainImage = document.getElementById("mainImage");
-    const magnifier = document.getElementById("magnifier");
-    const magnifierImg = document.getElementById("magnifierImage");
+        // Zoom functionality
+        const mainImage = document.getElementById("mainImage");
+        const magnifier = document.getElementById("magnifier");
+        const magnifierImg = document.getElementById("magnifierImage");
 
-    mainImage.addEventListener("mouseover", () => {
-      magnifier.style.display = "block";
-    });
+        mainImage.addEventListener("mouseover", () => {
+          magnifier.style.display = "block";
+        });
 
-    mainImage.addEventListener("mouseout", () => {
-      magnifier.style.display = "none";
-    });
+        mainImage.addEventListener("mouseout", () => {
+          magnifier.style.display = "none";
+        });
 
-    mainImage.addEventListener("mousemove", (event) => {
-      const rect = mainImage.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
+        mainImage.addEventListener("mousemove", (event) => {
+          const rect = mainImage.getBoundingClientRect();
+          const x = event.clientX - rect.left;
+          const y = event.clientY - rect.top;
 
-      const magnifierSize = magnifier.offsetWidth / 2;
-      let magnifierX = x - magnifierSize;
-      let magnifierY = y - magnifierSize;
+          const magnifierSize = magnifier.offsetWidth / 2;
+          let magnifierX = x - magnifierSize;
+          let magnifierY = y - magnifierSize;
 
-      magnifierX = Math.max(0, Math.min(magnifierX, rect.width - magnifier.offsetWidth));
-      magnifierY = Math.max(0, Math.min(magnifierY, rect.height - magnifier.offsetHeight));
+          magnifierX = Math.max(0, Math.min(magnifierX, rect.width - magnifier.offsetWidth));
+          magnifierY = Math.max(0, Math.min(magnifierY, rect.height - magnifier.offsetHeight));
 
-      magnifier.style.left = `${rect.left + magnifierX}px`;
-      magnifier.style.top = `${rect.top + magnifierY}px`;
+          magnifier.style.left = `${rect.left + magnifierX}px`;
+          magnifier.style.top = `${rect.top + magnifierY}px`;
 
-      const zoomLevel = 4; // Adjust zoom level
-      const offsetX = (x / rect.width) * magnifierImg.offsetWidth;
-      const offsetY = (y / rect.height) * magnifierImg.offsetHeight;
+          const zoomLevel = 4; // Adjust zoom level
+          const offsetX = (x / rect.width) * magnifierImg.offsetWidth;
+          const offsetY = (y / rect.height) * magnifierImg.offsetHeight;
 
-      magnifierImg.style.left = `${-offsetX + magnifierSize}px`;
-      magnifierImg.style.top = `${-offsetY + magnifierSize}px`;
-    });
+          magnifierImg.style.left = `${-offsetX + magnifierSize}px`;
+          magnifierImg.style.top = `${-offsetY + magnifierSize}px`;
+        });
 
-  </script>
+      </script>
 
-  <!-- Review -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const stars = document.querySelectorAll('#starRating .fa-star');
-      const ratingInput = document.getElementById('ratingInput');
+      <!-- Review -->
+      <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          const stars = document.querySelectorAll('#starRating .fa-star');
+          const ratingInput = document.getElementById('ratingInput');
 
-      stars.forEach((star, index) => {
-        star.addEventListener('click', () => {
-          ratingInput.value = index + 1;
-          stars.forEach((s, i) => {
-            if (i <= index) {
-              s.classList.add('text-warning');
-              s.classList.remove('text-muted');
-            } else {
-              s.classList.add('text-muted');
-              s.classList.remove('text-warning');
-            }
+          stars.forEach((star, index) => {
+            star.addEventListener('click', () => {
+              ratingInput.value = index + 1;
+              stars.forEach((s, i) => {
+                if (i <= index) {
+                  s.classList.add('text-warning');
+                  s.classList.remove('text-muted');
+                } else {
+                  s.classList.add('text-muted');
+                  s.classList.remove('text-warning');
+                }
+              });
+            });
           });
         });
-      });
-    });
-  </script>
+      </script>
 
 
 
 
 
-  <%- include("../partials/footer") %>
+      <%- include("../partials/footer") %>

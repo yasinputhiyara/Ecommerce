@@ -3,7 +3,10 @@ const Cart = require("../../model/Cart");
 const Address = require("../../model/Address");
 const Order = require("../../model/Order");
 const { User } = require("../../model/User");
+const crypto = require("crypto");
+const Razorpay = require("razorpay");
 const mongoose = require("mongoose");
+require("dotenv").config();
 
 const addToCart = async (req, res) => {
   try {
@@ -99,29 +102,33 @@ const validateCartStock = async (req, res) => {
   try {
     const user = req.session.user;
     if (!user) {
-      return res.status(401).json({ 
-        success: false, 
-        message: 'User not logged in' 
+      return res.status(401).json({
+        success: false,
+        message: "User not logged in",
       });
     }
 
-    const cart = await Cart.findOne({ userId: user._id }).populate('items.productId');
+    const cart = await Cart.findOne({ userId: user._id }).populate(
+      "items.productId"
+    );
     if (!cart) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'Cart not found' 
+      return res.status(404).json({
+        success: false,
+        message: "Cart not found",
       });
     }
 
     const outOfStockItems = [];
-    
+
     for (const item of cart.items) {
       if (!item.productId) continue;
-      
-      const variant = item.productId.variants.find(v => v.size === item.size);
+
+      const variant = item.productId.variants.find((v) => v.size === item.size);
       if (!variant || variant.quantity < item.quantity) {
         outOfStockItems.push(
-          `${item.productId.productName} (Size: ${item.size}) - Only ${variant ? variant.quantity : 0} available`
+          `${item.productId.productName} (Size: ${item.size}) - Only ${
+            variant ? variant.quantity : 0
+          } available`
         );
       }
     }
@@ -129,20 +136,19 @@ const validateCartStock = async (req, res) => {
     if (outOfStockItems.length > 0) {
       return res.json({
         success: false,
-        outOfStockItems
+        outOfStockItems,
       });
     }
 
     return res.json({
       success: true,
-      message: 'All items are in stock'
+      message: "All items are in stock",
     });
-    
   } catch (error) {
-    console.error('Validate cart stock error:', error);
+    console.error("Validate cart stock error:", error);
     return res.status(500).json({
       success: false,
-      message: 'Internal Server Error'
+      message: "Internal Server Error",
     });
   }
 };
@@ -283,20 +289,25 @@ const removeFromCart = async (req, res) => {
 
 const loadCheckoutPage = async (req, res) => {
   try {
-    const user = req.session.user;
+    const userId = req.session.user;
+    const user = await User.findOne({_id: userId});
+    // console.log("User", user);
 
     if (!user) {
       // return res.status(401).json({ error: "User not authenticated." });
       return res.redirect("/login");
     }
 
-
     const addressesDoc = await Address.findOne({ userId: user._id });
     const addresses = addressesDoc ? addressesDoc.address : [];
+
+    // console.log("Addresses", addresses);
 
     const cart = await Cart.findOne({ userId: user._id }).populate(
       "items.productId"
     );
+
+    // console.log("Cart", cart);
 
     // Validate products and quantities
     const outOfStockItems = [];
@@ -314,18 +325,29 @@ const loadCheckoutPage = async (req, res) => {
 
     if (outOfStockItems.length > 0) {
       return res.render("user/cart", {
-        error: `The following items are out of stock or have insufficient quantity: ${outOfStockItems.join(
-          ", "
-        )}`,
+        error: `The following items are out of stock or have insufficient quantity: ${outOfStockItems.join(", "  )}`,
       });
     }
 
-    res.render("user/checkout", { user, addresses, cart });
+    res.render("user/checkout", { user : user, addresses , cart });
   } catch (error) {
     console.error("Checkout Page Error:", error);
     res.status(500).render("error", { message: "Error loading checkout page" });
   }
 };
+
+
+// const loadCheckoutPage = async (req, res) => {
+//   try {
+//     const user = req.session.user;
+//     console.log("User", user);
+
+//     res.render("user/checkout", { user ,addresses : null, cart :null });
+
+//   } catch (error) {
+//     console.error("Checkout Page Error:", error);
+//   }
+// }
 
 const generateOrderId = () => {
   const timestamp = Date.now().toString();
@@ -335,154 +357,346 @@ const generateOrderId = () => {
   return `ORD${timestamp}${random}`;
 };
 
+// Razorpay instance (replace with your Razorpay credentials)
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
+
 const checkout = async (req, res) => {
   try {
     const { selectedAddress, paymentMethod } = req.body;
-    const user = req.session.user;
+    const userId = req.session.user._id;
 
-    if (!user) {
-      return res.redirect("/login");
-    }
-
-    const cart = await Cart.findOne({ userId: user._id }).populate(
-      "items.productId"
-    );
-
+    // Fetch cart details
+    const cart = await Cart.findOne({ userId }).populate("items.productId");
     if (!cart || cart.items.length === 0) {
-      return res.status(400).json({ error: "Cart is empty." });
+      return res
+        .status(400)
+        .json({ success: false, message: "Cart is empty." });
     }
 
-    // Validate address
-    const addressDoc = await Address.findOne({ userId: user._id });
-    const deliveryAddress = addressDoc?.address.find(
-      (addr) => addr._id.toString() === selectedAddress
-    );
-    if (!deliveryAddress) {
-      return res.status(404).json({ error: "Selected address not found." });
-    }
-
-    // Group cart items by product ID to handle variants
-    const productUpdates = new Map();
+    // Check product variant availability
     const outOfStockItems = [];
-
     for (const item of cart.items) {
       const product = item.productId;
+      const variant = product.variants.find((v) => v.size === item.size);
 
-      if (!product) {
-        console.warn(`Product ID is null for cart item: ${JSON.stringify(item)}`);
-        continue;
-      }
-
-      const variantIndex = product.variants.findIndex(
-        (v) => v.size === item.size
-      );
-
-      if (
-        variantIndex === -1 ||
-        product.variants[variantIndex].quantity < item.quantity
-      ) {
+      if (!variant || variant.quantity < item.quantity) {
         outOfStockItems.push(`${product.productName} (${item.size})`);
         continue;
       }
 
-      // Group updates by product ID
-      if (!productUpdates.has(product._id.toString())) {
-        productUpdates.set(product._id.toString(), {
-          product,
-          updates: []
-        });
-      }
-
-      // Add variant update to the product's update list
-      productUpdates.get(product._id.toString()).updates.push({
-        variantIndex,
-        quantity: item.quantity
-      });
+      // Reduce variant quantity
+      variant.quantity -= item.quantity;
     }
 
     if (outOfStockItems.length > 0) {
       return res.status(400).json({
-        error: `The following items are out of stock: ${outOfStockItems.join(", ")}`
+        success: false,
+        message: `The following items are out of stock: ${outOfStockItems.join(
+          ", "
+        )}`,
       });
     }
 
-    // Apply updates for each product
-    const updates = [];
-    for (const [, { product, updates: productVariantUpdates }] of productUpdates) {
-      // Apply all variant updates for this product
-      for (const update of productVariantUpdates) {
-        product.variants[update.variantIndex].quantity -= update.quantity;
-      }
+    // Save updated products
+    await Promise.all(cart.items.map((item) => item.productId.save()));
 
-      // Check if product should be marked as out of stock
-      if (product.variants.every((v) => v.quantity === 0)) {
-        product.status = "Out of Stock";
-      }
-
-      // Save product once with all variant updates
-      updates.push(product.save());
-    }
-
-    // Wait for all product updates to complete
-    await Promise.all(updates);
-
-    // Calculate amounts
+    // Calculate total price
     const totalPrice = cart.items.reduce(
-      (sum, item) => (item.productId ? sum + item.price * item.quantity : sum),
+      (sum, item) => sum + item.productId.salePrice * item.quantity,
       0
     );
-    const shippingCost = 0;
-    const discount = 0;
-    const finalAmount = totalPrice + shippingCost - discount;
 
-    // Create order
+    // Save order
     const newOrder = new Order({
-      userId: user._id,
+      userId,
       orderId: generateOrderId(),
-      orderedItems: cart.items
-        .filter((item) => item.productId)
-        .map((item) => ({
-          product: item.productId._id,
-          quantity: item.quantity,
-          price: item.price,
-          size: item.size,
-        })),
+      orderedItems: cart.items.map((item) => ({
+        product: item.productId._id,
+        quantity: item.quantity,
+        size: item.size,
+        price: item.productId.salePrice,
+      })),
       totalPrice,
-      discount,
-      finalAmount,
-      address: deliveryAddress,
-      status: "Pending",
-      createdOn: new Date(),
-      paymentMethod,
+      address: selectedAddress,
+      paymentMethod : paymentMethod,
+      paymentStatus: paymentMethod === "cod" ? "Pending" : "Paid",
+      orderStatus: "Pending",
     });
 
     await newOrder.save();
 
-    // Clear cart
+    // Clear cart after order
     cart.items = [];
     await cart.save();
 
-    // Respond based on payment method
-    if (paymentMethod === "cod") {
-      return res.status(200).json({
-        success: true,
-        message: "Order placed successfully!",
-        order: newOrder,
-      });
-    } else if (paymentMethod === "razorpay") {
-      return res.status(200).json({
-        success: true,
-        message: "Razorpay payment pending",
-        order: newOrder,
-      });
-    }
+    res.status(200).json({
+      success: true,
+      message: "Order placed successfully.",
+      orderId: newOrder._id,
+    });
   } catch (error) {
-    console.error("Checkout Error:", error);
-    return res.status(500).json({
-      error: "An error occurred during checkout. Please try again.",
+    console.error("Error placing order:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to place order. Please try again.",
     });
   }
 };
+
+// const loadOrderSuccess = async (req, res) => {
+//   try {
+//     const user = req.session.user;
+//     const orderId = req.query.orderId;
+//     const order = await Order.findOne({ orderId: orderId });
+
+//     if (!user) {
+//       return res.redirect("/login");
+//     }
+
+//     res.render("user/order-success", { user, order });
+//   } catch (error) {
+//     console.error("Order Success Error:", error);
+//     res
+//       .status(500)
+//       .render("error", { message: "Error loading order success page" });
+//   }
+// };
+
+// const razorpayPayment = async (req, res) => {
+//   try {
+//     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =  req.body;
+
+//     // Verify payment signature
+//     const hmac = crypto.createHmac("sha256", process.env.RAZORPAY_KEY_SECRET);
+//     hmac.update(razorpay_order_id + "|" + razorpay_payment_id);
+//     const generatedSignature = hmac.digest("hex");
+
+//     if (generatedSignature !== razorpay_signature) {
+//       return res
+//         .status(400)
+//         .json({ success: false, message: "Invalid payment signature." });
+//     }
+
+//     // Update order payment status in the database
+//     const order = await Order.findOneAndUpdate(
+//       { orderId: razorpay_order_id },
+//       { paymentStatus: "Paid", status: "Processing" },
+//       { new: true }
+//     );
+
+//     if (!order) {
+//       return res
+//         .status(404)
+//         .json({ success: false, message: "Order not found." });
+//     }
+
+//     // Update product variant quantities
+//     for (const item of order.orderedItems) {
+//       const product = await Product.findById(item.product);
+//       const variant = product.variants.find((v) => v.size === item.size);
+
+//       if (variant) {
+//         variant.quantity -= item.quantity;
+//         if (variant.quantity < 0) variant.quantity = 0;
+//       }
+
+//       await product.save();
+//     }
+
+//     // Clear the cart for the user
+//     const cart = await Cart.findOne({ userId: order.userId });
+//     if (cart) {
+//       cart.items = [];
+//       await cart.save();
+//     }
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Payment verified and order placed successfully.",
+//     });
+//   } catch (error) {
+//     console.error("Error verifying payment:", error);
+//     res.status(500).json({
+//       success: false,
+//       message: "Payment verification failed.",
+//     });
+//   }
+// };
+
+const razorpayOrder = async (req, res) => {
+  try {
+    const { selectedAddress } = req.body;
+    const userId = req.session.user._id;
+
+    // Validate selected address
+    if (!selectedAddress) {
+      return res
+        .status(400)
+        .json({ success: false, message: "No address selected." });
+    }
+
+    // Fetch cart details
+    const cart = await Cart.findOne({ userId }).populate("items.productId");
+    if (!cart || cart.items.length === 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Cart is empty." });
+    }
+
+    // Check product variant availability
+    const outOfStockItems = [];
+    for (const item of cart.items) {
+      const product = item.productId;
+      const variant = product.variants.find((v) => v.size === item.size);
+
+      if (!variant || variant.quantity < item.quantity) {
+        outOfStockItems.push(`${product.productName} (${item.size})`);
+        continue;
+      }
+
+      // Reduce variant quantity
+      variant.quantity -= item.quantity;
+    }
+
+    if (outOfStockItems.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: `The following items are out of stock: ${outOfStockItems.join(
+          ", "
+        )}`,
+      });
+    }
+
+    // Save updated products
+    await Promise.all(cart.items.map((item) => item.productId.save()));
+
+    // Calculate total price
+    const totalPrice = cart.items.reduce(
+      (sum, item) => sum + item.productId.salePrice * item.quantity,
+      0
+    );
+
+    // Create Razorpay order
+    const razorpayOrder = await razorpay.orders.create({
+      amount: totalPrice * 100, // Amount in paise
+      currency: "INR",
+      receipt: `order_rcpt_${Date.now()}`,
+    });
+
+    // Save order to the database
+    const newOrder = new Order({
+      userId,
+      orderId: razorpayOrder.id,
+      orderedItems: cart.items.map((item) => ({
+        product: item.productId._id,
+        quantity: item.quantity,
+        size: item.size,
+        price: item.productId.salePrice,
+      })),
+      totalPrice,
+      address: selectedAddress,
+      paymentMethod: "razorpay",
+      paymentStatus: "Pending", // Mark as pending until payment verification
+      orderStatus: "Pending",
+    });
+
+    await newOrder.save();
+
+    // Clear the cart
+    cart.items = [];
+    await cart.save();
+
+    res.status(200).json({
+      success: true,
+      key: process.env.RAZORPAY_KEY_ID,
+      amount: razorpayOrder.amount,
+      currency: razorpayOrder.currency,
+      id: razorpayOrder.id,
+      orderId: newOrder.orderId
+    });
+  } catch (error) {
+    console.error("Error creating Razorpay order:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to create order. Please try again.",
+    });
+  }
+};
+
+
+const razorpayPayment = async (req, res) => {
+  try {
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, orderId } = req.body;
+    console.log("Razorpay Payment Data", req.body);
+
+    // Verify payment signature
+    const hmac = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET);
+    
+    // Important: Use the correct signature generation method
+    const generatedSignature = hmac
+      .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+      .digest('hex');
+
+    if (generatedSignature !== razorpay_signature) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Invalid payment signature.',
+        details: {
+          generated: generatedSignature,
+          received: razorpay_signature
+        }
+      });
+    }
+
+    // Update order status to 'Paid'
+    const order = await Order.findOneAndUpdate(
+      { orderId },
+      { 
+        paymentStatus: 'Paid', 
+        orderStatus: 'Processing' 
+      },
+      { new: true }
+    );
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Order not found.' });
+    }
+
+    res.status(200).json({ success: true, message: 'Payment verified successfully.' });
+  } catch (error) {
+    console.error('Error verifying payment:', error);
+    res.status(500).json({ success: false, message: 'Payment verification failed.' });
+  }
+};
+
+const paymentFailed = async (req, res) => {
+  try {
+    const { orderId } = req.body;
+
+    // Update order status to "Pending"
+    const order = await Order.findOneAndUpdate(
+      { orderId },
+      { paymentStatus: "Pending", orderStatus: "Pending" },
+      { new: true }
+    );
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: "Order not found." });
+    }
+
+    res.status(200).json({ success: true, message: "Order status updated to pending." });
+  } catch (error) {
+    console.error("Error updating order status:", error);
+    res.status(500).json({ success: false, message: "Failed to update order status." });
+  }
+};
+
+
+
+
 
 
 module.exports = {
@@ -492,5 +706,9 @@ module.exports = {
   removeFromCart,
   loadCheckoutPage,
   checkout,
-  validateCartStock
+  validateCartStock,
+  // loadOrderSuccess,
+  razorpayPayment,
+  razorpayOrder,
+  paymentFailed
 };

@@ -346,62 +346,129 @@
         });
       });
 
-      doneButton.addEventListener('click', () => {
-        const updatedName = document.getElementById('nameValue').textContent;
-        const updatedPhone = document.getElementById('phoneValue').textContent;
+      // doneButton.addEventListener('click', () => {
+      //   const updatedName = document.getElementById('nameValue').textContent;
+      //   const updatedPhone = document.getElementById('phoneValue').textContent;
+
+      //   if (nameChanged || passwordChanged || phoneChanged) {
+      //     const updateData = {};
+
+      //     if (nameChanged) updateData.name = updatedName;
+      //     if (phoneChanged) updateData.phone = updatedPhone === 'Not Set' ? '' : updatedPhone;
+
+      //     fetch('/profile/update', {
+      //       method: 'PUT',
+      //       headers: {
+      //         'Content-Type': 'application/json',
+      //       },
+      //       body: JSON.stringify(updateData)
+      //     })
+      //       .then(response => response.json())
+      //       .then(data => {
+      //         if (data.message === "Profile updated successfully") {
+      //           document.getElementById('nameValue').textContent = data.user.name;
+      //           document.getElementById('phoneValue').textContent = data.user.phone || 'Not Set';
+
+      //           nameChanged = false;
+      //           passwordChanged = false;
+      //           phoneChanged = false;
+
+      //           Swal.fire({
+      //             icon: 'success',
+      //             title: 'Success',
+      //             text: 'Profile updated successfully'
+      //           });
+      //         } else {
+      //           Swal.fire({
+      //             icon: 'error',
+      //             title: 'Error!',
+      //             text: data.message
+      //           });
+      //         }
+      //       })
+      //       .catch(error => {
+      //         console.error('Error:', error);
+      //         Swal.fire({
+      //           icon: 'error',
+      //           title: 'Error!',
+      //           text: 'An error occurred while updating profile'
+      //         });
+      //       });
+      //   } else {
+      //     Swal.fire({
+      //       icon: 'info',
+      //       title: 'Info',
+      //       text: 'No changes to save'
+      //     });
+      //   }
+      // });
+
+      doneButton.addEventListener("click", () => {
+        const updatedName = document.getElementById("nameValue").textContent;
+        const updatedPhone = document.getElementById("phoneValue").textContent;
 
         if (nameChanged || passwordChanged || phoneChanged) {
           const updateData = {};
 
           if (nameChanged) updateData.name = updatedName;
-          if (phoneChanged) updateData.phone = updatedPhone === 'Not Set' ? '' : updatedPhone;
+          if (phoneChanged) updateData.phone = updatedPhone === "Not Set" ? "" : updatedPhone;
 
-          fetch('/profile/update', {
-            method: 'PUT',
+          fetch("/profile/update", {
+            method: "PUT",
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
-            body: JSON.stringify(updateData)
+            body: JSON.stringify(updateData),
           })
-            .then(response => response.json())
-            .then(data => {
+            .then((response) => response.json())
+            .then((data) => {
               if (data.message === "Profile updated successfully") {
-                document.getElementById('nameValue').textContent = data.user.name;
-                document.getElementById('phoneValue').textContent = data.user.phone || 'Not Set';
+                // Update the header username dynamically
+                const headerUsername = document.querySelector("#headerUsername"); // Add an ID to the username in the header
+                if (headerUsername) {
+                  headerUsername.textContent = data.user.username; // Update the header with the new username
+                }
+
+                // Update the profile values
+                document.getElementById("nameValue").textContent = data.user.username;
+                document.getElementById("phoneValue").textContent = data.user.phone || "Not Set";
 
                 nameChanged = false;
                 passwordChanged = false;
                 phoneChanged = false;
 
                 Swal.fire({
-                  icon: 'success',
-                  title: 'Success',
-                  text: 'Profile updated successfully'
+                  icon: "success",
+                  title: "Success",
+                  text: "Profile updated successfully",
+                }).then(() => {
+                  window.location.reload();
                 });
               } else {
                 Swal.fire({
-                  icon: 'error',
-                  title: 'Error!',
-                  text: data.message
+                  icon: "error",
+                  title: "Error!",
+                  text: data.message,
                 });
               }
             })
-            .catch(error => {
-              console.error('Error:', error);
+            .catch((error) => {
+              console.error("Error:", error);
               Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: 'An error occurred while updating profile'
+                icon: "error",
+                title: "Error!",
+                text: "An error occurred while updating profile",
               });
             });
         } else {
           Swal.fire({
-            icon: 'info',
-            title: 'Info',
-            text: 'No changes to save'
+            icon: "info",
+            title: "Info",
+            text: "No changes to save",
           });
         }
       });
+
     });
   </script>
 

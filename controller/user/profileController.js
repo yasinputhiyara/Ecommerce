@@ -214,7 +214,12 @@ const loadDashboard = async (req, res) => {
 
 const loadProfilePage = async (req, res) => {
   try {
-    const user = req.session.user || null;
+    // const userId = req.session.user ;
+    // console.log(user);
+    // const user = await User.findOne({ _id: userId });
+    
+    const user = req.session.user ;
+
     const userData = await User.findOne({ _id: user._id });
     res.render("user/account/profile", { user, userData });
   } catch (error) {
@@ -246,6 +251,40 @@ const loadWalletPage = async (req, res) => {
   }
 };
 
+// const updateProfile = async (req, res) => {
+//   try {
+//     const user = req.session.user || null;
+//     const { name, phone } = req.body;
+
+//     const updatedUser = await User.findOneAndUpdate(
+//       { email: user.email },
+//       { username: name, phone: phone },
+//       { new: true } // Return the updated user
+//     );
+
+//     if (updatedUser) {
+//       res.status(200).json({
+//         message: "Profile updated successfully",
+//         user: updatedUser,
+//       });
+//     } else {
+//       res.status(400).json({
+//         message: "User not found or update failed",
+//       });
+//     }
+
+//     req.session.user = {
+//       ...req.session.user,
+//       username: name,
+//     };
+//   } catch (error) {
+//     console.error("Error updating profile:", error);
+//     res.status(500).json({
+//       message: "An error occurred while updating profile",
+//     });
+//   }
+// };
+
 const updateProfile = async (req, res) => {
   try {
     const user = req.session.user || null;
@@ -258,6 +297,9 @@ const updateProfile = async (req, res) => {
     );
 
     if (updatedUser) {
+      // Update session with new username
+      req.session.user.username = updatedUser.username;
+
       res.status(200).json({
         message: "Profile updated successfully",
         user: updatedUser,
@@ -267,11 +309,6 @@ const updateProfile = async (req, res) => {
         message: "User not found or update failed",
       });
     }
-
-    req.session.user = {
-      ...req.session.user,
-      username: name,
-    };
   } catch (error) {
     console.error("Error updating profile:", error);
     res.status(500).json({
@@ -279,6 +316,7 @@ const updateProfile = async (req, res) => {
     });
   }
 };
+
 
 const updatePassword = async (req, res) => {
   try {

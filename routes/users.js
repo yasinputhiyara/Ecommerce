@@ -11,7 +11,8 @@ const userController = require('../controller/user/userController')
 const productController = require('../controller/user/productController')
 const profileController = require('../controller/user/profileController');
 const cartController = require('../controller/user/cartController');
-const orderController = require('../controller/user/orderController')
+const orderController = require('../controller/user/orderController');
+const wishlistController = require('../controller/user/wishlistController');
 
 /* GET users listing. */
 router.get('/login',checkBan,isLoggedIn,userController.loadLogin)
@@ -51,6 +52,7 @@ router.put('/profile/change-password',isLoggedOut,profileController.updatePasswo
 router.get('/auth/google',isLoggedIn,passport.authenticate('google',{scope:['profile','email']}))
 router.get('/auth/google/callback',isLoggedIn,passport.authenticate('google',{failureRedirect:'/login'}), async (req,res)=>{
     let user = req.user
+    req.session.user = user
     console.log(user)
     let products = await Product.find({isBlocked:false})
     res.render('user/home',{user , products})
@@ -75,8 +77,14 @@ router.delete('/remove-from-cart/:itemId', cartController.removeFromCart)
 
 //----- CHECKOUT ROUTES ---///
 
-router.get('/checkout',checkBan , cartController.loadCheckoutPage)
+router.get('/checkout' , cartController.loadCheckoutPage)
 router.post('/place-order' ,cartController.checkout)
+// router.get('/order-success',cartController.loadOrderSuccess)
+
+//-------- RAZORPAY INTEGRATION ---------//
+router.post('/create-razorpay-order',cartController.razorpayOrder)
+router.post('/verify-razorpay-payment',cartController.razorpayPayment)
+router.get('/payment-failed',cartController.paymentFailed)
 
 //------- ORDER ROUTES --------//
 router.get('/orders',orderController.loadOrders )
@@ -84,6 +92,13 @@ router.get('/order-details/:id',orderController.loadOrderDetails)
 router.post('/orders/:orderId/products/:productIndex/cancel',orderController.cancelProduct)
 router.post('/orders/:orderId/cancel', orderController.cancelOrder);
 router.get('/validateCartStock', cartController.validateCartStock)
+
+
+//----------  WISHLIST MANAGEMENT -----------//
+router.get('/wishlist',wishlistController.loadWishlist)
+router.post('/add-to-wishlist',wishlistController.addToWishlist)
+router.post('/remove-from-wishlist',wishlistController.removeFromWishlist)
+router.get('/wishlist/check',wishlistController.isProductInWishlist)
 
 
 

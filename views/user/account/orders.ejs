@@ -222,7 +222,7 @@
                       <td>
                         <% if (order.orderedItems && order.orderedItems.length> 0) { %>
                           <% order.orderedItems.forEach((item)=> { %>
-                            <% if (item.status !=='Cancelled' ) { %>
+                            <% if (item.orderStatus !=='Cancelled' ) { %>
                               <div>
                                 <%= item.product.productName %> x <%= item.quantity %>
                               </div>
@@ -234,13 +234,13 @@
                       </td>
 
                       <!-- Total -->
-                      <td>₹<%= order.finalAmount.toFixed(2) %>
+                      <td>₹<%= order.totalPrice.toFixed() %>
                       </td>
 
                       <!-- Status -->
                       <td>
-                        <span class="status <%= order.status.toLowerCase() %>">
-                          <%= order.status %>
+                        <span class="status <%= order.orderStatus.toLowerCase() %>">
+                          <%= order.orderStatus %>
                         </span>
                       </td>
 
@@ -251,7 +251,7 @@
                             View Details
                           </button>
                         </a>
-                        <% if (order.status.toLowerCase()==='pending' ) { %>
+                        <% if (order.orderStatus.toLowerCase()==='pending' ) { %>
                           <button class="btn cancel-btn" onclick="confirmCancel('<%= order._id %>')">
                             Cancel Order
                           </button>
@@ -327,7 +327,7 @@
       document.getElementById("modalCustomer").textContent =
         order.customer || "N/A";
       document.getElementById("modalDate").textContent = order.date || "N/A";
-      document.getElementById("modalStatus").textContent = order.status || "N/A";
+      document.getElementById("modalStatus").textContent = order.orderStatus || "N/A";
       document.getElementById("modalProducts").textContent =
         order.products || "N/A";
       document.getElementById("modalAddress").textContent =
