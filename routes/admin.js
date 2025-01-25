@@ -58,6 +58,7 @@ router.post('/editBrand',adminAuth,upload.single('image'),brandcontroller.editBr
 router.get('/view-orders',orderController.viewOrders)
 
 router.get('/order-details/:id',orderController.orderDetails)
+router.post('/update-order-status',orderController.updateOrderStatus)
 
 
 router.get('/logout', (req, res) => {

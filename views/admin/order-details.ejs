@@ -2,6 +2,8 @@
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
 
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+
 
     <style>
         body {
@@ -58,6 +60,75 @@
             border: 1px solid #e9ecef;
         }
     </style>
+
+    <style>
+        .total-breakdown {
+            background: linear-gradient(135deg, #ffffff, #f4f6f9);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            text-align: center;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .total-breakdown p {
+            margin: 10px 0;
+            font-size: 15px;
+            line-height: 1.7;
+            color: #464646;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .total-breakdown p strong {
+            color: #0d6efd;
+            margin-right: 8px;
+            font-weight: 600;
+        }
+
+        .total-breakdown .text-danger {
+            color: #dc3545;
+            font-weight: bold;
+            font-size: 15px;
+            text-align: center;
+        }
+    </style>
+
+    <style>
+        .card {
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .form-select {
+            width: 100%;
+            max-width: 300px;
+            margin-bottom: 15px;
+        }
+
+        .status-label {
+            font-weight: bold;
+            color: #495057;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .order-info p {
+            margin: 0 0 10px;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #333;
+        }
+    </style>
+
 
     <div class="container-scroller">
         <%- include("../partials/adminSidebar") %>
@@ -117,45 +188,94 @@
                             <div class="row g-4 mb-4">
                                 <div class="col-md-6">
                                     <div class="card h-100 border-0 order-summary-card">
-                                        <div class="card-header bg-transparent border-0 ps-0">
-                                            <h5 class="card-title mb-0">Delivery Address</h5>
-                                        </div>
 
-                                        <div class="card-body ps-0">
+
+                                        <div class="card-body ps-0 d-flex justify-content-center">
                                             <% if (order.address) { %>
-                                                <div class="total-breakdown">
-                                                    <p class="mb-1"><strong>Name:</strong>
-                                                        <%= order.address.name %>
-                                                    </p>
-                                                    <p class="mb-1"><strong>City:</strong>
-                                                        <%= order.address.city %>
-                                                    </p>
-                                                    <p class="mb-1"><strong>Landmark:</strong>
-                                                        <%= order.address.landMark %>
-                                                    </p>
-                                                    <p class="mb-1"><strong>State:</strong>
-                                                        <%= order.address.state %>
-                                                    </p>
-                                                    <p class="mb-1"><strong>Pincode:</strong>
-                                                        <%= order.address.pincode %>
-                                                    </p>
-                                                    <p class="mb-0"><strong>Phone:</strong>
-                                                        <%= order.address.phone %>
-                                                    </p>
+                                                <div class="total-breakdown w-100 max-w-400">
+                                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                                        <h5 class="m-0">Delivery Address</h5>
+                                                        <!-- <button class="btn btn-primary btn-sm">Edit</button> -->
+                                                    </div>
+                                                    <div class="d-flex flex-column">
+                                                        <p class="mb-2"><strong>Name:</strong>
+                                                            <%= address.name %>
+                                                        </p>
+                                                        <p class="mb-2"><strong>Address:</strong>
+                                                            <%= address.addressType %>
+                                                        </p>
+                                                        <p class="mb-2"><strong>City:</strong>
+                                                            <%= address.city %>
+                                                        </p>
+                                                        <p class="mb-2"><strong>Landmark:</strong>
+                                                            <%= address.landMark %>
+                                                        </p>
+                                                        <p class="mb-2"><strong>State:</strong>
+                                                            <%= address.state %>
+                                                        </p>
+                                                        <p class="mb-2"><strong>Pincode:</strong>
+                                                            <%= address.pincode %>
+                                                        </p>
+                                                        <div class="d-flex justify-content-between">
+                                                            <p class="mb-0"><strong>Phone:</strong>
+                                                                <%= address.phone %>
+                                                            </p>
+                                                            <p class="mb-0"><strong>Alt. Phone:</strong>
+                                                                <%= address.altPhone %>
+                                                            </p>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                                 <% } else { %>
-                                                    <p class="text-danger">Address not provided for this order.</p>
+                                                    <p class="text-danger w-100 text-center">Address not provided for
+                                                        this order.</p>
                                                     <% } %>
                                         </div>
 
 
                                     </div>
                                 </div>
+
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5 class="mb-4">Order Details</h5>
+                                        
+                                            <!-- Order Status -->
+                                            <label for="orderStatus" class="status-label">Order Status:</label>
+                                            <select id="orderStatus" class="form-select">
+                                                <option value="Pending" <%= order.orderStatus === "Pending" ? "selected" : "" %>>Pending</option>
+                                                <option value="Processing" <%= order.orderStatus === "Processing" ? "selected" : "" %>>Processing</option>
+                                                <option value="Shipped" <%= order.orderStatus === "Shipped" ? "selected" : "" %>>Shipped</option>
+                                                <option value="Delivered" <%= order.orderStatus === "Delivered" ? "selected" : "" %>>Delivered</option>
+                                            </select>
+                                        
+                                            <!-- Display Current Order Status -->
+                                            <p><strong>Current Status:</strong> <span id="orderStatusDisplay"><%= order.orderStatus %></span></p>
+
+                                            <!-- Payment Status -->
+
+                                            <p><strong>Payment Method:</strong>
+                                                <%= order.paymentMethod %>
+                                            </p>
+
+                                            <!-- Payment Status -->
+                                            <p><strong>Payment Status:</strong>
+                                                <%= order.paymentStatus %>
+                                            </p>
+                                        
+                                            <!-- Save Button -->
+                                            <button class="btn btn-primary mt-3" onclick="updateOrderStatus()">Save Changes</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+
                             </div>
                         </div>
 
                         <div class="row">
-                            <div class="col-md-8">
+                            <div class="col-md-12">
                                 <div class="card border-0 order-summary-card">
                                     <div class="card-header bg-transparent border-0 ps-0">
                                         <h5 class="card-title mb-0">Order Summary</h5>
@@ -225,6 +345,54 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        async function updateOrderStatus() {
+            const orderStatus = document.getElementById('orderStatus').value;
+            const orderStatusDisplay = document.getElementById('orderStatusDisplay'); // Element to update the order status display
+
+            try {
+                const response = await fetch('/admin/update-order-status', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        orderId: '<%= order._id %>',
+                        orderStatus: orderStatus
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Update the status display on the page without reloading
+                    orderStatusDisplay.textContent = orderStatus;
+
+                    // Show success message using SweetAlert
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Order status updated successfully.'
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to update order status.'
+                    });
+                }
+            } catch (error) {
+                console.error('Error updating order status:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred while updating order status.'
+                });
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
     <%- include("../partials/adminfooter") %>
