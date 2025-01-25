@@ -9,23 +9,24 @@ const couponSchema = new mongoose.Schema({
         required:true,
         unique:true
     },
-    createdOn:{
+    startDate:{
         type:Date,
-        default:Date.now,
+        // default:Date.now,
         required:true
     },
-    expiredOn:{
+    endDate:{
         type:Date,
         required:true
+    },
+    minPrice:{
+        type:Number,
+        reqired:true
     },
     offerPrice:{
         type:Number,
         required:true
     },
-    minuimumPrice:{
-        type:Number,
-        reqired:true
-    },
+    
     isList:{
         type:Boolean,
         default:true
