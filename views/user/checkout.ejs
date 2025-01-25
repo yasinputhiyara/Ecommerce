@@ -2,6 +2,21 @@
 
     <link rel="stylesheet" href="/user/essence/css/core-style.css">
 
+    <style>
+        .coupon-item.copied {
+            background-color: #e9ecef;
+            transition: background-color 0.3s ease;
+        }
+
+        .coupon-input-group {
+            display: flex;
+        }
+
+        .coupon-input-group input {
+            flex-grow: 1;
+        }
+    </style>
+
     <!-- Breadcrumb -->
     <div class="breadcumb_area bg-img" style="background-image: url(/user/essence/img/bg-img/breadcumb.jpg);">
         <div class="container h-100">
@@ -95,6 +110,46 @@
 
                 <!-- Right Column - Order Details -->
                 <div class="col-12 col-md-6 col-lg-5 ml-lg-auto">
+
+                    <!-- New Coupon Section -->
+                    <div class="coupon-section mb-4">
+                        <div class="cart-page-heading">
+                            <h5>Apply Coupon</h5>
+                        </div>
+                        <div class="coupon-input-group">
+                            <input type="text" id="couponCode" class="form-control" placeholder="Enter coupon code">
+                            <button class="btn essence-btn ml-2" onclick="applyCoupon()">Apply</button>
+                        </div>
+
+                        <div class="available-coupons mt-3">
+                            <h6>Available Coupons:</h6>
+                            <div class="coupon-list">
+                                <% if (availableCoupons && availableCoupons.length> 0) { %>
+                                    <% availableCoupons.forEach((coupon, index)=> { %>
+                                        <div class="coupon-item d-flex justify-content-between align-items-center mb-2">
+                                            <span>
+
+                                                <strong class="coupon-code" id="couponCode<%= index %>">
+                                                    <%= coupon.name %>
+                                                </strong>
+                                                <span class="text-muted">- <%= coupon.offerPrice %>Rs Off (Above Order
+                                                        of ₹<%= coupon.minPrice %>)</span>
+                                            </span>
+                                            <button class="btn btn-sm btn-outline-secondary"
+                                                onclick="copyCouponCode('couponCode<%= index %>')">
+                                                Copy
+                                            </button>
+                                        </div>
+                                        <% }); %>
+                                            <% } else { %>
+                                                <p class="text-muted">No coupons available</p>
+                                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+
+
+
                     <div class="order-details-confirmation">
                         <div class="cart-page-heading">
                             <h5>Your Order</h5>
@@ -367,56 +422,68 @@
         });
     </script>
 
+
     <script>
-        document.getElementById('applyCouponBtn').addEventListener('click', async () => {
-            const couponCode = document.getElementById('couponCode').value.trim();
-            const couponMessage = document.getElementById('couponMessage');
-            const discountAmount = document.getElementById('discountAmount');
-            const finalTotal = document.getElementById('finalTotal');
-            const subtotal = `<%= subtotal.toFixed(2) %>`;
+        function applyCoupon() {
+            const couponCodeInput = document.getElementById('couponCode');
+            const applyButton = document.querySelector('.coupon-input-group button');
+            const couponCode = couponCodeInput.value.trim();
+            const discountElement = document.getElementById('discountAmount');
+            const finalTotalElement = document.getElementById('finalTotal');
 
-            if (!couponCode) {
-                couponMessage.innerHTML = '<span class="text-danger">Please enter a coupon code</span>';
-                return;
-            }
+            fetch('/apply-coupon', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ couponCode })
+            })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        discountElement.textContent = `₹${result.discount.toFixed(2)}`;
+                        finalTotalElement.textContent = `₹${result.finalTotal.toFixed(2)}`;
 
-            try {
-                const response = await fetch('/apply-coupon', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ couponCode })
+                        Swal.fire({
+                            title: 'Success!',
+                            text: `Coupon "${result.couponName}" applied successfully!`,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        });
+
+                        couponCodeInput.disabled = true;
+                        applyButton.disabled = true;
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: result.message,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Coupon application error:', error);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'An error occurred while applying the coupon',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
                 });
+        }
 
-                const result = await response.json();
+        function copyCouponCode(elementId) {
+            const couponCodeElement = document.getElementById(elementId);
+            const couponCode = couponCodeElement.textContent.trim();
 
-                if (result.success) {
-                    // Calculate discount and new total
-                    const discount = result.discountAmount;
-                    const newTotal = subtotal - discount;
-
-                    couponMessage.innerHTML = `<span class="text-success">${result.message}</span>`;
-                    discountAmount.innerHTML = `&#8377;${discount.toFixed(2)}`;
-                    finalTotal.innerHTML = `&#8377;${newTotal.toFixed(2)}`;
-
-                    // Add a hidden input to the order form to pass coupon details
-                    const orderForm = document.getElementById('orderForm');
-                    const couponInput = document.createElement('input');
-                    couponInput.type = 'hidden';
-                    couponInput.name = 'appliedCoupon';
-                    couponInput.value = couponCode;
-                    orderForm.appendChild(couponInput);
-                } else {
-                    couponMessage.innerHTML = `<span class="text-danger">${result.message}</span>`;
-                    discountAmount.innerHTML = '&#8377;0.00';
-                    finalTotal.innerHTML = `&#8377;${subtotal.toFixed(2)}`;
-                }
-            } catch (error) {
-                console.error('Error applying coupon:', error);
-                couponMessage.innerHTML = '<span class="text-danger">An error occurred. Please try again.</span>';
-            }
-        });
+            navigator.clipboard.writeText(couponCode).then(() => {
+                couponCodeElement.closest('.coupon-item').classList.add('copied');
+                setTimeout(() => {
+                    couponCodeElement.closest('.coupon-item').classList.remove('copied');
+                }, 2000);
+            });
+        }
     </script>
 
 

@@ -80,6 +80,7 @@ router.delete('/remove-from-cart/:itemId', cartController.removeFromCart)
 router.get('/checkout' , cartController.loadCheckoutPage)
 router.post('/place-order' ,cartController.checkout)
 // router.get('/order-success',cartController.loadOrderSuccess)
+router.post('/apply-coupon',cartController.applyCoupon)
 
 //-------- RAZORPAY INTEGRATION ---------//
 router.post('/create-razorpay-order',cartController.razorpayOrder)

@@ -125,20 +125,20 @@
                         0 %>
                     </span>
                   </div>
-                  <div class="d-flex justify-content-between mb-2">
+                  <!-- <div class="d-flex justify-content-between mb-2">
                     <span>Discount</span>
                     <span class="discount">₹0</span>
-                  </div>
+                  </div> -->
                   <div class="d-flex justify-content-between mb-2">
                     <span>Shipping</span>
-                    <span class="shipping">₹50</span>
+                    <span class="shipping">₹0</span>
                   </div>
                   <hr>
                   <div class="d-flex justify-content-between mb-3">
                     <strong>Total</strong>
                     <strong class="total">
                       &#8377;<%= cartData ? cartData.items.reduce((acc, item)=> acc + (item.price * item.quantity), 0) +
-                        50 : 0 %>
+                        0 : 0 %>
                     </strong>
                   </div>
                 </div>
