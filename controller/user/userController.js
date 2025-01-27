@@ -232,13 +232,15 @@ const loadHome = async (req, res) => {
       req.session.destroy();
       return res.redirect("/login");
     }
+    const brand = await Brand.find({ isBlocked: false }).limit(5);
+    console.log(brand)
     const user = req.session.user;
     const categories = await Category.find({ isListed: true });
     let productData = await Product.find({ isBlocked: false })
       .sort({ createdAt: -1 })
-      .limit(4);
+      .limit(8);
 
-    res.render("user/home", { products: productData, user });
+    res.render("user/home", { products: productData, user ,brand });
   } catch (error) {
     console.error("Error in loading Home Page", error);
     res.status(500).send("Internal Server Error");

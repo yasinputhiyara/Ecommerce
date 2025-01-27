@@ -211,6 +211,7 @@
                         <form id="orderForm" method="POST">
                             <input type="hidden" name="selectedAddress" id="selectedAddress">
                             <input type="hidden" name="paymentMethod" id="paymentMethod">
+                            <!-- <input type="hidden" name="couponCode" id="couponCode" > -->
                             <button type="button" class="btn essence-btn" id="placeOrderButton">Place Order</button>
                         </form>
                     </div>
@@ -294,10 +295,14 @@
 
 
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
     <script>
         document.getElementById('placeOrderButton').addEventListener('click', async () => {
             const selectedAddress = document.querySelector('input[name="saved-address"]:checked');
             const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
+
+            const couponCode = document.getElementById("couponCode").value.trim(); // Get coupon code
+
 
             if (!selectedAddress || !paymentMethod) {
                 Swal.fire('Error', 'Please select a delivery address and payment method.', 'error');
@@ -310,7 +315,8 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         selectedAddress: selectedAddress.value,
-                        paymentMethod: 'cod'
+                        paymentMethod: 'cod',
+                        couponCode
                     })
                 });
 
@@ -330,7 +336,7 @@
                     const response = await fetch('/create-razorpay-order', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ selectedAddress: selectedAddress.value })
+                        body: JSON.stringify({ selectedAddress: selectedAddress.value , couponCode })
                     });
 
                     if (!response.ok) {

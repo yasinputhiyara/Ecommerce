@@ -192,6 +192,204 @@
     }
   </style>
 
+  
+<style>
+  /* Add this CSS to your existing styles */
+  .single-product-wrapper {
+    position: relative;
+    margin-bottom: 50px;
+    transition: all 0.3s;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+  }
+  
+  .single-product-wrapper:hover {
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
+  }
+  
+  .product-img {
+    position: relative;
+    overflow: hidden;
+    padding-top: 10%; /* Maintain aspect ratio */
+  }
+  
+  .image-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .product-img img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.5s;
+  }
+  
+  .hover-img {
+    opacity: 0;
+    transform: scale(1.1);
+  }
+  
+  .single-product-wrapper:hover .product-img img:first-child {
+    opacity: 0;
+  }
+  
+  .single-product-wrapper:hover .hover-img {
+    opacity: 1;
+    transform: scale(1);
+  }
+  
+  .product-badge {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    z-index: 2;
+  }
+  
+  .badge-new {
+    background: #ff084e;
+    color: #fff;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  
+  .product-actions {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    opacity: 0;
+    transform: translateX(20px);
+    transition: all 0.3s;
+  }
+  
+  .single-product-wrapper:hover .product-actions {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  
+  .product-actions a {
+    width: 35px;
+    height: 35px;
+    background: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s;
+  }
+  
+  .product-actions a:hover {
+    background: #ff084e;
+    color: #fff;
+  }
+  
+  .product-description {
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .product-title h6 {
+    font-size: 16px;
+    margin: 0;
+    font-weight: 600;
+    color: #333;
+    transition: color 0.3s;
+  }
+  
+  .product-title:hover h6 {
+    color: #ff084e;
+  }
+  
+  .product-price {
+    margin: 10px 0;
+  }
+  
+  .old-price {
+    color: #999;
+    text-decoration: line-through;
+    margin-right: 10px;
+    font-size: 14px;
+  }
+  
+  .current-price {
+    color: #ff084e;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  
+  .hover-content {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s;
+  }
+  
+  .single-product-wrapper:hover .hover-content {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .add-to-cart-btn {
+    margin-top: 15px;
+  }
+  
+  .essence-btn {
+    display: inline-block;
+    min-width: 170px;
+    height: 50px;
+    color: #ffffff;
+    border: none;
+    border-radius: 25px;
+    padding: 0 40px;
+    text-transform: uppercase;
+    font-size: 12px;
+    line-height: 50px;
+    background-color: #ff084e;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+  
+  .essence-btn:hover {
+    background-color: #333;
+    color: #fff;
+  }
+  
+  /* Responsive adjustments */
+  @media only screen and (max-width: 767px) {
+    .single-product-wrapper {
+      margin-bottom: 30px;
+    }
+    
+    .product-description {
+      padding: 15px;
+    }
+    
+    .essence-btn {
+      min-width: 140px;
+      height: 40px;
+      line-height: 40px;
+      padding: 0 20px;
+    }
+  }
+  </style>
+  
+
 
   <!-- ##### Welcome Area Start ##### -->
   <section class="welcome_area bg-img background-overlay" style="height: 300px;">
@@ -216,8 +414,7 @@
 
 
                   <div class="carousel-item">
-                    <img class="d-block w-100" src="/images/banner-img/banner6.png" alt="First slide"
-                      style="height: 400px;" />
+                    <img class="d-block w-100" src="/user/img/banner1.png" alt="First slide" style="height: 400px;" />
                     <div class="carousel-caption d-none d-md-block">
                       <!-- <h4>
                             <i class="material-icons">location_on</i>
@@ -227,8 +424,7 @@
                   </div>
 
                   <div class="carousel-item active">
-                    <img class="d-block w-100" src="/images/banner-img/banner7.png" alt="Second slide"
-                      style="height: 400px;" />
+                    <img class="d-block w-100" src="/user/img/banner2.png" alt="Second slide" style="height: 400px;" />
                     <div class="carousel-caption d-none d-md-block">
                       <!-- <h4>
                             <i class="material-icons">location_on</i>
@@ -237,8 +433,7 @@
                     </div>
                   </div>
                   <div class="carousel-item">
-                    <img class="d-block w-100" src="/images/banner-img/banner6.png" alt="Third slide"
-                      style="height: 400px;" />
+                    <img class="d-block w-100" src="/user/img/banner3.png" alt="Third slide" style="height: 400px;" />
                     <div class="carousel-caption d-none d-md-block">
                       <!-- <h4>
                             <i class="material-icons">location_on</i>
@@ -319,18 +514,28 @@
       <div class="row">
 
         <div class="col-md-12 mb-3" style="height: 150px; margin-bottom: 20px;">
-          <img src="/banner/homebanner1.png" class="img-fluid" style="height: 100%; width: 100%; object-fit: cover;"
+          <a href="/shop?minPrice=100&maxPrice=4000&brand=Puma">
+            <img src="/banner/homebanner1.png" class="img-fluid" style="height: 100%; width: 100%; object-fit: cover;"
             alt="Responsive image">
+
+          </a>
+          
         </div>
 
         <div class="col-md-12 mb-3" style="height: 150px; margin-bottom: 20px;">
-          <img src="/banner/homebanner2.png" class="img-fluid" style="height: 100%; width: 100%; object-fit: cover;"
+          <a href="/shop?minPrice=100&maxPrice=4000&brand=Nike">
+            <img src="/banner/homebanner2.png" class="img-fluid" style="height: 100%; width: 100%; object-fit: cover;"
             alt="Responsive image">
+          </a>
+          
         </div>
 
         <div class="col-md-12 mb-3" style="height: 150px; margin-bottom: 20px;">
-          <img src="/banner/homebanner3.png" class="img-fluid" style="height: 100%; width: 100%; object-fit: cover;"
+          <a href="/shop?minPrice=100&maxPrice=4000&brand=New Balance">
+            <img src="/banner/homebanner3.png" class="img-fluid" style="height: 100%; width: 100%; object-fit: cover;"
             alt="Responsive image">
+          </a>
+          
         </div>
 
       </div>
@@ -339,11 +544,11 @@
   <!-- $$$$$$$$$$$$ -->
 
   <!-- ##### CTA Area Start ##### -->
-  <div class="cta-area">
+  <!-- <div class="cta-area">
     <div class="container">
       <div class="row">
         <div class="col-12">
-          <div class="cta-content bg-img background-overlay" style="background-image: url(/banner/homebanner4.png)">
+          <div class="cta-content bg-img background-overlay" style="background-image: url(/user/img/banner4.png)">
             <div class="h-100 d-flex align-items-center justify-content-end">
               <div class="cta--text">
                 <h6>Explore Our</h6>
@@ -355,7 +560,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
   <!-- ##### CTA Area End ##### -->
 
 
@@ -366,7 +571,7 @@
       <div class="row">
         <div class="col-12">
           <div class="section-heading text-center">
-            <h2>Hot Picks</h2>
+            <h2>New Arrivals</h2>
           </div>
         </div>
       </div>
@@ -374,105 +579,80 @@
 
     <div class="container">
       <div class="row">
-        <div class="col-12">
-          <div class="popular-products-slides owl-carousel">
-
-            <% for(let i=0 ; i < products.length ; i++){%>
-
-              <!-- Single Product -->
-              <div class="single-product-wrapper">
-                <!-- Product Image -->
-                <div class="product-img">
-                  <!-- <img src="images/product-img/product-1.jpg" alt="" /> -->
-                  <img src="/product-images/<%= products[i].productImages[0] || products[i].productImages[1]  %>"
-                    alt="" />
+        <% for (let product of products) { %>
+          <!-- Single Product -->
+          <div class="col-12 col-sm-6 col-lg-4">
+            <div class="single-product-wrapper">
+              <!-- Product Image -->
+              <div class="product-img">
+                <div class="image-wrapper">
+                  <img src="/product-images/<%= product.productImages[0] %>" alt="<%= product.productName %>" />
                   <!-- Hover Thumb -->
-                  <img class="hover-img" src="/product-images/<%= products[i].productImages[2]  %>" alt="" />
-                  <!-- Favourite -->
-                  <div class="product-favourite">
-                    <a href="#" class="favme fa fa-heart"></a>
-                  </div>
+                  <img class="hover-img" src="/product-images/<%= product.productImages[1] %>"
+                    alt="<%= product.productName %>" />
                 </div>
-                <!-- Product Description -->
-                <div class="product-description">
-                  <span>topshop</span>
-                  <a href="/view-productDetails?id=<%= products[i]._id %>">
-                    <h6>
-                      <%= products[i].productName %>
-                    </h6>
-                  </a>
-                  <p class="product-price">$<%= products[i].salePrice %>
-                  </p>
 
-                  <!-- Hover Content -->
-                  <div class="hover-content">
-                    <!-- Add to Cart -->
-                    <div class="add-to-cart-btn">
-                      <a href="#" class="btn essence-btn">Add to Cart</a>
+                <!-- Product Badge -->
+                <% if (product.regularPrice> product.salePrice) { %>
+                  <div class="product-badge bg-white">
+                    <span class="badge-new ">-<%= Math.round((product.regularPrice - product.salePrice) /
+                        product.regularPrice * 100) %>%</span>
+                  </div>
+                  <% } %>
+
+                    <!-- Quick View & Wishlist -->
+                    <div class="product-actions">
+                      <a href="/product-details/<%= product._id %>" class="quick-view-btn">
+                        <i class="fa fa-eye"></i>
+                      </a>
+                      <a href="#" class="wishlist-btn">
+                        <i class="fa fa-heart"></i>
+                      </a>
                     </div>
+              </div>
+
+              <!-- Product Description -->
+              <div class="product-description">
+                <a href="/product-details/<%= product._id %>" class="product-title">
+                  <h6>
+                    <%= product.productName %>
+                  </h6>
+                </a>
+                <div class="product-price">
+                  <% if (product.regularPrice> product.salePrice) { %>
+                    <span class="old-price">₹<%= product.regularPrice %></span>
+                    <% } %>
+                      <span class="current-price">₹<%= product.salePrice %></span>
+                </div>
+
+                <!-- Add to Cart -->
+                <div class="hover-content">
+                  <div class="add-to-cart-btn">
+                    <a href="/product-details/<%= product._id  %>" class="btn essence-btn">Buy Now</a>
                   </div>
                 </div>
-              </div>
-
-              <% } %>
-
-
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- ##### New Arrivals Area End ##### -->
-
-  <!-- ##### New Arrivals Area Start ##### -->
-  <section class="new-arrivals-area section-padding-80 clearfix">
-    <div class="container">
-      <div class="row">
-        <div class="col-12">
-          <div class="section-heading text-center">
-            <h2>Popular Products</h2>
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <!-- Single Product Card -->
-
-        <% for(let i = 0 ; i < products.length ; i++){ %>
-          <div class="col-md-4 col-sm-6 col-lg-3 mb-4">
-            <div class="card product-card">
-              <div class="product-img-container">
-                <img src="\resized-images\<%= products[i].productImages[0] %>" class="card-img-top"
-                  alt="Product Image" />
-                <!-- Hover Thumb -->
-                <img src="\resized-images\<%= products[i].productImages[1] %>" class="hover-img"
-                  alt="Hover Image" />
-              </div>
-              <div class="card-body text-center">
-                <span class="product-brand d-block"> <%= products[i].brand  %></span>
-                <h6 class="product-title"><a href="single-product-details.html"><%= products[i].productName  %></a></h6>
-                <p class="product-price">$<%= products[i].salePrice  %></p>
-                <a href="#" class="btn essence-btn">Add to Cart</a>
               </div>
             </div>
           </div>
           <% } %>
-
-
-        <!-- Repeat as necessary -->
       </div>
     </div>
   </section>
-
   <!-- ##### New Arrivals Area End ##### -->
+
+  
+
+
 
   <!-- ##### Brands Area Start ##### -->
   <div class="brands-area d-flex align-items-center justify-content-between">
 
     <!-- Brand Logo -->
-    <div class="single-brands-logo">
-      <img src="public\product-images\1735014175212-25c13627-0991-49db-906e-b7e1188656c4.png" alt="" />
-    </div>
+     <% for(let i = 0 ; i< brand.length ; i++){  %>
+      <div class="single-brands-logo">
+        <img src="\product-images\<%= brand[i].brandImage[0] %>" alt="" />
+      </div>
+      <%}  %>
 
   </div>
   <!-- ##### Brands Area End ##### -->

@@ -1,5 +1,6 @@
 const Orders = require("../../model/Order");
 const Address = require("../../model/Address");
+const Wallet = require("../../model/Wallet");
 const { Product } = require("../../model/Product");
 
 const loadOrders = async (req, res) => {
@@ -93,6 +94,7 @@ const loadOrderDetails = async (req, res) => {
   }
 };
 
+
 const cancelOrder = async (req, res) => {
   try {
     const orderId = req.params.orderId;
@@ -100,9 +102,7 @@ const cancelOrder = async (req, res) => {
     console.log("Cancelling order:", orderId);
 
     // Find the order and populate product details
-    const order = await Orders.findById(orderId).populate(
-      "orderedItems.product"
-    );
+    const order = await Orders.findById(orderId).populate("orderedItems.product");
 
     if (!order) {
       return res.status(404).json({
@@ -112,27 +112,26 @@ const cancelOrder = async (req, res) => {
     }
 
     // Check if order is already cancelled
-    if (order.status === "Cancelled") {
+    if (order.orderStatus === "Cancelled") {
       return res.status(400).json({
         success: false,
         message: "Order is already cancelled.",
       });
     }
 
-    // Keep track of all products that need to be saved
+    // Keep track of all products to be updated
     const productsToUpdate = new Map();
 
-    // Update inventory for each non-cancelled item
+    // Update inventory for each item
     for (const item of order.orderedItems) {
       if (item.status !== "Cancelled") {
         console.log("Processing item:", {
           productId: item.product._id,
           size: item.size,
           quantity: item.quantity,
-          status: item.status,
         });
 
-        // Find the product or use cached version
+        // Find product or use cached version
         let product;
         if (productsToUpdate.has(item.product._id.toString())) {
           product = productsToUpdate.get(item.product._id.toString());
@@ -148,43 +147,38 @@ const cancelOrder = async (req, res) => {
           continue;
         }
 
-        console.log("Product variants:", product.variants);
-        console.log("Looking for size:", item.size);
-
-        // Find the matching variant with case-insensitive comparison
+        // Update inventory
         const variant = product.variants.find(
-          (v) =>
-            v.size.toString().toLowerCase() ===
-            item.size.toString().toLowerCase()
+          (v) => v.size.toLowerCase() === item.size.toLowerCase()
         );
 
-        if (!variant) {
-          const availableSizes = product.variants.map((v) => v.size);
-          console.log(
-            `Variant not found for size ${item.size}. Available sizes:`,
-            availableSizes
-          );
-          continue;
+        if (variant) {
+          variant.quantity += item.quantity;
         }
 
-        // Log variant details before updating
-        console.log("Found variant:", {
-          size: variant.size,
-          currentQuantity: variant.quantity,
-          toAdd: item.quantity,
-          newQuantity: variant.quantity + item.quantity,
-        });
-
-        // Update inventory
-        variant.quantity += item.quantity;
-
-        // Mark individual item as cancelled
+        // Mark item as cancelled
         item.status = "Cancelled";
       }
     }
 
     // Update order status and amounts
-    order.status = "Cancelled";
+    order.orderStatus = "Cancelled";
+
+    if (order.paymentStatus === "Paid") {
+      // Refund to wallet
+      const wallet = await Wallet.findOne({ userId: order.userId });
+      if (wallet) {
+        wallet.balance += order.totalPrice;
+        wallet.transactionHistory.push({
+          transactionType: "CREDIT",
+          transactionAmount: order.totalPrice,
+          description: `Refund for Order ID: ${order._id}`,
+        });
+        await wallet.save();
+      }
+    }
+
+    order.paymentStatus = "Refunded";
     order.totalPrice = 0;
     order.finalAmount = 0;
 
@@ -198,7 +192,7 @@ const cancelOrder = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Order cancelled successfully.",
+      message: "Order cancelled and refund processed successfully.",
     });
   } catch (error) {
     console.error("Error cancelling order:", error);
@@ -209,15 +203,14 @@ const cancelOrder = async (req, res) => {
   }
 };
 
+
 const cancelProduct = async (req, res) => {
   try {
     const { orderId, productIndex } = req.params;
 
     console.log("Cancelling product:", { orderId, productIndex });
 
-    const order = await Orders.findById(orderId).populate(
-      "orderedItems.product"
-    );
+    const order = await Orders.findById(orderId).populate("orderedItems.product");
 
     if (!order) {
       return res.status(404).json({
@@ -236,14 +229,6 @@ const cancelProduct = async (req, res) => {
 
     const item = order.orderedItems[index];
 
-    // Debug logging for item details
-    console.log("Item details:", {
-      productId: item.product._id,
-      size: item.size,
-      quantity: item.quantity,
-      status: item.status,
-    });
-
     if (item.status === "Cancelled") {
       return res.status(400).json({
         success: false,
@@ -251,7 +236,7 @@ const cancelProduct = async (req, res) => {
       });
     }
 
-    // Find the product and log its variants
+    // Find product and update inventory
     const product = await Product.findById(item.product._id);
     if (!product) {
       return res.status(404).json({
@@ -260,47 +245,40 @@ const cancelProduct = async (req, res) => {
       });
     }
 
-    console.log("Product variants:", product.variants);
-    console.log("Looking for size:", item.size);
-
-    // Find the variant with case-insensitive comparison
-    // Find the variant with case-insensitive comparison
     const variant = product.variants.find(
-      (v) =>
-        v.size.toString().toLowerCase() === item.size.toString().toLowerCase()
+      (v) => v.size.toLowerCase() === item.size.toLowerCase()
     );
 
     if (!variant) {
-      // Log all available sizes for debugging
-      const availableSizes = product.variants.map((v) => v.size);
-      console.log("Available sizes:", availableSizes);
-
       return res.status(400).json({
         success: false,
-        message: `Product variant not found. Available sizes: ${availableSizes.join(
-          ", "
-        )}`,
+        message: "Product variant not found.",
       });
     }
 
-    // Update inventory
     variant.quantity += item.quantity;
 
-    // Log variant details before updating
-    console.log("Found variant:", {
-      size: variant.size,
-      currentQuantity: variant.quantity,
-      toAdd: item.quantity,
-      newQuantity: variant.quantity + item.quantity,
-    });
-
-    // Calculate price updates
-    const itemTotal = item.price * item.quantity;
-    order.totalPrice -= itemTotal;
+    // Calculate refund for this product
+    const refundAmount = item.price * item.quantity;
+    order.totalPrice -= refundAmount;
     order.finalAmount = order.totalPrice;
 
     // Update item status
     order.orderedItems[index].status = "Cancelled";
+
+    // Process refund if payment was made
+    if (order.paymentStatus === "Paid") {
+      const wallet = await Wallet.findOne({ userId: order.userId });
+      if (wallet) {
+        wallet.balance += refundAmount;
+        wallet.transactionHistory.push({
+          transactionType: "CREDIT",
+          transactionAmount: refundAmount,
+          description: `Refund for Product in Order ID: ${order._id}`,
+        });
+        await wallet.save();
+      }
+    }
 
     // Check if all items are cancelled
     const allItemsCancelled = order.orderedItems.every(
@@ -308,6 +286,7 @@ const cancelProduct = async (req, res) => {
     );
     if (allItemsCancelled) {
       order.status = "Cancelled";
+      order.paymentStatus = "Refunded";
     }
 
     // Save both product and order
@@ -327,6 +306,8 @@ const cancelProduct = async (req, res) => {
     });
   }
 };
+
+
 
 module.exports = {
   loadOrders,

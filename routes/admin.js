@@ -27,7 +27,7 @@ router.get('/block-user',adminAuth , userController.blockUser);
 router.get('/unblock-user',adminAuth ,userController.unBlockUser )
 
 
-//------Product------///
+//------Product ------///
 router.get('/view-products',adminAuth ,productController.loadProducts )
 router.get('/add-product', productController.loadAddProduct)
 router.post('/add-product',upload.array("images", 4),productController.addProduct)
@@ -36,6 +36,9 @@ router.get('/unblockProduct' ,adminAuth, productController.unblockProduct)
 router.get('/edit-product/:id',productController.loadEditProduct);
 router.put('/edit-product/:id' ,upload.array('images',4), productController.editProduct)
 router.delete('/delete-product-image/:productId/:imageName', productController.deleteProductImage);
+
+router.post('/addProductOffer',adminAuth,productController.addProductOffer)
+router.post('/removeProductOffer',productController.removeProductOffer)
 
 
 //-----Category------//

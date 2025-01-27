@@ -47,6 +47,7 @@
                     <tr>
                       <th>#</th>
                       <th scope="col">Product Name</th>
+                      <th sccope="col">Product Offer</th>
                       <th scope="col">Actions</th>
                     </tr>
                   </thead>
@@ -61,6 +62,37 @@
                         <td>
                           <%= data[i].productName %>
                         </td>
+
+
+                        <!-- Product Offer -->
+                        <td>
+                          <% if (data[i].productOffer ) { %>
+                            <span class="badge bg-success">
+                              <%= data[i].productOffer %>
+                            </span>
+                            <% } else { %>
+                              <span class="badge bg-danger"> 0% </span>
+                              <% } %>
+
+
+                                <% if(locals.data[i].productOffer===0) {%>
+                                  <button class="btn btn-info" onclick="addOffer('<%= data[i]._id %>')"
+                                    style="width: 100px;">
+                                    <a href="#" class="text-white">Add Offer</a>
+                                  </button>
+                                  <% }else{ %>
+                                    <button class="btn btn-info" onclick="removeOffer('<%= data[i]._id %>') "
+                                      style="width: 100px;">
+                                      <a href="#" class="text-white">Remove</a>
+                                    </button>
+                                    <% } %>
+
+                        </td>
+
+
+
+
+
 
                         <!-- Actions -->
                         <td>
@@ -120,7 +152,8 @@
                               <p><strong>Varients:</strong>
                                 <br>
                                 <% for(let j=0; j < data[i].variants.length; j++) { %>
-                                  Size <%= data[i].variants[j].size %>: Quantity <%= data[i].variants[j].quantity %> <br>
+                                  Size <%= data[i].variants[j].size %>: Quantity <%= data[i].variants[j].quantity %>
+                                      <br>
                                       <% } %>
                               </p>
                               <p><strong>Description:</strong>
@@ -189,6 +222,79 @@
           </div>
       </div>
   </div>
+
+
+  <script>
+    // Function to add a product offer
+    async function addOffer(productId) {
+      const { value: amount } = await Swal.fire({
+        title: "Add Offer",
+        input: "number",
+        inputLabel: "Enter offer percentage",
+        inputPlaceholder: "%",
+        confirmButtonText: "Apply Offer",
+        showCancelButton: true,
+      });
+  
+      if (amount) {
+        $.ajax({
+          url: "/admin/addProductOffer",
+          method: "post",
+          data: {
+            percentage: amount,
+            productId: productId,
+          },
+          success: (response) => {
+            if (response.status === true) {
+              Swal.fire("Success", "Offer added successfully!", "success").then(() => {
+                location.reload();
+              });
+            } else {
+              Swal.fire("Failed", response.message || "Unable to add offer.", "error");
+            }
+          },
+          error: () => {
+            Swal.fire("Error", "An error occurred while adding the offer.", "error");
+          },
+        });
+      }
+    }
+  
+    // Function to remove a product offer
+    function removeOffer(productId) {
+      Swal.fire({
+        title: "Remove Offer",
+        text: "Are you sure you want to remove this offer?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, Remove It!",
+        cancelButtonText: "Cancel",
+        timer: 5000, // Use 'timer' instead of 'time'
+        timerProgressBar: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $.ajax({
+            url: "/admin/removeProductOffer",
+            method: "post",
+            data: { productId: productId },
+            success: (response) => {
+              if (response.status === true) {
+                Swal.fire("Removed", "The offer has been removed.", "success").then(() => {
+                  location.reload();
+                });
+              } else {
+                Swal.fire("Failed", response.message || "Unable to remove offer.", "error");
+              }
+            },
+            error: () => {
+              Swal.fire("Error", "An error occurred while removing the offer.", "error");
+            },
+          });
+        }
+      });
+    }
+  </script>
+  
 
 
 

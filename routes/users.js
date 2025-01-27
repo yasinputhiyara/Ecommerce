@@ -13,6 +13,7 @@ const profileController = require('../controller/user/profileController');
 const cartController = require('../controller/user/cartController');
 const orderController = require('../controller/user/orderController');
 const wishlistController = require('../controller/user/wishlistController');
+const walletController = require('../controller/user/walletController');
 
 /* GET users listing. */
 router.get('/login',checkBan,isLoggedIn,userController.loadLogin)
@@ -36,7 +37,8 @@ router.patch('/reset-password',isLoggedIn,profileController.resetPassword)
 router.get('/dashboard',checkBan,isLoggedOut,profileController.loadDashboard)
 router.get('/update-profile',checkBan,isLoggedOut, profileController.loadProfilePage);
 router.get('/address',checkBan,isLoggedOut, profileController.loadAddressPage);
-router.get('/wallet',isLoggedOut,profileController.loadWalletPage);
+// router.get('/wallet',isLoggedOut,profileController.loadWalletPage);
+router.get('/wallet',isLoggedOut,walletController.getWallet);
 
 router.post('/add-address',isLoggedOut,profileController.addAddress)
 router.get('/get-address/:id',profileController.getAddressById)
