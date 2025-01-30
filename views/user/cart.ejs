@@ -154,7 +154,7 @@
                 </div>
 
                 <% if(cartData && cartData.items.length> 0){ %>
-                  <a href="/checkout" class="btn btn-primary w-100">Proceed to Checkout</a>
+                  <a href="/checkout" id="checkoutBtn" class="btn btn-primary w-100">Proceed to Checkout</a>
                   <% }else{ %>
                     <a href="" onclick="validateCart()" class="btn btn-primary w-100">Proceed to Checkout</a>
                     <% } %>

@@ -51,8 +51,8 @@ router.put('/profile/update',isLoggedOut,profileController.updateProfile)
 router.put('/profile/change-password',isLoggedOut,profileController.updatePassword)
 
 //----- GOOGLE AUTHENTICTION ----//
-router.get('/auth/google',isLoggedIn,passport.authenticate('google',{scope:['profile','email']}))
-router.get('/auth/google/callback',isLoggedIn,passport.authenticate('google',{failureRedirect:'/login'}), async (req,res)=>{
+router.get('/auth/google',checkBan,isLoggedIn,passport.authenticate('google',{scope:['profile','email']}))
+router.get('/auth/google/callback',checkBan,isLoggedIn,passport.authenticate('google',{failureRedirect:'/login'}), async (req,res)=>{
     let user = req.user
     req.session.user = user
     console.log(user)
@@ -75,12 +75,14 @@ router.post('/addToCart/:id',cartController.addToCart)
 router.get('/cart',checkBan,cartController.loadCart)
 router.post('/update-cart', cartController.updateCart)
 router.delete('/remove-from-cart/:itemId', cartController.removeFromCart)
+router.get('/validateCartStock', cartController.validateCartStock)
+
 
 
 //----- CHECKOUT ROUTES ---///
 
-router.get('/checkout' , cartController.loadCheckoutPage)
-router.post('/place-order' ,cartController.checkout)
+router.get('/checkout',checkBan , cartController.loadCheckoutPage)
+router.post('/place-order',cartController.checkout)
 // router.get('/order-success',cartController.loadOrderSuccess)
 router.post('/apply-coupon',cartController.applyCoupon)
 
@@ -94,7 +96,9 @@ router.get('/orders',orderController.loadOrders )
 router.get('/order-details/:id',orderController.loadOrderDetails)
 router.post('/orders/:orderId/products/:productIndex/cancel',orderController.cancelProduct)
 router.post('/orders/:orderId/cancel', orderController.cancelOrder);
-router.get('/validateCartStock', cartController.validateCartStock)
+// router.post('/orders/:orderId/return',orderController.returnOrder);
+router.post('/orders/:orderId/products/:productIndex/return', orderController.returnSingleProduct);
+
 
 
 //----------  WISHLIST MANAGEMENT -----------//

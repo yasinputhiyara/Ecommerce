@@ -94,7 +94,7 @@
 
         .product-item {
             display: grid;
-            grid-template-columns: 80px 2fr 1fr 1fr 1fr 1fr ;
+            grid-template-columns: 80px 2fr 1fr 1fr 1fr 1fr 1fr 1fr;
             gap: 15px;
             padding: 15px 0;
             border-bottom: 1px solid #eee;
@@ -356,9 +356,13 @@
                     <h2 class="section-title">Order Details</h2>
 
                     <div class="container mt-5 pt-5">
+
+
+
+
                         <div class="order-header">
                             <div class="order-info">
-                                <h2 class="order-id">Order #<%= order._id %>
+                                <h2 class="order-id">#<%= order.orderId%>
                                 </h2>
                                 <div class="order-date">
                                     Ordered on: <%= new Date(order.createdOn).toLocaleDateString('en-US', {
@@ -373,78 +377,9 @@
                             </div>
                         </div>
 
-
-
-                        <div class="products-list">
-                            <div class="product-item product-header">
-                                <div>Image</div>
-                                <div>Product Details</div>
-                                <div>Size</div>
-                                <div>Quantity</div>
-                                <div>Price</div>
-                                <div>Action</div>
-                            </div>
-                            <% order.orderedItems.forEach((item, index)=> { %>
-                                <div class="product-item <%= item.status === 'Cancelled' ? 'Cancelled' : '' %>">
-
-                                    <div>
-                                        <img src="/product-images/<%= item.product.productImages[0] %>"
-                                            alt="<%= item.product.productName %>" class="product-image">
-                                    </div>
-                                    <div class="product-details">
-                                        <span class="product-name">
-                                            <%= item.product.productName %>
-                                        </span>
-                                        <span class="product-id">Brand: <%= item.product.brand || 'N/A' %></span>
-                                    </div>
-                                    <div>
-                                        <%= item.size %>
-                                    </div>
-                                    <div>
-                                        <%= item.quantity %>
-                                    </div>
-                                    <div>₹<%= (item.price * item.quantity).toFixed(2) %>
-                                    </div>
-                                    <div>
-                                        <% if (order.orderStatus.toLowerCase()==='pending' && item.status !=='Cancelled' ) { %>
-                                            <button class="cancel-product-btn"
-                                                onclick="confirmCancelProduct('<%= order._id %>', `<%= index %>`)">
-                                                Cancel Item
-                                            </button>
-                                            <% } else if (order.orderStatus.toLowerCase()==='processing' && item.status!=='Cancelled' ) { %>
-                                                <span class="badge bg-warning text-dark">Processing</span>
-                                                <% } else if (order.orderStatus.toLowerCase()==='shipped' && item.status !=='Cancelled' ) { %>
-                                                    <span class="badge bg-info text-dark">Shipped</span>
-                                                    <% } else if (order.orderStatus.toLowerCase()==='delivered' ) { %>
-                                                        <span class="badge bg-success text-white">Delivered</span>
-                                                        <% } else if (item.status==='Cancelled' ) { %>
-                                                            <a class="badge rounded-pill bg-danger text-white" disabled>
-                                                                Item Cancelled
-                                                            </a>
-                                                            <% } %>
-                                    </div>
-                                </div>
-                                <% }); %>
-                        </div>
-
-                        <div class="address-section">
-                            <h3 class="section-title">Shipping Address</h3>
-                            <p class="text-center">
-                                <strong>
-                                    <%= orderAddress.name %>
-                                </strong> <br>
-                                <%= orderAddress.addressType %> Address <br>
-                                    <%= orderAddress.landMark %>, <%= orderAddress.city %>, <%= orderAddress.state %> -
-                                                <%= orderAddress.pincode %> <br>
-                                                    Phone: <%= orderAddress.phone %> <br>
-                                                        Alt Phone: <%= orderAddress.altPhone %>
-                            </p>
-                        </div>
-
-
                         <div class="timeline-section">
                             <% if (order.orderStatus.toLowerCase() !=='cancelled' ) { %>
-                                <section class="vh-50" style="background-color: #ffffff;">
+                                <section class="vh-50">
                                     <div class="container py-5 h-100">
                                         <div class="row d-flex justify-content-center align-items-center h-100">
                                             <div class="col-12">
@@ -459,7 +394,7 @@
                                                                 <p class="mb-0">Order Date: <%= new
                                                                         Date(order.createdOn).toLocaleDateString() %>
                                                                 </p>
-                                                                <p class="mb-0">Order ID: #<%= order._id %>
+                                                                <p class="mb-0">Order ID: #<%= order.orderId %>
                                                                 </p>
                                                             </div>
                                                         </div>
@@ -525,17 +460,130 @@
 
 
 
-                        <div class="total-section">
-                            <h3 class="section-title">Total Amount</h3>
-                            <p class="total-amount text-center">₹<%= order.totalPrice.toFixed(2) %>
+                        <div class="products-list">
+                            <div class="product-item product-header">
+                                <div>Image</div>
+                                <div>Product Details</div>
+                                <div>Size</div>
+                                <div>Quantity</div>
+                                <div>Payment Status</div>
+                                <div>Order Status</div>
+                                <div>Price</div>
+                                <div>Action</div>
+                            </div>
+                            <% order.orderedItems.forEach((item, index)=> { %>
+                                <div class="product-item <%= item.orderStatus === 'Cancelled' ? 'Cancelled' : '' %>">
+                                    <div>
+                                        <img src="/product-images/<%= item.product.productImages[0] %>"
+                                            alt="<%= item.product.productName %>" class="product-image">
+                                    </div>
+                                    <div class="product-details">
+                                        <span class="product-name">
+                                            <%= item.product.productName %>
+                                        </span>
+                                        <span class="product-id">Brand: <%= item.product.brand || 'N/A' %></span>
+                                    </div>
+                                    <div>
+                                        <%= item.size %>
+                                    </div>
+                                    <div>
+                                        <%= item.quantity %>
+                                    </div>
+                                    <div>
+                                        <% if (item.paymentStatus==='Paid' ) { %>
+                                            <span class="badge bg-success text-white">Paid</span>
+                                            <% } else if (item.paymentStatus==='Refunded' ) { %>
+                                                <span class="badge bg-info text-white">Refunded</span>
+                                                <% } else if (item.paymentStatus==='Failed' ) { %>
+                                                    <span class="badge bg-danger text-white">Failed</span>
+                                                    <% } else { %>
+                                                        <span class="badge bg-warning text-dark">Pending</span>
+                                                        <% } %>
+                                    </div>
+                                    <div>
+                                        <% if (item.orderStatus==='Pending' ) { %>
+                                            <span class="badge bg-warning text-dark">Pending</span>
+                                            <% } else if (item.orderStatus==='Processing' ) { %>
+                                                <span class="badge bg-warning text-dark">Processing</span>
+                                                <% } else if (item.orderStatus==='Shipped' ) { %>
+                                                    <span class="badge bg-info text-dark">Shipped</span>
+                                                    <% } else if (item.orderStatus==='Delivered' ) { %>
+                                                        <span class="badge bg-success text-white">Delivered</span>
+                                                        <% } else if (item.orderStatus==='Cancelled' ) { %>
+                                                            <span class="badge bg-danger text-white">Cancelled</span>
+                                                            <% } else if (item.orderStatus==='Return Request' ) { %>
+                                                                <span class="badge bg-info text-dark">Return
+                                                                    Requested</span>
+                                                                <% } else if (item.orderStatus==='Returned' ) { %>
+                                                                    <span
+                                                                        class="badge bg-success text-white">Returned</span>
+                                                                    <% } %>
+                                    </div>
+                                    <div>₹<%= (item.price * item.quantity).toFixed(2) %>
+                                    </div>
+                                    <div>
+                                        <% if ((item.orderStatus==='Pending' || item.orderStatus==='Processing' ) && item.orderStatus !=='Cancelled' ) { %>
+                                            <button class="cancel-product-btn"
+                                                onclick="confirmCancelProduct('<%= order._id %>', '<%= index %>')">
+                                                Cancel Item
+                                            </button>
+                                            <% } else if (item.orderStatus==='Delivered' ) { %>
+                                                <button class="return-product-btn btn btn-sm btn-outline-info"
+                                                    onclick="confirmReturnProduct('<%= order._id %>', '<%= index %>')">
+                                                    Return Item
+                                                </button>
+                                                <% } %>
+                                    </div>
+                                </div>
+                                <% }); %>
+                        </div>
+
+                        <div class="address-section">
+                            <h3 class="section-title">Shipping Address</h3>
+                            <p class="text-center">
+                                <strong>
+                                    <%= order.address.name %>
+                                </strong> <br>
+                                <%= order.address.addressType %> Address <br>
+                                    <%= order.address.landMark %>, <%= order.address.city %>, <%= order.address.state %>
+                                                -
+                                                <%= order.address.pincode %> <br>
+                                                    Phone: <%= order.address.phone %> <br>
+                                                        Alt Phone: <%= order.address.altPhone %>
                             </p>
                         </div>
 
+
+                        <div class="total-section">
+                            <h3 class="section-title">Order Summary</h3>
+                            <div class="summary-details">
+                                <div class="summary-row">
+                                    <span>Subtotal:</span>
+                                    <span>₹<%= order.subtotal.toFixed(2) %></span>
+                                </div>
+                                <div class="summary-row text-success">
+                                    <span>Discount:</span>
+                                    <span>-₹<%= order.discount.toFixed(2) %></span>
+                                </div>
+                                <div class="summary-row">
+                                    <span>Shipping:</span>
+                                    <span>₹0</span>
+                                </div>
+                                <div class="summary-row font-weight-bold">
+                                    <span>Total Amount:</span>
+                                    <span>₹<%= order.totalPrice.toFixed(2) %></span>
+                                </div>
+                            </div>
+                        </div>
+
                         <a href="/orders" class="back-btn">Back to Orders</a>
-                        <% if (order.orderStatus.toLowerCase()==='pending' ) { %>
+
+                        <% if (order.orderStatus.toLowerCase()==='pending' || order.orderStatus.toLowerCase()==='processing' ) { %>
                             <button class="cancel-btn" onclick="confirmCancelOrder('<%= order._id %>')">Cancel
                                 Order</button>
-                            <% } %>
+                            <% }  %>
+                                
+                                
                     </div>
 
                 </div>
@@ -543,118 +591,197 @@
         </div>
     </div>
 
-
-
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function confirmCancelOrder(orderId) {
-            // First check if order status is shipped
-            const orderStatus = '<%= order.orderStatus.toLowerCase() %>';
-            if (orderStatus === 'shipped' || orderStatus === 'delivered') {
-                Swal.fire({
-                    title: 'Cannot Cancel',
-                    text: 'Orders cannot be cancelled once shipped',
-                    icon: 'error',
-                    confirmButtonColor: '#3085d6'
-                });
-                return;
-            }
-
             Swal.fire({
                 title: 'Cancel Entire Order?',
-                text: `Are you sure you want to cancel order ${orderId}?`,
-                icon: 'warning',
+                text: `Please provide a reason for canceling order ${orderId}:`,
+                input: 'textarea',
+                inputPlaceholder: 'Enter your reason here...',
+                inputAttributes: {
+                    'aria-label': 'Reason for canceling order',
+                },
                 showCancelButton: true,
+                confirmButtonText: 'Submit',
                 confirmButtonColor: '#d33',
                 cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Yes, cancel order',
-                cancelButtonText: 'No, keep it'
+                preConfirm: (reason) => {
+                    if (!reason) {
+                        Swal.showValidationMessage('Reason is required');
+                    }
+                    return reason;
+                },
             }).then((result) => {
                 if (result.isConfirmed) {
-                    cancelOrder(orderId);
+                    cancelOrder(orderId, result.value); // Pass the reason to the cancelOrder function
                 }
             });
         }
 
-        function confirmCancelProduct(orderId, productIndex) {
-            // First check if order status is shipped
-            const orderStatus = '<%= order.orderStatus.toLowerCase() %>';
-            if (orderStatus === 'shipped' || orderStatus === 'delivered') {
-                Swal.fire({
-                    title: 'Cannot Cancel',
-                    text: 'Products cannot be cancelled once the order is shipped',
-                    icon: 'error',
-                    confirmButtonColor: '#3085d6'
-                });
-                return;
-            }
-
-            Swal.fire({
-                title: 'Cancel Product?',
-                text: 'Are you sure you want to cancel this product?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Yes, cancel item',
-                cancelButtonText: 'No, keep it'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    cancelProduct(orderId, productIndex);
-                }
-            });
-        }
-
-
-        function cancelOrder(orderId) {
+        function cancelOrder(orderId, reason) {
             fetch(`/orders/${orderId}/cancel`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
-                }
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ reason }),
             })
-                .then(response => response.json())
-                .then(data => {
+                .then((response) => response.json())
+                .then((data) => {
                     if (data.success) {
-                        Swal.fire('Cancelled!', 'The order has been cancelled.', 'success')
-                            .then(() => {
-                                window.location.reload();
-                            });
+                        Swal.fire('Cancelled!', 'The order has been cancelled.', 'success').then(() => {
+                            window.location.reload();
+                        });
                     } else {
                         Swal.fire('Error!', 'Failed to cancel the order.', 'error');
                     }
                 })
-                .catch(error => {
+                .catch((error) => {
                     console.error('Error:', error);
                     Swal.fire('Error!', 'Something went wrong.', 'error');
                 });
         }
 
-        function cancelProduct(orderId, productIndex) {
+        // function confirmReturnOrder(orderId) {
+        //     Swal.fire({
+        //         title: 'Return Order?',
+        //         text: `Please provide a reason for returning order ${orderId}:`,
+        //         input: 'textarea',
+        //         inputPlaceholder: 'Enter your reason here...',
+        //         inputAttributes: {
+        //             'aria-label': 'Reason for returning order',
+        //         },
+        //         showCancelButton: true,
+        //         confirmButtonText: 'Submit',
+        //         confirmButtonColor: '#d33',
+        //         cancelButtonColor: '#3085d6',
+        //         preConfirm: (reason) => {
+        //             if (!reason) {
+        //                 Swal.showValidationMessage('Reason is required');
+        //             }
+        //             return reason;
+        //         },
+        //     }).then((result) => {
+        //         if (result.isConfirmed) {
+        //             returnOrder(orderId, result.value); // Pass the reason to the returnOrder function
+        //         }
+        //     });
+        // }
+
+        // function returnOrder(orderId, reason) {
+        //     fetch(`/orders/${orderId}/return`, {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //         },
+        //         body: JSON.stringify({ reason }),
+        //     })
+        //         .then((response) => response.json())
+        //         .then((data) => {
+        //             if (data.success) {
+        //                 Swal.fire('Returned!', 'The order has been returned successfully.', 'success').then(() => {
+        //                     window.location.reload();
+        //                 });
+        //             } else {
+        //                 Swal.fire('Error!', 'Failed to return the order.', 'error');
+        //             }
+        //         })
+        //         .catch((error) => {
+        //             console.error('Error:', error);
+        //             Swal.fire('Error!', 'Something went wrong.', 'error');
+        //         });
+        // }
+
+
+
+
+
+        // PRODUCT CANCEL AND RETURN FUNCTIONS
+
+
+        function confirmCancelProduct(orderId, productIndex) {
+            Swal.fire({
+                title: 'Cancel Product?',
+                input: 'text',
+                inputLabel: 'Reason for cancellation',
+                inputPlaceholder: 'Enter your reason...',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, cancel item',
+                cancelButtonText: 'No, keep it',
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'Reason is required!';
+                    }
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    cancelProduct(orderId, productIndex, result.value);
+                }
+            });
+        }
+
+        function cancelProduct(orderId, productIndex, reason) {
             fetch(`/orders/${orderId}/products/${productIndex}/cancel`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
-                }
+                },
+                body: JSON.stringify({ reason })
             })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(err => Promise.reject(err));
-                    }
-                    return response.json();
-                })
+                .then(response => response.json())
                 .then(data => {
                     if (data.success) {
                         Swal.fire('Cancelled!', 'The product has been cancelled.', 'success')
-                            .then(() => {
-                                window.location.reload();
-                            });
+                            .then(() => window.location.reload());
                     }
                 })
-                .catch(error => {
-                    console.error('Error:', error);
-                    Swal.fire('Error!', error.message || 'Something went wrong.', 'error');
-                });
+                .catch(error => Swal.fire('Error!', error.message || 'Something went wrong.', 'error'));
+        }
+
+
+
+        function confirmReturnProduct(orderId, productIndex) {
+            Swal.fire({
+                title: 'Return Product?',
+                input: 'text',
+                inputLabel: 'Reason for return',
+                inputPlaceholder: 'Enter your reason...',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, return item',
+                cancelButtonText: 'No, keep it',
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'Reason is required!';
+                    }
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    returnProduct(orderId, productIndex, result.value);
+                }
+            });
+        }
+
+        function returnProduct(orderId, productIndex, reason) {
+            fetch(`/orders/${orderId}/products/${productIndex}/return`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ reason })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire('Returned!', 'The product has been returned.', 'success')
+                            .then(() => window.location.reload());
+                    }
+                })
+                .catch(error => Swal.fire('Error!', error.message || 'Something went wrong.', 'error'));
         }
     </script>
 

@@ -311,7 +311,7 @@ const loadShop = async (req, res) => {
       .skip((page - 1) * itemsPerPage)
       .limit(itemsPerPage);
 
-    const categories = await Category.find({});
+    const categories = await Category.find({isListed:true});
     const brands = await Brand.find({ isBlocked: false });
 
     res.render("user/shop", {

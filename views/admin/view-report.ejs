@@ -1,0 +1,42 @@
+<select id="salesFilter">
+    <option value="daily">Daily</option>
+    <option value="weekly">Weekly</option>
+    <option value="monthly">Monthly</option>
+    <option value="yearly">Yearly</option>
+    <option value="custom">Custom Date</option>
+</select>
+<input type="date" id="startDate">
+<input type="date" id="endDate">
+<button onclick="fetchSalesReport()">Generate Report</button>
+
+<div id="salesData"></div>
+<button onclick="downloadPDF()">Download PDF</button>
+<button onclick="downloadExcel()">Download Excel</button>
+
+
+<script>
+    async function fetchSalesReport() {
+    let filter = document.getElementById("salesFilter").value;
+    let startDate = document.getElementById("startDate").value;
+    let endDate = document.getElementById("endDate").value;
+
+    let url = `/admin/sales-report?filter=${filter}`;
+    if (filter === "custom") {
+        url += `&startDate=${startDate}&endDate=${endDate}`;
+    }
+
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data.success) {
+        document.getElementById("salesData").innerHTML = `
+            <p>Total Sales: ${data.totalSales}</p>
+            <p>Total Revenue: ${data.totalRevenue}</p>
+            <p>Total Discount: ${data.totalDiscount}</p>
+        `;
+    } else {
+        alert("Failed to fetch sales report.");
+    }
+}
+
+</script>

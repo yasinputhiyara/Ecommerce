@@ -10,6 +10,7 @@ const categoryController = require ('../controller/admin/categoryController')
 const brandcontroller = require('../controller/admin/brandController')
 const orderController = require('../controller/admin/orderController')
 const couponController = require('../controller/admin/couponController');
+const salesReport = require('../controller/admin/salesReport')
 const { MAX } = require('uuid');
 
 var router = express.Router();
@@ -64,12 +65,16 @@ router.get('/view-orders',orderController.viewOrders)
 
 router.get('/order-details/:id',orderController.orderDetails)
 router.post('/update-order-status',orderController.updateOrderStatus)
+router.post('/handle-return/:productId', orderController.handleReturnRequest)
+                                                                                                                                                           
 
 //---------- COUPON MANAGEMENT ----------//
 router.get('/view-coupons',couponController.loadCoupons)
 router.post('/add-coupon',couponController.addCoupon)   
 router.delete('/delete-coupon/:couponId',couponController.deleteCoupon)
 
+
+router.get('/sales-report', salesReport.getSalesReport)
 
 
 router.get('/logout', (req, res) => {

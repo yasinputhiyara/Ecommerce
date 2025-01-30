@@ -1,6 +1,7 @@
 const { Brand, Category, Product } = require("../../model/Product");
 const Wishlist = require("../../model/Wishlist");
 
+
 // const loadProductDetail = async (req, res) => {
 //     try {
 //         const productId = req.params.id;
@@ -66,6 +67,10 @@ const loadProductDetail = async (req, res) => {
     const isInWishlist = wishlist?.products.some(
       (product) => product.toString() === productId
     );
+
+    if(product.isBlocked){
+      return res.status(404).send("Product not found");  
+    }
 
     // Dummy discount/coupon data
     const dummyDiscounts = [

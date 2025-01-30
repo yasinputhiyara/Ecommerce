@@ -5,7 +5,7 @@
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
 
 
-    <style>
+    <!-- <style>
         body {
             background-color: #f4f6f9;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -127,17 +127,92 @@
             line-height: 1.5;
             color: #333;
         }
+    </style> -->
+
+
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        .order-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-top: 150px;
+        }
+
+        .info-card {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .status-badge {
+            font-size: 0.9rem;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+
+        .product-image {
+            max-width: 70px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .order-summary-card {
+            border: none;
+            background-color: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .total-breakdown {
+            background: linear-gradient(135deg, #ffffff, #f4f6f9);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .product-status {
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .reason-box {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        .action-buttons .btn {
+            margin: 0 5px;
+            font-size: 0.85rem;
+            padding: 5px 15px;
+        }
     </style>
-
-
     <div class="container-scroller">
         <%- include("../partials/adminSidebar") %>
-
             <div class="container-fluid page-body-wrapper">
                 <%- include("../partials/adminNav") %>
 
                     <div class="container">
                         <div class="order-container">
+                            <!-- Order Header -->
                             <div class="row mb-4 align-items-center">
                                 <div class="col-md-6">
                                     <h2 class="mb-0">Order Details <span class="badge bg-secondary ms-2">#<%=
@@ -150,6 +225,7 @@
                                 </div>
                             </div>
 
+                            <!-- Info Cards -->
                             <div class="row g-3 mb-4">
                                 <div class="col-md-3">
                                     <div class="info-card text-center">
@@ -179,158 +255,189 @@
                                     <div class="info-card text-center">
                                         <h6 class="text-muted mb-2">Contact No</h6>
                                         <p class="mb-0">
-                                            <%= order.userId?.contactNumber || 'N/A' %>
+                                            <%= order.userId?.phone || 'N/A' %>
                                         </p>
                                     </div>
                                 </div>
                             </div>
 
+                            <!-- Address and Order Status -->
                             <div class="row g-4 mb-4">
+                                <!-- Address Section -->
                                 <div class="col-md-6">
                                     <div class="card h-100 border-0 order-summary-card">
-
-
                                         <div class="card-body ps-0 d-flex justify-content-center">
                                             <% if (order.address) { %>
-                                                <div class="total-breakdown w-100 max-w-400">
-                                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                                        <h5 class="m-0">Delivery Address</h5>
-                                                        <!-- <button class="btn btn-primary btn-sm">Edit</button> -->
-                                                    </div>
+                                                <div class="total-breakdown w-100">
+                                                    <h5 class="mb-3">Delivery Address</h5>
                                                     <div class="d-flex flex-column">
                                                         <p class="mb-2"><strong>Name:</strong>
-                                                            <%= address.name %>
+                                                            <%= order.address.name %>
                                                         </p>
                                                         <p class="mb-2"><strong>Address:</strong>
-                                                            <%= address.addressType %>
+                                                            <%= order.address.addressType %>
                                                         </p>
                                                         <p class="mb-2"><strong>City:</strong>
-                                                            <%= address.city %>
+                                                            <%= order.address.city %>
                                                         </p>
                                                         <p class="mb-2"><strong>Landmark:</strong>
-                                                            <%= address.landMark %>
+                                                            <%= order.address.landMark %>
                                                         </p>
                                                         <p class="mb-2"><strong>State:</strong>
-                                                            <%= address.state %>
+                                                            <%= order.address.state %>
                                                         </p>
                                                         <p class="mb-2"><strong>Pincode:</strong>
-                                                            <%= address.pincode %>
+                                                            <%= order.address.pincode %>
                                                         </p>
                                                         <div class="d-flex justify-content-between">
                                                             <p class="mb-0"><strong>Phone:</strong>
-                                                                <%= address.phone %>
+                                                                <%= order.address.phone %>
                                                             </p>
                                                             <p class="mb-0"><strong>Alt. Phone:</strong>
-                                                                <%= address.altPhone %>
+                                                                <%= order.address.altPhone %>
                                                             </p>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <% } else { %>
-                                                    <p class="text-danger w-100 text-center">Address not provided for
-                                                        this order.</p>
+                                                    <p class="text-danger">Address not provided for this order.</p>
                                                     <% } %>
                                         </div>
-
-
                                     </div>
                                 </div>
 
+                                <!-- Order Status Section -->
                                 <div class="col-md-6">
                                     <div class="card">
                                         <div class="card-body">
                                             <h5 class="mb-4">Order Details</h5>
-                                        
-                                            <!-- Order Status -->
-                                            <label for="orderStatus" class="status-label">Order Status:</label>
-                                            <select id="orderStatus" class="form-select">
-                                                <option value="Pending" <%= order.orderStatus === "Pending" ? "selected" : "" %>>Pending</option>
-                                                <option value="Processing" <%= order.orderStatus === "Processing" ? "selected" : "" %>>Processing</option>
-                                                <option value="Shipped" <%= order.orderStatus === "Shipped" ? "selected" : "" %>>Shipped</option>
-                                                <option value="Delivered" <%= order.orderStatus === "Delivered" ? "selected" : "" %>>Delivered</option>
+                                            <label for="orderStatus" class="fw-bold mb-2">Order Status:</label>
+                                            <select id="orderStatus" class="form-select mb-3">
+                                                <option value="Pending" <%=order.orderStatus==="Pending" ? "selected"
+                                                    : "" %>>Pending</option>
+                                                <option value="Processing" <%=order.orderStatus==="Processing"
+                                                    ? "selected" : "" %>>Processing</option>
+                                                <option value="Shipped" <%=order.orderStatus==="Shipped" ? "selected"
+                                                    : "" %>>Shipped</option>
+                                                <option value="Delivered" <%=order.orderStatus==="Delivered"
+                                                    ? "selected" : "" %>>Delivered</option>
+                                                <option value="Cancelled" <%=order.orderStatus==="Cancelled"
+                                                    ? "selected" : "" %>>Cancelled</option>
                                             </select>
-                                        
-                                            <!-- Display Current Order Status -->
-                                            <p><strong>Current Status:</strong> <span id="orderStatusDisplay"><%= order.orderStatus %></span></p>
-
-                                            <!-- Payment Status -->
-
+                                            <p><strong>Current Status:</strong> <span id="orderStatusDisplay">
+                                                    <%= order.orderStatus %>
+                                                </span></p>
                                             <p><strong>Payment Method:</strong>
                                                 <%= order.paymentMethod %>
                                             </p>
-
-                                            <!-- Payment Status -->
                                             <p><strong>Payment Status:</strong>
                                                 <%= order.paymentStatus %>
                                             </p>
-                                        
-                                            <!-- Save Button -->
-                                            <button class="btn btn-primary mt-3" onclick="updateOrderStatus()">Save Changes</button>
+                                            <button class="btn btn-primary mt-3" id="saveChangesBtn"
+                                                onclick="updateOrderStatus()">Save Changes</button>
                                         </div>
                                     </div>
                                 </div>
 
-
                             </div>
-                        </div>
 
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="card border-0 order-summary-card">
-                                    <div class="card-header bg-transparent border-0 ps-0">
-                                        <h5 class="card-title mb-0">Order Summary</h5>
-                                    </div>
-                                    <div class="card-body ps-0">
-                                        <div class="table-responsive">
-                                            <table class="table">
-                                                <thead>
+                            <!-- Order Summary with Product Status -->
+                            <div class="card border-0 order-summary-card">
+                                <div class="card-header bg-transparent border-0">
+                                    <h5 class="card-title">Order Summary</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Product</th>
+                                                    <th>Size</th>
+                                                    <th>Quantity</th>
+                                                    <th>Price</th>
+                                                    <th>Status</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <% order.orderedItems.forEach((item, index)=> { %>
                                                     <tr>
-                                                        <th>Product</th>
-                                                        <th>Size</th>
-                                                        <th>Quantity</th>
-                                                        <th class="text-end">Price</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <% order.orderedItems.forEach(item=> { %>
-                                                        <tr>
-                                                            <td>
-                                                                <div class="d-flex align-items-center">
-                                                                    <img src="/product-images/<%= item.product?.productImages?.[0] || '/images/default-product.jpg' %>"
-                                                                        alt="<%= item.product?.productName || 'N/A' %>"
-                                                                        class="product-image me-3">
-                                                                    <span>
-                                                                        <%= item.product?.productName || 'N/A' %>
-                                                                    </span>
+                                                        <td>
+                                                            <div class="d-flex align-items-center">
+                                                                <img src="/product-images/<%= item.product?.productImages?.[0] || '/images/default-product.jpg' %>"
+                                                                    alt="<%= item.product?.productName || 'N/A' %>"
+                                                                    class="product-image me-3">
+                                                                <span>
+                                                                    <%= item.product?.productName || 'N/A' %>
+                                                                </span>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <%= item.size || 'N/A' %>
+                                                        </td>
+                                                        <td>
+                                                            <%= item.quantity %>
+                                                        </td>
+                                                        <td>$<%= item.price.toFixed(2) %>
+                                                        </td>
+                                                        <td>
+                                                            <span class="product-status bg-light"
+                                                                id="status-<%= index %>">
+                                                                <%= item.orderStatus || 'Active' %>
+                                                            </span>
+                                                            <% if (item.cancellationReason || item.returnReason) { %>
+                                                                <div class="reason-box">
+                                                                    <small class="text-muted">
+                                                                        Reason: <%= item.cancellationReason ||
+                                                                            item.returnReason %>
+                                                                    </small>
                                                                 </div>
-                                                            </td>
-                                                            <td>
-                                                                <%= item.size || 'N/A' %>
-                                                            </td>
-                                                            <td>
-                                                                <%= item.quantity %>
-                                                            </td>
-                                                            <td class="text-end">$<%= item.price.toFixed(2) %>
-                                                            </td>
-                                                        </tr>
-                                                        <% }); %>
-                                                </tbody>
-                                            </table>
+                                                                <% } %>
+                                                        </td>
+                                                        <td class="action-buttons">
+                                                            <% if (item.orderStatus==='Cancelled' ) { %>
+                                                                <!-- <button class="btn btn-sm btn-success"
+                                                                    onclick="handleCancellation('<%= item._id %>', true)">
+                                                                    Accept Cancel
+                                                                </button>
+                                                                <button class="btn btn-sm btn-danger"
+                                                                    onclick="handleCancellation('<%= item._id %>', false)">
+                                                                    Reject Cancel
+                                                                </button> -->
+                                                                <a href="" class="badge bg-warning"> product Cancelled
+                                                                </a>
+                                                                <% } %>
+                                                                    <% if (item.orderStatus==='Return Request' ) { %>
+                                                                        <button class="btn btn-sm btn-success"
+                                                                            onclick="handleReturn('<%= item._id %>', true)">
+                                                                            Accept Return
+                                                                        </button>
+                                                                        <button class="btn btn-sm btn-danger"
+                                                                            onclick="handleReturn('<%= item._id %>', false)">
+                                                                            Reject Return
+                                                                        </button>
+                                                                        <% } %>
+                                                        </td>
+                                                    </tr>
+                                                    <% }); %>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <!-- Total Breakdown -->
+                                    <div class="total-breakdown mt-4">
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span>Total Price</span>
+                                            <span>$<%= order.subtotal.toFixed(2) %></span>
                                         </div>
-                                        <div class="total-breakdown mt-3">
-                                            <div class="d-flex justify-content-between mb-2">
-                                                <span>Total Price</span>
-                                                <span>$<%= order.totalPrice.toFixed(2) %></span>
-                                            </div>
-                                            <div class="d-flex justify-content-between mb-2">
-                                                <span>Discount</span>
-                                                <span>$<%= order.discount.toFixed(2) %></span>
-                                            </div>
-                                            <hr>
-                                            <div class="d-flex justify-content-between fw-bold">
-                                                <span>Total Payable</span>
-                                                <span>$<%= (order.totalPrice - order.discount).toFixed(2) %></span>
-                                            </div>
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span>Discount</span>
+                                            <span>$<%= order.discount.toFixed(2) %></span>
+                                        </div>
+                                        <hr>
+                                        <div class="d-flex justify-content-between fw-bold">
+                                            <span>Total Payable</span>
+                                            <span>$<%= (order.totalPrice).toFixed(2) %></span>
                                         </div>
                                     </div>
                                 </div>
@@ -338,15 +445,36 @@
                         </div>
                     </div>
             </div>
-
-
-
-    </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 
     <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const orderStatusSelect = document.getElementById("orderStatus");
+            const saveChangesBtn = document.getElementById("saveChangesBtn");
+            const currentStatus = "<%= order.orderStatus %>";
+
+            function updateOrderOptions() {
+                if (currentStatus === "Shipped") {
+                    orderStatusSelect.querySelector("option[value='Pending']").disabled = true;
+                    orderStatusSelect.querySelector("option[value='Processing']").disabled = true;
+                }
+                if (currentStatus === "Delivered") {
+                    orderStatusSelect.querySelector("option[value='Pending']").disabled = true;
+                    orderStatusSelect.querySelector("option[value='Processing']").disabled = true;
+                    orderStatusSelect.querySelector("option[value='Shipped']").disabled = true;
+                }
+                if (currentStatus === "Cancelled" || currentStatus === "Delivered" || currentStatus === "Return Request" ) {
+                    orderStatusSelect.disabled = true;
+                    saveChangesBtn.disabled = true;
+                }
+            }
+
+            updateOrderOptions();
+        });
+
         async function updateOrderStatus() {
             const orderStatus = document.getElementById('orderStatus').value;
             const orderStatusDisplay = document.getElementById('orderStatusDisplay'); // Element to update the order status display
@@ -375,6 +503,7 @@
                         title: 'Success',
                         text: 'Order status updated successfully.'
                     });
+                    location.reload()
                 } else {
                     Swal.fire({
                         icon: 'error',
@@ -391,6 +520,44 @@
                 });
             }
         }
+
+        async function handleReturn(productId, isAccepted) {
+            Swal.fire({
+                title: isAccepted ? "Approve Return?" : "Reject Return?",
+                text: `Are you sure you want to ${isAccepted ? "approve" : "reject"} the return request?`,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: isAccepted ? "#28a745" : "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: isAccepted ? "Yes, Approve" : "Yes, Reject",
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        const response = await fetch(`/admin/handle-return/${productId}`, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({ isAccepted }),
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            Swal.fire("Success!", data.message, "success").then(() => {
+                                window.location.reload(); // Refresh page after action
+                            });
+                        } else {
+                            Swal.fire("Error!", data.message, "error");
+                        }
+                    } catch (error) {
+                        console.error("Error processing return:", error);
+                        Swal.fire("Error!", "Something went wrong.", "error");
+                    }
+                }
+            });
+        }
+
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 

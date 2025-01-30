@@ -7,7 +7,8 @@ const loadWishlist = async (req, res) => {
     const user = req.session.user;
 
     if (!user) {
-      return res.redirect("/login");
+      // return res.redirect("/login");
+      return res.status(401).json({ message: "User not logged in." });
     }
 
     // Fetch the user's wishlist

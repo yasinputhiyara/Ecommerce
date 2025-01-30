@@ -28,11 +28,8 @@ const cartSchema = new Schema({
         status:{
             type:String,
             default:'placed'
-        },
-        cancellationsReason:{
-            type:String,
-            default:'none'
         }
+        
     }],
     
 

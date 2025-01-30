@@ -64,6 +64,11 @@
       color: #2e7d32;
     }
 
+    .status.paid {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
     .status.pending {
       background: #fff3e0;
       color: #ef6c00;
@@ -202,10 +207,12 @@
             <table>
               <thead>
                 <tr>
-                  <th>Order ID</th>
+                  <th>Date</th>
                   <th>Products</th>
                   <th>Total</th>
-                  <th>Status</th>
+                  <th>Payment Status</th>
+                  <th>Order Status</th>
+                  <th>Payment Method</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -215,7 +222,7 @@
                     <tr>
                       <!-- Order ID -->
                       <td>
-                        <%= order._id %>
+                        <%= new Date(order.createdOn).toLocaleDateString() %>
                       </td>
 
                       <!-- Products -->
@@ -224,7 +231,10 @@
                           <% order.orderedItems.forEach((item)=> { %>
                             <% if (item.orderStatus !=='Cancelled' ) { %>
                               <div>
-                                <%= item.product.productName %> x <%= item.quantity %>
+                                <!-- <%= item.product.productName %> x <%= item.quantity %> -->
+                                <img src="/product-images/<%= item.product.productImages[0]  %>" height="50px"
+                                  width="50px" alt="">
+
                               </div>
                               <% } %>
                                 <% }); %>
@@ -237,26 +247,48 @@
                       <td>₹<%= order.totalPrice.toFixed() %>
                       </td>
 
-                      <!-- Status -->
+                      <!--Paymnet Status -->
+
+                      <td>
+                        <span class="status <%= order.paymentStatus.toLowerCase() %>">
+                          <%= order.paymentStatus %>
+                        </span>
+                      </td>
+
+                      <!--Order Status -->
+
                       <td>
                         <span class="status <%= order.orderStatus.toLowerCase() %>">
                           <%= order.orderStatus %>
                         </span>
                       </td>
 
+                      <!--Payment Method -->
+                      <td>
+                        <%= order.paymentMethod %>
+                      </td>
+
                       <!-- Actions -->
+
                       <td>
                         <a href="/order-details/<%= order._id  %>">
-                          <button class="view-btn">
-                            View Details
-                          </button>
+                          <button class="view-btn">View Details</button>
                         </a>
-                        <% if (order.orderStatus.toLowerCase()==='pending' ) { %>
-                          <button class="btn cancel-btn" onclick="confirmCancel('<%= order._id %>')">
+
+                        <% if (order.orderStatus.toLowerCase()==='pending' || order.orderStatus.toLowerCase()==='processing' ) { %>
+                          <button class="btn cancel-btn" onclick="confirmAction('<%= order._id %>', 'cancel')">
                             Cancel Order
                           </button>
-                          <% } %>
+                          <% } else if (order.orderStatus.toLowerCase()==='shipped' ) { %>
+                            <button class="btn cancel-btn" disabled>Cancel Order</button>
+                            <% }  %>
+                                <% if (order.paymentStatus.toLowerCase()==='pending' && order.paymentMethod.toLowerCase()==='razorpay' ) { %>
+                                  <button class="btn pay-now-btn bg-info" onclick="payNow('<%= order._id %>')">
+                                    Pay Now
+                                  </button>
+                                  <% } %>
                       </td>
+
                     </tr>
                     <% }); %>
                       <% } else { %>
@@ -267,130 +299,72 @@
               </tbody>
             </table>
           </div>
-
-          <!-- Modal -->
-          <div id="orderModal" class="modal">
-            <div class="modal-content">
-              <button class="close-btn" onclick="closeModal()">&times;</button>
-              <h2>Order Details</h2>
-              <div class="product-details">
-                <div class="detail-row">
-                  <div class="detail-label">Order ID:</div>
-                  <div class="detail-value" id="modalOrderId"></div>
-                </div>
-                <div class="detail-row">
-                  <div class="detail-label">Customer Name:</div>
-                  <div class="detail-value" id="modalCustomer"></div>
-                </div>
-                <div class="detail-row">
-                  <div class="detail-label">Order Date:</div>
-                  <div class="detail-value" id="modalDate"></div>
-                </div>
-                <div class="detail-row">
-                  <div class="detail-label">Status:</div>
-                  <div class="detail-value" id="modalStatus"></div>
-                </div>
-                <div class="detail-row">
-                  <div class="detail-label">Products:</div>
-                  <div class="detail-value" id="modalProducts"></div>
-                </div>
-                <div class="detail-row">
-                  <div class="detail-label">Shipping Address:</div>
-                  <div class="detail-value" id="modalAddress"></div>
-                </div>
-                <div class="detail-row">
-                  <div class="detail-label">Total Amount:</div>
-                  <div class="detail-value" id="modalTotal"></div>
-                </div>
-              </div>
-            </div>
-          </div>
+          
         </div>
       </div>
     </div>
   </div>
 
+
   <script>
+    function confirmAction(orderId, actionType) {
+      const actionText = actionType === "cancel" ? "Cancel Order" : "Return Order";
+      const inputPlaceholder = actionType === "cancel" ? "Enter cancellation reason" : "Enter return reason";
 
-
-    function openModal(orderId) {
-      const modal = document.getElementById("orderModal");
-      const order = orderData[orderId];
-
-      if (!order) {
-        console.error(`Order data for ${orderId} not found`);
-        Swal.fire("Error", "Order details not found.", "error");
-        return;
-      }
-
-      document.getElementById("modalOrderId").textContent = order.orderId || "N/A";
-      document.getElementById("modalCustomer").textContent =
-        order.customer || "N/A";
-      document.getElementById("modalDate").textContent = order.date || "N/A";
-      document.getElementById("modalStatus").textContent = order.orderStatus || "N/A";
-      document.getElementById("modalProducts").textContent =
-        order.products || "N/A";
-      document.getElementById("modalAddress").textContent =
-        order.address || "N/A";
-      document.getElementById("modalTotal").textContent = order.total || "N/A";
-
-      modal.style.display = "flex";
-    }
-
-    function closeModal() {
-      document.getElementById("orderModal").style.display = "none";
-    }
-
-    function confirmCancel(orderId) {
       Swal.fire({
-        title: "Are you sure?",
-        text: `Do you want to cancel order ${orderId}?`,
-        icon: "warning",
+        title: 'Cancel Entire Order?',
+        text: `Please provide a reason for canceling order ${orderId}:`,
+        input: 'textarea',
+        inputPlaceholder: 'Enter your reason here...',
+        inputAttributes: {
+          'aria-label': 'Reason for canceling order',
+        },
         showCancelButton: true,
-        confirmButtonColor: "#d33",
-        cancelButtonColor: "#3085d6",
-        confirmButtonText: "Yes, cancel it!",
-        cancelButtonText: "No, keep it",
+        confirmButtonText: 'Submit',
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        preConfirm: (reason) => {
+          if (!reason) {
+            Swal.showValidationMessage('Reason is required');
+          }
+          return reason;
+        },
       }).then((result) => {
         if (result.isConfirmed) {
-          cancelOrder(orderId);
+          // Send request to server
+          fetch(`/orders/${orderId}/${actionType}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ reason: result.value }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.success) {
+                Swal.fire("Success!", `${actionText} successful.`, "success").then(() => {
+                  location.reload(); // Refresh page
+                });
+              } else {
+                Swal.fire("Error!", data.message, "error");
+              }
+            });
         }
       });
     }
 
-    function cancelOrder(orderId) {
-
-      fetch(`/orders/${orderId}/cancel`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
+    function payNow(orderId) {
+      Swal.fire({
+        title: "Proceed to Payment",
+        text: "You will be redirected to complete the payment.",
+        icon: "info",
+        showCancelButton: true,
+        confirmButtonText: "Pay Now",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = `/pay-now/${orderId}`;
         }
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            Swal.fire('Cancelled!', 'The order has been cancelled.', 'success')
-              .then(() => {
-                window.location.reload();
-              });
-          } else {
-            Swal.fire('Error!', 'Failed to cancel the order.', 'error');
-          }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          Swal.fire('Error!', 'Something went wrong.', 'error');
-        });
-
-      // Swal.fire("Cancelled!", `Order ${orderId} has been cancelled.`, "success");
+      });
     }
 
-    window.onclick = function (event) {
-      const modal = document.getElementById("orderModal");
-      if (event.target == modal) {
-        closeModal();
-      }
-    };
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
