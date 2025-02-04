@@ -191,24 +191,116 @@ const loadDashboard = async (req, res) => {
       },
     ]);
 
-    const visitorData = await Order.aggregate([
-      {
-        $group: {
-          _id: { $dateToString: { format: "%Y-%m", date: "$createdAt" } },
-          visitorCount: { $sum: 1 },
-        },
-      },
-      { $sort: { _id: 1 } },
-      { $limit: 6 },
-    ]);
 
     const orderStatusLabels = orderStatusBreakdown.map((status) => status._id);
     const orderStatusCounts = orderStatusBreakdown.map(
       (status) => status.count
     );
 
-    console.log("Sttus " , orderStatusLabels , "count " , orderStatusCounts);
+    // console.log("Sttus " , orderStatusLabels , "count " , orderStatusCounts);
     // Render the dashboard
+
+    const getRevenueAnalytics = async () => {
+      const currentDate = new Date();
+      const currentYear = currentDate.getFullYear();
+    
+      // Daily Revenue (Last 7 days)
+      const dailyRevenue = await Order.aggregate([
+        {
+          $match: {
+            paymentStatus: "Paid",
+            orderStatus: { $nin: ["Cancelled", "Returned"] },
+            createdAt: { 
+              $gte: new Date(currentDate.getTime() - 7 * 24 * 60 * 60 * 1000) 
+            }
+          }
+        },
+        {
+          $group: {
+            _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+            total: { $sum: "$totalPrice" }
+          }
+        },
+        { $sort: { "_id": 1 } }
+      ]);
+    
+      // Weekly Revenue (Last 4 weeks)
+      const weeklyRevenue = await Order.aggregate([
+        {
+          $match: {
+            paymentStatus: "Paid",
+            orderStatus: { $nin: ["Cancelled", "Returned"] },
+            createdAt: { 
+              $gte: new Date(currentDate.getTime() - 28 * 24 * 60 * 60 * 1000) 
+            }
+          }
+        },
+        {
+          $group: {
+            _id: { $week: "$createdAt" },
+            total: { $sum: "$totalPrice" }
+          }
+        },
+        { $sort: { "_id": 1 } }
+      ]);
+    
+      // Monthly Revenue (Last 12 months)
+      const monthlyRevenue = await Order.aggregate([
+        {
+          $match: {
+            paymentStatus: "Paid",
+            orderStatus: { $nin: ["Cancelled", "Returned"] },
+            createdAt: { 
+              $gte: new Date(currentDate.getTime() - 365 * 24 * 60 * 60 * 1000) 
+            }
+          }
+        },
+        {
+          $group: {
+            _id: { 
+              year: { $year: "$createdAt" },
+              month: { $month: "$createdAt" }
+            },
+            total: { $sum: "$totalPrice" }
+          }
+        },
+        { $sort: { "_id.year": 1, "_id.month": 1 } }
+      ]);
+    
+      // Yearly Revenue (Last 4 years)
+      const yearlyRevenue = await Order.aggregate([
+        {
+          $match: {
+            paymentStatus: "Paid",
+            orderStatus: { $nin: ["Cancelled", "Returned"] },
+            createdAt: { 
+              $gte: new Date(currentYear - 3, 0, 1) 
+            }
+          }
+        },
+        {
+          $group: {
+            _id: { $year: "$createdAt" },
+            total: { $sum: "$totalPrice" }
+          }
+        },
+        { $sort: { "_id": 1 } }
+      ]);
+    
+      return {
+        daily: dailyRevenue,
+        weekly: weeklyRevenue,
+        monthly: monthlyRevenue,
+        yearly: yearlyRevenue
+      };
+    };
+    
+    // Add this to your loadDashboard function
+    const revenueAnalytics = await getRevenueAnalytics();
+
+    // console.log('revenue analytics ' , revenueAnalytics)
+
+
     res.render("admin/dashboard", {
       totalOrders,
       totalDeliveries,
@@ -222,7 +314,8 @@ const loadDashboard = async (req, res) => {
       customers,
       products,
       orderStatusLabels,
-      orderStatusCounts
+      orderStatusCounts,
+      revenueAnalytics: JSON.stringify(revenueAnalytics)
 
     });
   } catch (error) {

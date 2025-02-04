@@ -1,123 +1,187 @@
 <%- include("../partials/adminheader") %>
 
-<div class="container-scroller">
-  <%- include("../partials/adminSidebar") %>
+  <style>
+    /* Custom Styles */
+    .avatar-sm {
+      width: 32px;
+      height: 32px;
+    }
 
-  <div class="container-fluid page-body-wrapper">
-    <%- include("../partials/adminNav") %>
+    .search-form {
+      max-width: 300px;
+    }
 
-    <div class="main-panel">
-      <div class="content-wrapper bg-light">
-        <div class="page-header">
+    .table th {
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.5px;
+    }
 
-          <form action="/admin/view-users" method="get" class="mt-2 mt-md-0 d-none d-lg-flex search">
-            <input type="text" name="search" class="form-control" placeholder="Search customers" value="<%= searchQuery %>">
-            <button type="submit" class="btn btn-primary">Search</button>
-          </form>
+    .table td {
+      vertical-align: middle;
+    }
 
-          <h3 class="page-title">Basic Tables</h3>
-          <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="#">Tables</a></li>
-              <li class="breadcrumb-item active" aria-current="page">
-                Basic tables
-              </li>
-            </ol>
-          </nav>
-        </div>
+    .page-link {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      border-radius: 6px !important;
+      margin: 0 2px;
+    }
 
-        <div class="row">
-          <div class="col-lg-12 grid-margin stretch-card">
-            <div class="card">
-              <div class="card-body">
-                <h4 class="card-title">Basic Table</h4>
-                <p class="card-description">Add class <code>.table</code></p>
-                <div class="table-responsive">
-                  <table class="table">
-                    <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>Username</th>
-                        <th>Email</th>
-                        <th>Join Date</th>
-                        <!-- <th>Update</th>                         -->
-                        <th>Blocked</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <% users.forEach(function(user, index) { %>
-                      <tr>
-                        <td><%= index + 1 %></td>
-                        <td><%= user.username %></td>
-                        <td><%= user.email %></td>
-                        
-                        <td> <%= new Date(user.createdOn).toDateString()  %></td>
-                        <!-- <td> <a href="/admin/update-user/<%= user._id %>" class="btn btn-primary">Update</a></td> -->
+    .card {
+      border-radius: 10px;
+    }
 
-                        <% if(user.isBlocked === false) {%>                          
-                          <td><a href="/admin/block-user?id=<%= user._id %>" class="btn btn-danger"> Block</a></td>
-                          <% }else { %>
-                            <td><a href="/admin/unblock-user?id=<%= user._id %>" class="btn btn-warning"> unBlock</a></td>
-                            <% } %>
-                        
-                        
-                        
-                        <!-- <td>
-                          <label class="badge badge-danger">Pending</label>
-                        </td> -->
-                      </tr>
-                      <% }) %>
-                      
-                    </tbody>
-                  </table>
+    .btn-sm {
+      border-radius: 6px;
+    }
+
+    /* Hover effect for table rows */
+    .table-hover tbody tr:hover {
+      background-color: rgba(0, 0, 0, 0.01);
+    }
+  </style>
+
+  <div class="container-scroller">
+    <%- include("../partials/adminSidebar") %>
+
+      <div class="container-fluid page-body-wrapper">
+        <%- include("../partials/adminNav") %>
+
+          <div class="main-panel">
+            <div class="content-wrapper bg-light">
+              <!-- Header Section with Search -->
+              <div
+                class="page-header d-flex flex-column flex-md-row justify-content-between align-items-md-center bg-white rounded shadow-sm p-4 mb-4">
+                <div class="mb-3 mb-md-0">
+                  <h3 class="page-title mb-2">User Management</h3>
+                  <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                      <li class="breadcrumb-item"><a href="#" class="text-decoration-none">Dashboard</a></li>
+                      <li class="breadcrumb-item active" aria-current="page">Users</li>
+                    </ol>
+                  </nav>
+                </div>
+
+                <form action="/admin/view-users" method="get" class="search-form position-relative">
+                  <div class="input-group">
+                    <input type="text" name="search" class="form-control border-end-0" placeholder="Search users..."
+                      value="<%= searchQuery %>">
+                    <button type="submit" class="btn btn-primary">
+                      <i class="fas fa-search"></i>
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              <!-- Main Content Card -->
+              <div class="row">
+                <div class="col-12">
+                  <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                      <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="card-title mb-0">Users List</h4>
+                        <span class="badge bg-primary rounded-pill">Total: <%= users.length %></span>
+                      </div>
+
+                      <div class="table-responsive">
+                        <table class="table table-hover">
+                          <thead class="bg-light">
+                            <tr>
+                              <th class="border-0">#</th>
+                              <th class="border-0">Username</th>
+                              <th class="border-0">Email</th>
+                              <th class="border-0">Join Date</th>
+                              <th class="border-0">Status</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <% users.forEach(function(user, index) { %>
+                              <tr>
+                                <td>
+                                  <%= index + 1 %>
+                                </td>
+                                <td>
+                                  <div class="d-flex align-items-center">
+                                    <div
+                                      class="avatar-sm bg-primary bg-opacity-10 rounded-circle me-2 d-flex align-items-center justify-content-center">
+                                      <span class="text-primary fw-bold">
+                                        <%= user.username.charAt(0).toUpperCase() %>
+                                      </span>
+                                    </div>
+                                    <span class="fw-medium">
+                                      <%= user.username %>
+                                    </span>
+                                  </div>
+                                </td>
+                                <td>
+                                  <%= user.email %>
+                                </td>
+                                <td>
+                                  <span class="text-muted">
+                                    <%= new Date(user.createdOn).toDateString() %>
+                                  </span>
+                                </td>
+                                <td>
+                                  <% if(user.isBlocked===false) { %>
+                                    <a href="/admin/block-user?id=<%= user._id %>"
+                                      class="btn btn-sm btn-outline-danger px-3">
+                                      <i class="fas fa-ban me-1"></i> Block
+                                    </a>
+                                    <% } else { %>
+                                      <a href="/admin/unblock-user?id=<%= user._id %>"
+                                        class="btn btn-sm btn-outline-warning px-3">
+                                        <i class="fas fa-unlock me-1"></i> Unblock
+                                      </a>
+                                      <% } %>
+                                </td>
+                              </tr>
+                              <% }) %>
+                          </tbody>
+                        </table>
+                      </div>
+
+                      <!-- Pagination -->
+                      <div class="d-flex justify-content-between align-items-center mt-4">
+                        <div class="text-muted">
+                          Showing page <%= currentPage %> of <%= totalPages %>
+                        </div>
+                        <nav aria-label="Page navigation">
+                          <ul class="pagination mb-0">
+                            <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                              <a class="page-link" href="?page=<%= currentPage - 1 %>&search=<%= searchQuery %>">
+                                <i class="fas fa-chevron-left"></i>
+                              </a>
+                            </li>
+
+                            <% for (let i=1; i <=totalPages; i++) { %>
+                              <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                <a class="page-link" href="?page=<%= i %>&search=<%= searchQuery %>">
+                                  <%= i %>
+                                </a>
+                              </li>
+                              <% } %>
+
+                                <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                                  <a class="page-link" href="?page=<%= currentPage + 1 %>&search=<%= searchQuery %>">
+                                    <i class="fas fa-chevron-right"></i>
+                                  </a>
+                                </li>
+                          </ul>
+                        </nav>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <!-- Pagination Section -->
-      <div class="pagination mt-4">
-        <nav aria-label="Page navigation">
-          <ul class="pagination justify-content-center">
-            <!-- Previous Page -->
-            <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
-              <a class="page-link" href="?page=<%= currentPage - 1 %>&search=<%= searchQuery %>"
-                aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-              </a>
-            </li>
-
-            <!-- Page Numbers -->
-            <% for (let i=1; i <=totalPages; i++) { %>
-              <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                <a class="page-link" href="?page=<%= i %>&search=<%= searchQuery %>">
-                  <%= i %>
-                </a>
-              </li>
-              <% } %>
-
-                <!-- Next Page -->
-                <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
-                  <a class="page-link" href="?page=<%= currentPage + 1 %>&search=<%= searchQuery %>"
-                    aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                  </a>
-                </li>
-          </ul>
-        </nav>
-      </div>
             </div>
           </div>
-        </div>      
       </div>
-
-
-      
-      
-
-      
-
-      
-    </div>
   </div>
-</div>
 
-
-<%- include("../partials/adminfooter") %>
+  <%- include("../partials/adminfooter") %>

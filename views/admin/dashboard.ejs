@@ -67,17 +67,14 @@
 
                     <div class="main-panel">
                         <div class="content-wrapper bg-light">
+
                             <section class="content-main">
                                 <div class="content-header mb-4">
                                     <div class="row align-items-center">
                                         <div class="col-md-6">
                                             <h2 class="content-title card-title">Dashboard</h2>
                                         </div>
-                                        <div class="col-md-6 text-md-end">
-                                            <button class="btn btn-outline-primary me-2">
-                                                <i class="fas fa-download me-1"></i> Generate Report
-                                            </button>
-                                        </div>
+
                                     </div>
                                 </div>
 
@@ -185,12 +182,40 @@
                                         </div>
                                     </div>
 
+
+
                                     <div class="col-xl-6 col-lg-12 mb-3">
                                         <div class="card h-100">
                                             <div class="card-body">
                                                 <h4 class="card-title text-dark mb-3">Customer Fulfillment</h4>
                                                 <div class="chartjs-wrapper">
                                                     <canvas id="myChart" width="400" height="300"></canvas>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="row">
+                                    <div class="col-xl-12 col-lg-12 mb-3">
+                                        <div class="card h-100">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                                    <h4 class="card-title text-dark">Revenue Analytics</h4>
+                                                    <div class="btn-group" role="group">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            data-filter="yearly">Yearly</button>
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            data-filter="monthly">Monthly</button>
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            data-filter="weekly">Weekly</button>
+                                                        <button type="button" class="btn btn-outline-primary active"
+                                                            data-filter="daily">Daily</button>
+                                                    </div>
+                                                </div>
+                                                <div class="chartjs-wrapper">
+                                                    <canvas id="revenueChart" width="400" height="200"></canvas>
                                                 </div>
                                             </div>
                                         </div>
@@ -422,6 +447,102 @@
                 const percentage = ((amount / 100000) * 100).toFixed(2);
                 earningsPercentage.textContent = `${percentage}%`;
             }
+        });
+    </script>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Parse the revenue analytics data from backend
+            const revenueAnalytics = JSON.parse('<%- revenueAnalytics %>');
+
+            // Process the data for each time period
+            const revenueData = {
+                daily: {
+                    labels: revenueAnalytics.daily.map(item => {
+                        const date = new Date(item._id);
+                        return date.toLocaleDateString('en-US', { weekday: 'short' });
+                    }),
+                    data: revenueAnalytics.daily.map(item => item.total)
+                },
+                weekly: {
+                    labels: revenueAnalytics.weekly.map((item, index) => `Week ${index + 1}`),
+                    data: revenueAnalytics.weekly.map(item => item.total)
+                },
+                monthly: {
+                    labels: revenueAnalytics.monthly.map(item => {
+                        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                        return monthNames[item._id.month - 1];
+                    }),
+                    data: revenueAnalytics.monthly.map(item => item.total)
+                },
+                yearly: {
+                    labels: revenueAnalytics.yearly.map(item => item._id.toString()),
+                    data: revenueAnalytics.yearly.map(item => item.total)
+                }
+            };
+
+            // Initialize the revenue chart
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            let revenueChart = new Chart(revenueCtx, {
+                type: 'line',
+                data: {
+                    labels: revenueData.daily.labels,
+                    datasets: [{
+                        label: 'Revenue (₹)',
+                        data: revenueData.daily.data,
+                        fill: true,
+                        borderColor: 'rgb(75, 192, 192)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Daily Revenue Trends'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function (value) {
+                                    return '₹' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Handle filter button clicks
+            document.querySelectorAll('[data-filter]').forEach(button => {
+                button.addEventListener('click', function () {
+                    // Update active button state
+                    document.querySelectorAll('[data-filter]').forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // Get the selected time period
+                    const period = this.getAttribute('data-filter');
+
+                    // Update chart data
+                    revenueChart.data.labels = revenueData[period].labels;
+                    revenueChart.data.datasets[0].data = revenueData[period].data;
+
+                    // Update chart title
+                    revenueChart.options.plugins.title.text = `${period.charAt(0).toUpperCase() + period.slice(1)} Revenue Trends`;
+
+                    // Refresh the chart
+                    revenueChart.update();
+                });
+            });
         });
     </script>
 

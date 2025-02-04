@@ -1,227 +1,303 @@
+
 <%- include("../partials/adminheader") %>
-  <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/sweetalert2@7.12.15/dist/sweetalert2.min.css'>
-  </link>
+<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/sweetalert2@7.12.15/dist/sweetalert2.min.css'>
 
-  <div class="container-scroller">
-    <!-- Sidebar -->
-    <%- include("../partials/adminSidebar") %>
 
-      <div class="container-fluid page-body-wrapper">
-        <!-- Navbar -->
-        <%- include("../partials/adminNav") %>
+<style>
+  .card {
+    border-radius: 10px;
+  }
+  
+  .btn {
+    border-radius: 6px;
+  }
+  
+  .btn-sm {
+    padding: 0.4rem 0.8rem;
+  }
+  
+  .table th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+  }
+  
+  .page-link {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-radius: 6px !important;
+    margin: 0 2px;
+  }
+  
+  .modal-content {
+    border-radius: 10px;
+    border: none;
+  }
+  
+  .carousel {
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .product-details .badge {
+    padding: 8px 12px;
+  }
+  </style>
 
-          <div class="main-panel">
-            <div class="content-wrapper bg-light">
+<div class="container-scroller">
+  <%- include("../partials/adminSidebar") %>
 
-              <!-- Page Header -->
-              <div class="page-header">
-                <h3 class="page-title">Product Management</h3>
-                <a href="/admin/add-product" class="btn btn-primary">Add Product</a>
-                <nav aria-label="breadcrumb">
-                  <ol class="breadcrumb" style="color: red;">
-                    <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
-                    <li class="breadcrumb-item active" aria-current="page"><a href="#">Products</a></li>
-                  </ol>
-                </nav>
+  <div class="container-fluid page-body-wrapper">
+    <%- include("../partials/adminNav") %>
+
+    <div class="main-panel">
+      <div class="content-wrapper bg-light">
+        <!-- Header Section -->
+        <div class="page-header bg-white rounded shadow-sm p-4 mb-4">
+          <div class="row align-items-center">
+            <div class="col-md-6">
+              <h3 class="page-title mb-2">Product Management</h3>
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                  <li class="breadcrumb-item"><a href="#" class="text-decoration-none">Dashboard</a></li>
+                  <li class="breadcrumb-item active">Products</li>
+                </ol>
+              </nav>
+            </div>
+            <div class="col-md-6 text-md-end">
+              <a href="/admin/add-product" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Add Product
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="row mb-4">
+          <div class="col-md-8 mx-auto">
+            <form action="" method="get">
+              <div class="input-group">
+                <input type="text" class="form-control border-end-0" placeholder="Search products..." name="search" value="<%= searchQuery %>">
+                <button class="btn btn-primary" type="submit">
+                  <i class="fas fa-search"></i>
+                </button>
               </div>
+            </form>
+          </div>
+        </div>
 
-              <!-- Search Bar -->
-              <!-- Search Bar -->
-              <div class="content-header text-center">
-                <form action="" method="get" class="d-inline">
-                  <div class="input-group input-group-sm border border-1 border-grey rounded-pill"
-                    style="width: 500px; margin: auto;">
-                    <input type="text" class="form-control border-0 rounded-pill" placeholder="Search products"
-                      name="search" value="<%= searchQuery %>" /> <!-- Preserve search input -->
-                    <button class="btn border-0" type="submit">Search</button>
-                  </div>
-                </form>
-              </div>
+        <!-- Product Table Card -->
+        <div class="card border-0 shadow-sm">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h4 class="card-title mb-0">Product List</h4>
+              <span class="badge bg-primary rounded-pill">Total: <%= data.length %></span>
+            </div>
 
-
-              <!-- Product Table -->
-              <div class="right mt-5">
-                <h2 class="content-title card-title text-center mb-4">Product List</h2>
-                <table class="table table-striped table-bordered text-center">
-                  <thead class="thead-dark">
+            <div class="table-responsive">
+              <table class="table table-hover align-middle">
+                <thead class="bg-light">
+                  <tr>
+                    <th class="text-center">#</th>
+                    <th>Product Name</th>
+                    <th class="text-center">Product Offer</th>
+                    <th class="text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% for (let i=0; i < data.length; i++) { %>
                     <tr>
-                      <th>#</th>
-                      <th scope="col">Product Name</th>
-                      <th sccope="col">Product Offer</th>
-                      <th scope="col">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <% for (let i=0; i < data.length; i++) { %>
+                      <td class="text-center"><%= i+1 %></td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <img src="/product-images/<%= data[i].productImages[0] %>" 
+                               class="rounded me-3" 
+                               style="width: 48px; height: 48px; object-fit: cover;">
+                          <div>
+                            <h6 class="mb-0"><%= data[i].productName %></h6>
+                            <small class="text-muted"><%= data[i].brand %></small>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="text-center">
+                        <div class="d-flex flex-column align-items-center gap-2">
+                          <% if (data[i].productOffer) { %>
+                            <span class="badge bg-success px-3 py-2"><%= data[i].productOffer %>% OFF</span>
+                          <% } else { %>
+                            <span class="badge bg-danger px-3 py-2">No Offer</span>
+                          <% } %>
 
-                      <tr>
-                        <td>
-                          <%= i+1 %>
-                        </td>
-                        <!-- Product Name -->
-                        <td>
-                          <%= data[i].productName %>
-                        </td>
-
-
-                        <!-- Product Offer -->
-                        <td>
-                          <% if (data[i].productOffer ) { %>
-                            <span class="badge bg-success">
-                              <%= data[i].productOffer %>
-                            </span>
-                            <% } else { %>
-                              <span class="badge bg-danger"> 0% </span>
-                              <% } %>
-
-
-                                <% if(locals.data[i].productOffer===0) {%>
-                                  <button class="btn btn-info" onclick="addOffer('<%= data[i]._id %>')"
-                                    style="width: 100px;">
-                                    <a href="#" class="text-white">Add Offer</a>
-                                  </button>
-                                  <% }else{ %>
-                                    <button class="btn btn-info" onclick="removeOffer('<%= data[i]._id %>') "
-                                      style="width: 100px;">
-                                      <a href="#" class="text-white">Remove</a>
-                                    </button>
-                                    <% } %>
-
-                        </td>
-
-
-
-
-
-
-                        <!-- Actions -->
-                        <td>
-                          <!-- View Details Button -->
-                          <button class="btn btn-info text-white me-2" data-bs-toggle="modal"
-                            data-bs-target="#productModal<%= i %>">
-                            View Details
+                          <% if(data[i].productOffer === 0) { %>
+                            <button class="btn btn-outline-primary btn-sm" onclick="addOffer('<%= data[i]._id %>')">
+                              Add Offer
+                            </button>
+                          <% } else { %>
+                            <button class="btn btn-outline-danger btn-sm" onclick="removeOffer('<%= data[i]._id %>')">
+                              Remove Offer
+                            </button>
+                          <% } %>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="d-flex justify-content-center gap-2">
+                          <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#productModal<%= i %>">
+                            <i class="fas fa-eye me-1"></i> View
                           </button>
 
-                          <!-- Block/Unblock Button -->
                           <% if (!data[i].isBlocked) { %>
-                            <a href="/admin/blockProduct?id=<%= data[i]._id %>" class="btn btn-danger text-white me-2"
-                              style="text-decoration: none;">
-                              Block
+                            <a href="/admin/blockProduct?id=<%= data[i]._id %>" class="btn btn-danger btn-sm">
+                              <i class="fas fa-ban me-1"></i> Block
                             </a>
-                            <% } else { %>
-                              <a href="/admin/unblockProduct?id=<%= data[i]._id %>"
-                                class="btn btn-success text-white me-2" style="text-decoration: none;">
-                                Unblock
-                              </a>
-                              <% } %>
+                          <% } else { %>
+                            <a href="/admin/unblockProduct?id=<%= data[i]._id %>" class="btn btn-success btn-sm">
+                              <i class="fas fa-check me-1"></i> Unblock
+                            </a>
+                          <% } %>
 
-                                <!-- Edit Button -->
-                                <a href="/admin/edit-product/<%= data[i]._id %>" class="btn btn-primary text-white"
-                                  style="text-decoration: none;">
-                                  Edit
-                                </a>
-                        </td>
-                      </tr>
+                          <a href="/admin/edit-product/<%= data[i]._id %>" class="btn btn-primary btn-sm">
+                            <i class="fas fa-edit me-1"></i> Edit
+                          </a>
+                        </div>
+                      </td>
+                    </tr>
 
-                      <!-- Product Details Modal -->
-
-                      <div class="modal fade" id="productModal<%= i %>" tabindex="-1"
-                        aria-labelledby="productModalLabel<%= i %>" aria-hidden="true">
-                        <div class="modal-dialog modal-lg">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <h5 class="modal-title" id="productModalLabel<%= i %>">
-                                <%= data[i].productName %>
-                              </h5>
-                              <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                              <p><strong>Brand:</strong>
-                                <%= data[i].brand %>
-                              </p>
-                              <p><strong>Category:</strong>
-                                <%= data[i].category.name %>
-                              </p>
-                              <p><strong>Sale Price:</strong>
-                                <%= data[i].salePrice %>
-                              </p>
-                              <p><strong>Regular Price:</strong>
-                                <%= data[i].regularPrice %>
-                              </p>
-                              <p><strong>Varients:</strong>
-                                <br>
-                                <% for(let j=0; j < data[i].variants.length; j++) { %>
-                                  Size <%= data[i].variants[j].size %>: Quantity <%= data[i].variants[j].quantity %>
-                                      <br>
-                                      <% } %>
-                              </p>
-                              <p><strong>Description:</strong>
-                                <%= data[i].description %>
-                              </p>
-                              <p><strong>Status:</strong>
-                                <%= data[i].isBlocked ? "Blocked" : "Active" %>
-                              </p>
-                              <div>
-                                <strong>Product Images:</strong>
-                                <div class="d-flex flex-wrap">
-                                  <% for (let image of data[i].productImages) { %>
-                                    <img src="/product-images/<%= image %>" alt="Product Image"
-                                      class="img-thumbnail m-2" style="width: 150px; height: 150px;">
-                                    <% } %>
+                    <!-- Improved Modal -->
+                    <div class="modal fade" id="productModal<%= i %>" tabindex="-1">
+                      <div class="modal-dialog modal-lg modal-dialog-centered">
+                        <div class="modal-content">
+                          <div class="modal-header bg-light">
+                            <h5 class="modal-title">
+                              <i class="fas fa-box me-2"></i><%= data[i].productName %>
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                          </div>
+                          <div class="modal-body">
+                            <div class="row">
+                              <div class="col-md-6">
+                                <div class="product-images mb-3">
+                                  <div id="productCarousel<%= i %>" class="carousel slide" data-bs-ride="carousel">
+                                    <div class="carousel-inner">
+                                      <% data[i].productImages.forEach((image, index) => { %>
+                                        <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                                          <img src="/product-images/<%= image %>" class="d-block w-100 rounded" 
+                                               style="height: 300px; object-fit: cover;">
+                                        </div>
+                                      <% }); %>
+                                    </div>
+                                    <button class="carousel-control-prev" type="button" 
+                                            data-bs-target="#productCarousel<%= i %>" data-bs-slide="prev">
+                                      <span class="carousel-control-prev-icon"></span>
+                                    </button>
+                                    <button class="carousel-control-next" type="button" 
+                                            data-bs-target="#productCarousel<%= i %>" data-bs-slide="next">
+                                      <span class="carousel-control-next-icon"></span>
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="col-md-6">
+                                <div class="product-details">
+                                  <div class="mb-3">
+                                    <h6 class="text-muted mb-2">Brand</h6>
+                                    <p class="mb-0"><%= data[i].brand %></p>
+                                  </div>
+                                  <div class="mb-3">
+                                    <h6 class="text-muted mb-2">Category</h6>
+                                    <p class="mb-0"><%= data[i].category.name %></p>
+                                  </div>
+                                  <div class="mb-3">
+                                    <h6 class="text-muted mb-2">Price Details</h6>
+                                    <div class="d-flex gap-3">
+                                      <p class="mb-0">
+                                        <span class="badge bg-success">Sale: ₹<%= data[i].salePrice %></span>
+                                      </p>
+                                      <p class="mb-0">
+                                        <span class="badge bg-secondary">Regular: ₹<%= data[i].regularPrice %></span>
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div class="mb-3">
+                                    <h6 class="text-muted mb-2">Status</h6>
+                                    <span class="badge <%= data[i].isBlocked ? 'bg-danger' : 'bg-success' %>">
+                                      <%= data[i].isBlocked ? "Blocked" : "Active" %>
+                                    </span>
+                                  </div>
                                 </div>
                               </div>
                             </div>
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            
+                            <div class="mt-4">
+                              <h6 class="text-muted mb-3">Available Variants</h6>
+                              <div class="row g-2">
+                                <% data[i].variants.forEach(variant => { %>
+                                  <div class="col-sm-6 col-md-4">
+                                    <div class="card bg-light">
+                                      <div class="card-body p-3">
+                                        <div class="d-flex justify-content-between">
+                                          <span>Size: <%= variant.size %></span>
+                                          <span class="badge bg-info">Qty: <%= variant.quantity %></span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                <% }); %>
+                              </div>
                             </div>
+
+                            <div class="mt-4">
+                              <h6 class="text-muted mb-2">Description</h6>
+                              <p class="mb-0"><%= data[i].description %></p>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                           </div>
                         </div>
                       </div>
+                    </div>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
 
-                      <% } %>
-                  </tbody>
-                </table>
+            <!-- Pagination -->
+            <div class="d-flex justify-content-between align-items-center mt-4">
+              <div class="text-muted">
+                Showing page <%= currentPage %> of <%= totalPages %>
               </div>
+              <nav aria-label="Page navigation">
+                <ul class="pagination mb-0">
+                  <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                    <a class="page-link" href="?page=<%= currentPage - 1 %>&search=<%= searchQuery %>">
+                      <i class="fas fa-chevron-left"></i>
+                    </a>
+                  </li>
 
-              <!-- Pagination Section -->
-              <div class="pagination mt-4">
-                <nav aria-label="Page navigation">
-                  <ul class="pagination justify-content-center">
-                    <!-- Previous Page -->
-                    <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
-                      <a class="page-link" href="?page=<%= currentPage - 1 %>&search=<%= searchQuery %>"
-                        aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                      </a>
+                  <% for (let i=1; i <=totalPages; i++) { %>
+                    <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                      <a class="page-link" href="?page=<%= i %>&search=<%= searchQuery %>"><%= i %></a>
                     </li>
+                  <% } %>
 
-                    <!-- Page Numbers -->
-                    <% for (let i=1; i <=totalPages; i++) { %>
-                      <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                        <a class="page-link" href="?page=<%= i %>&search=<%= searchQuery %>">
-                          <%= i %>
-                        </a>
-                      </li>
-                      <% } %>
-
-                        <!-- Next Page -->
-                        <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
-                          <a class="page-link" href="?page=<%= currentPage + 1 %>&search=<%= searchQuery %>"
-                            aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                          </a>
-                        </li>
-                  </ul>
-                </nav>
-              </div>
-
-
-
+                  <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                    <a class="page-link" href="?page=<%= currentPage + 1 %>&search=<%= searchQuery %>">
+                      <i class="fas fa-chevron-right"></i>
+                    </a>
+                  </li>
+                </ul>
+              </nav>
             </div>
           </div>
+        </div>
       </div>
+    </div>
   </div>
+</div>
 
 
   <script>
@@ -232,16 +308,24 @@
         input: "number",
         inputLabel: "Enter offer percentage",
         inputPlaceholder: "%",
+        inputAttributes: { min: "1", max: "100" }, // Restrict input range
         confirmButtonText: "Apply Offer",
         showCancelButton: true,
       });
-  
+
       if (amount) {
+        const percentage = parseFloat(amount);
+
+        // Validate the percentage (1 - 100)
+        if (isNaN(percentage) || percentage <= 0 || percentage > 100) {
+          return Swal.fire("Invalid Offer", "Please enter a valid percentage (1-100).", "error");
+        }
+
         $.ajax({
           url: "/admin/addProductOffer",
           method: "post",
           data: {
-            percentage: amount,
+            percentage: percentage,
             productId: productId,
           },
           success: (response) => {
@@ -259,7 +343,8 @@
         });
       }
     }
-  
+
+
     // Function to remove a product offer
     function removeOffer(productId) {
       Swal.fire({
@@ -294,7 +379,7 @@
       });
     }
   </script>
-  
+
 
 
 

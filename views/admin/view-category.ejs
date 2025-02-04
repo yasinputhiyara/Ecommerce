@@ -467,24 +467,31 @@
 
 
         async function addOffer(categoryId) {
-
             const { value: amount } = await Swal.fire({
                 title: "Offer in percentage",
                 input: "number",
                 inputLabel: "Percentage",
-                inputPlaceholder: "%"
-            })
+                inputPlaceholder: "%",
+                inputAttributes: { min: "1", max: "100" } // Restrict input between 1 and 100
+            });
 
             if (amount) {
+                const percentage = parseFloat(amount);
+
+                // Validate that the percentage is within the allowed range (1 - 100)
+                if (isNaN(percentage) || percentage <= 0 || percentage > 100) {
+                    return Swal.fire("Invalid Offer", "Please enter a valid percentage (1-100).", "error");
+                }
+
                 try {
                     const response = await fetch('/admin/addCategoryOffer', {
                         method: "POST",
                         headers: { "content-type": "application/json" },
                         body: JSON.stringify({
-                            percentage: amount,
+                            percentage: percentage,
                             categoryId: categoryId,
                         })
-                    })
+                    });
 
                     const data = await response.json();
                     if (response.ok && data.status === true) {
@@ -493,22 +500,17 @@
                             "The Offer has been added",
                             "success"
                         ).then(() => {
-                            location.reload()
-                        })
+                            location.reload();
+                        });
                     } else {
-                        Swal.fire("failed", data.message || "Adding offer failed", "error")
+                        Swal.fire("Failed", data.message || "Adding offer failed", "error");
                     }
                 } catch (error) {
-                    Swal.fire(
-                        "Error",
-                        "An error occured while adding the offfer",
-                        "error"
-                    )
-
+                    Swal.fire("Error", "An error occurred while adding the offer", "error");
                 }
             }
-
         }
+
 
 
         async function removeOffer(categoryId) {
