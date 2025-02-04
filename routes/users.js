@@ -64,6 +64,7 @@ router.get('/auth/google/callback',checkBan,isLoggedIn,passport.authenticate('go
 router.get('/',checkBan,userController.loadHome)
 router.get('/shop',checkBan,userController.loadShop)
 router.get('/product-details/:id',checkBan, productController.loadProductDetail)
+router.get("/search",productController.search)
 
 // router.get('/filter',productController.filterProducts)
 
@@ -99,6 +100,11 @@ router.post('/orders/:orderId/cancel', orderController.cancelOrder);
 // router.post('/orders/:orderId/return',orderController.returnOrder);
 router.post('/orders/:orderId/products/:productIndex/return', orderController.returnSingleProduct);
 
+router.get('/get-order-details/:orderId',cartController.getOrderDetails)
+router.post('/verify-razorpay-payment-order',cartController.razorpayPaymentinOrder)
+
+
+
 
 
 //----------  WISHLIST MANAGEMENT -----------//
@@ -108,7 +114,6 @@ router.post('/remove-from-wishlist',wishlistController.removeFromWishlist)
 router.post('/wishlist/remove',wishlistController.removeFromWishlist)
 
 router.get('/wishlist/check',wishlistController.isProductInWishlist)
-
 
 
 

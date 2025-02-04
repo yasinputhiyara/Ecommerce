@@ -1,7 +1,6 @@
 const { Brand, Category, Product } = require("../../model/Product");
 const Wishlist = require("../../model/Wishlist");
 
-
 // const loadProductDetail = async (req, res) => {
 //     try {
 //         const productId = req.params.id;
@@ -58,7 +57,7 @@ const Wishlist = require("../../model/Wishlist");
 
 const loadProductDetail = async (req, res) => {
   try {
-    const userId = req.session.user?._id; 
+    const userId = req.session.user?._id;
     const productId = req.params.id;
     const product = await Product.findById(productId).populate("category");
 
@@ -68,8 +67,8 @@ const loadProductDetail = async (req, res) => {
       (product) => product.toString() === productId
     );
 
-    if(product.isBlocked){
-      return res.status(404).send("Product not found");  
+    if (product.isBlocked) {
+      return res.status(404).send("Product not found");
     }
 
     // Dummy discount/coupon data
@@ -137,7 +136,7 @@ const loadProductDetail = async (req, res) => {
       product: enrichedProduct,
       user: req.session.user,
       products: similarProducts,
-      isInWishlist
+      isInWishlist,
     });
   } catch (error) {
     console.error(error);
@@ -145,6 +144,69 @@ const loadProductDetail = async (req, res) => {
   }
 };
 
+const search = async (req, res) => {
+  try {
+    const { query, category, brand, minPrice, maxPrice, subCategory, color } =
+      req.query;
+
+    let filter = {};
+
+    // 🔹 Search by Product Name
+    if (query) {
+      filter.productName = { $regex: query, $options: "i" };
+    }
+
+    // 🔹 Search by Category Name
+    if (category) {
+      const categoryData = await Category.findOne({
+        name: { $regex: category, $options: "i" },
+      });
+      if (categoryData) {
+        filter.category = categoryData._id; // Filter by ObjectId of category
+      }
+    }
+
+    // 🔹 Search by Brand Name
+    if (brand) {
+      const brandData = await Brand.findOne({
+        brandName: { $regex: brand, $options: "i" },
+      });
+      if (brandData) {
+        filter.brand = brandData.brandName; // Filter by brand name
+      }
+    }
+
+    // 🔹 Filter by Price Range (Regular or Sale Price)
+    if (minPrice || maxPrice) {
+      filter.$or = [
+        { regularPrice: { $gte: minPrice || 0, $lte: maxPrice || Infinity } },
+        { salePrice: { $gte: minPrice || 0, $lte: maxPrice || Infinity } },
+      ];
+    }
+
+    // 🔹 Filter by Subcategory
+    if (subCategory) {
+      filter.subCategory = { $regex: subCategory, $options: "i" };
+    }
+
+    // 🔹 Filter by Color
+    if (color) {
+      filter.color = { $regex: color, $options: "i" };
+    }
+
+    // 🔹 Query Products with Filters
+    const results = await Product.find(filter)
+      .populate("category") // Populate Category Details
+      .sort({ createdAt: -1 }); // Sort by Newest Products
+
+    res.json(results); // Return JSON response
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   loadProductDetail,
+  search,
 };

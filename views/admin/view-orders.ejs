@@ -91,8 +91,9 @@
                                     <table class="table table-hover">
                                         <thead>
                                             <tr>
+                                                <th>Date</th>
                                                 <th>Order ID</th>
-                                                <th>Item</th>
+                                                
                                                 <th>Customer Name</th>
                                                 <th>Payment Info</th>
                                                 <th>Amount</th>
@@ -103,32 +104,29 @@
                                         </thead>
                                         <tbody>
                                             <% orders.forEach(order=> { %>
-                                                <% order.orderedItems.forEach(item=> { %>
+                                                
                                                     <tr>
+                                                        <td>
+                                                            <%= new Date(order.createdOn).toLocaleString()  %>
+                                                        </td>
                                                         <td>
                                                             <%= order.orderId %>
                                                         </td>
-                                                        <td>
-                                                            <div class="d-flex align-items-center">
-                                                                <img src="/product-images/<%= item.product.productImages[0] || '/api/placeholder/50/50' %>"
-                                                                    alt="<%= item.product.productName %>"
-                                                                    class="table-img">
-
-                                                            </div>
-                                                        </td>
+                                                        
                                                         <td>
                                                             <%= order.userId.username %>
                                                         </td>
                                                         <td>
                                                             <%= order.paymentMethod || 'N/A' %>
                                                         </td>
-                                                        <td>$<%= item.price || '0.00' %>
+                                                        <td>$<%= order.totalPrice || '0.00' %>
                                                         </td>
                                                         <td>
                                                             <span class="status-badge
     <%= 
         order.paymentStatus === 'Paid' ? 'status-completed bg-success text-white' :
         order.paymentStatus === 'Pending' ? 'status-progress bg-warning text-dark' :
+        order.paymentStatus === 'Refunded' ? 'status-progress bg-info text-dark' :
         order.paymentStatus === 'Failed' ? 'status-progress bg-danger text-dark' :
         'status-unknown bg-secondary text-white'
     %>">
@@ -141,6 +139,7 @@
         order.orderStatus === 'Processing' ? 'status-processing bg-info text-white' : 
         order.orderStatus === 'Shipped' ? 'status-shipped bg-primary text-white' : 
         order.orderStatus === 'Delivered' ? 'status-delivered bg-success text-white' : 
+        order.orderStatus === 'Returned' ? 'status-delivered bg-warning text-white' : 
         'status-unknown bg-secondary text-white' 
     %>">
                                                                 <%= order.orderStatus %>
@@ -153,7 +152,7 @@
 
                                                         </td>
                                                     </tr>
-                                                    <% }); %>
+                                                    
                                                         <% }); %>
                                         </tbody>
                                     </table>

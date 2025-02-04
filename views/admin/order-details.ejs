@@ -210,240 +210,247 @@
             <div class="container-fluid page-body-wrapper">
                 <%- include("../partials/adminNav") %>
 
-                    <div class="container">
-                        <div class="order-container">
-                            <!-- Order Header -->
-                            <div class="row mb-4 align-items-center">
-                                <div class="col-md-6">
-                                    <h2 class="mb-0">Order Details <span class="badge bg-secondary ms-2">#<%=
-                                                order.orderId %></span></h2>
-                                </div>
-                                <div class="col-md-6 text-md-end">
-                                    <span class="badge bg-warning status-badge">
-                                        <%= order.orderStatus %>
-                                    </span>
-                                </div>
-                            </div>
-
-                            <!-- Info Cards -->
-                            <div class="row g-3 mb-4">
-                                <div class="col-md-3">
-                                    <div class="info-card text-center">
-                                        <h6 class="text-muted mb-2">Order Created</h6>
-                                        <p class="mb-0">
-                                            <%= new Date(order.createdOn).toLocaleString() %>
-                                        </p>
+                <div class="main-panel">
+                    <div class="content-wrapper bg-light">
+                        <div class="container">
+                            <div class="order-container">
+                                <!-- Order Header -->
+                                <div class="row mb-4 align-items-center">
+                                    <div class="col-md-6">
+                                        <h2 class="mb-0">Order Details <span class="badge bg-secondary ms-2">#<%=
+                                                    order.orderId %></span></h2>
+                                    </div>
+                                    <div class="col-md-6 text-md-end">
+                                        <span class="badge bg-warning status-badge">
+                                            <%= order.orderStatus %>
+                                        </span>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
-                                    <div class="info-card text-center">
-                                        <h6 class="text-muted mb-2">Customer Name</h6>
-                                        <p class="mb-0">
-                                            <%= order.userId?.username || 'N/A' %>
-                                        </p>
+    
+                                <!-- Info Cards -->
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-3">
+                                        <div class="info-card text-center">
+                                            <h6 class="text-muted mb-2">Order Created</h6>
+                                            <p class="mb-0">
+                                                <%= new Date(order.createdOn).toLocaleString() %>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="info-card text-center">
+                                            <h6 class="text-muted mb-2">Customer Name</h6>
+                                            <p class="mb-0">
+                                                <%= order.userId?.username || 'N/A' %>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="info-card text-center">
+                                            <h6 class="text-muted mb-2">Email</h6>
+                                            <p class="mb-0">
+                                                <%= order.userId?.email || 'N/A' %>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="info-card text-center">
+                                            <h6 class="text-muted mb-2">Contact No</h6>
+                                            <p class="mb-0">
+                                                <%= order.userId?.phone || 'N/A' %>
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
-                                    <div class="info-card text-center">
-                                        <h6 class="text-muted mb-2">Email</h6>
-                                        <p class="mb-0">
-                                            <%= order.userId?.email || 'N/A' %>
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="info-card text-center">
-                                        <h6 class="text-muted mb-2">Contact No</h6>
-                                        <p class="mb-0">
-                                            <%= order.userId?.phone || 'N/A' %>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Address and Order Status -->
-                            <div class="row g-4 mb-4">
-                                <!-- Address Section -->
-                                <div class="col-md-6">
-                                    <div class="card h-100 border-0 order-summary-card">
-                                        <div class="card-body ps-0 d-flex justify-content-center">
-                                            <% if (order.address) { %>
-                                                <div class="total-breakdown w-100">
-                                                    <h5 class="mb-3">Delivery Address</h5>
-                                                    <div class="d-flex flex-column">
-                                                        <p class="mb-2"><strong>Name:</strong>
-                                                            <%= order.address.name %>
-                                                        </p>
-                                                        <p class="mb-2"><strong>Address:</strong>
-                                                            <%= order.address.addressType %>
-                                                        </p>
-                                                        <p class="mb-2"><strong>City:</strong>
-                                                            <%= order.address.city %>
-                                                        </p>
-                                                        <p class="mb-2"><strong>Landmark:</strong>
-                                                            <%= order.address.landMark %>
-                                                        </p>
-                                                        <p class="mb-2"><strong>State:</strong>
-                                                            <%= order.address.state %>
-                                                        </p>
-                                                        <p class="mb-2"><strong>Pincode:</strong>
-                                                            <%= order.address.pincode %>
-                                                        </p>
-                                                        <div class="d-flex justify-content-between">
-                                                            <p class="mb-0"><strong>Phone:</strong>
-                                                                <%= order.address.phone %>
+    
+                                <!-- Address and Order Status -->
+                                <div class="row g-4 mb-4">
+                                    <!-- Address Section -->
+                                    <div class="col-md-6">
+                                        <div class="card h-100 border-0 order-summary-card">
+                                            <div class="card-body ps-0 d-flex justify-content-center">
+                                                <% if (order.address) { %>
+                                                    <div class="total-breakdown w-100">
+                                                        <h5 class="mb-3">Delivery Address</h5>
+                                                        <div class="d-flex flex-column">
+                                                            <p class="mb-2"><strong>Name:</strong>
+                                                                <%= order.address.name %>
                                                             </p>
-                                                            <p class="mb-0"><strong>Alt. Phone:</strong>
-                                                                <%= order.address.altPhone %>
+                                                            <p class="mb-2"><strong>Address:</strong>
+                                                                <%= order.address.addressType %>
                                                             </p>
+                                                            <p class="mb-2"><strong>City:</strong>
+                                                                <%= order.address.city %>
+                                                            </p>
+                                                            <p class="mb-2"><strong>Landmark:</strong>
+                                                                <%= order.address.landMark %>
+                                                            </p>
+                                                            <p class="mb-2"><strong>State:</strong>
+                                                                <%= order.address.state %>
+                                                            </p>
+                                                            <p class="mb-2"><strong>Pincode:</strong>
+                                                                <%= order.address.pincode %>
+                                                            </p>
+                                                            <div class="d-flex justify-content-between">
+                                                                <p class="mb-0"><strong>Phone:</strong>
+                                                                    <%= order.address.phone %>
+                                                                </p>
+                                                                <p class="mb-0"><strong>Alt. Phone:</strong>
+                                                                    <%= order.address.altPhone %>
+                                                                </p>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <% } else { %>
-                                                    <p class="text-danger">Address not provided for this order.</p>
-                                                    <% } %>
+                                                    <% } else { %>
+                                                        <p class="text-danger">Address not provided for this order.</p>
+                                                        <% } %>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-
-                                <!-- Order Status Section -->
-                                <div class="col-md-6">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <h5 class="mb-4">Order Details</h5>
-                                            <label for="orderStatus" class="fw-bold mb-2">Order Status:</label>
-                                            <select id="orderStatus" class="form-select mb-3">
-                                                <option value="Pending" <%=order.orderStatus==="Pending" ? "selected"
-                                                    : "" %>>Pending</option>
-                                                <option value="Processing" <%=order.orderStatus==="Processing"
-                                                    ? "selected" : "" %>>Processing</option>
-                                                <option value="Shipped" <%=order.orderStatus==="Shipped" ? "selected"
-                                                    : "" %>>Shipped</option>
-                                                <option value="Delivered" <%=order.orderStatus==="Delivered"
-                                                    ? "selected" : "" %>>Delivered</option>
-                                                <option value="Cancelled" <%=order.orderStatus==="Cancelled"
-                                                    ? "selected" : "" %>>Cancelled</option>
-                                            </select>
-                                            <p><strong>Current Status:</strong> <span id="orderStatusDisplay">
-                                                    <%= order.orderStatus %>
-                                                </span></p>
-                                            <p><strong>Payment Method:</strong>
-                                                <%= order.paymentMethod %>
-                                            </p>
-                                            <p><strong>Payment Status:</strong>
-                                                <%= order.paymentStatus %>
-                                            </p>
-                                            <button class="btn btn-primary mt-3" id="saveChangesBtn"
-                                                onclick="updateOrderStatus()">Save Changes</button>
+    
+                                    <!-- Order Status Section -->
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h5 class="mb-4">Order Details</h5>
+                                                <label for="orderStatus" class="fw-bold mb-2">Order Status:</label>
+                                                <select id="orderStatus" class="form-select mb-3">
+                                                    <option value="Pending" <%=order.orderStatus==="Pending" ? "selected"
+                                                        : "" %>>Pending</option>
+                                                    <option value="Processing" <%=order.orderStatus==="Processing"
+                                                        ? "selected" : "" %>>Processing</option>
+                                                    <option value="Shipped" <%=order.orderStatus==="Shipped" ? "selected"
+                                                        : "" %>>Shipped</option>
+                                                    <option value="Delivered" <%=order.orderStatus==="Delivered"
+                                                        ? "selected" : "" %>>Delivered</option>
+                                                    <option value="Cancelled" <%=order.orderStatus==="Cancelled"
+                                                        ? "selected" : "" %>>Cancelled</option>
+                                                </select>
+                                                <p><strong>Current Status:</strong> <span id="orderStatusDisplay">
+                                                        <%= order.orderStatus %>
+                                                    </span></p>
+                                                <p><strong>Payment Method:</strong>
+                                                    <%= order.paymentMethod %>
+                                                </p>
+                                                <p><strong>Payment Status:</strong>
+                                                    <%= order.paymentStatus %>
+                                                </p>
+                                                <button class="btn btn-primary mt-3" id="saveChangesBtn"
+                                                    onclick="updateOrderStatus()">Save Changes</button>
+                                            </div>
                                         </div>
                                     </div>
+    
                                 </div>
-
-                            </div>
-
-                            <!-- Order Summary with Product Status -->
-                            <div class="card border-0 order-summary-card">
-                                <div class="card-header bg-transparent border-0">
-                                    <h5 class="card-title">Order Summary</h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Product</th>
-                                                    <th>Size</th>
-                                                    <th>Quantity</th>
-                                                    <th>Price</th>
-                                                    <th>Status</th>
-                                                    <th>Actions</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <% order.orderedItems.forEach((item, index)=> { %>
+    
+                                <!-- Order Summary with Product Status -->
+                                <div class="card border-0 order-summary-card">
+                                    <div class="card-header bg-transparent border-0">
+                                        <h5 class="card-title">Order Summary</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <thead>
                                                     <tr>
-                                                        <td>
-                                                            <div class="d-flex align-items-center">
-                                                                <img src="/product-images/<%= item.product?.productImages?.[0] || '/images/default-product.jpg' %>"
-                                                                    alt="<%= item.product?.productName || 'N/A' %>"
-                                                                    class="product-image me-3">
-                                                                <span>
-                                                                    <%= item.product?.productName || 'N/A' %>
-                                                                </span>
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <%= item.size || 'N/A' %>
-                                                        </td>
-                                                        <td>
-                                                            <%= item.quantity %>
-                                                        </td>
-                                                        <td>$<%= item.price.toFixed(2) %>
-                                                        </td>
-                                                        <td>
-                                                            <span class="product-status bg-light"
-                                                                id="status-<%= index %>">
-                                                                <%= item.orderStatus || 'Active' %>
-                                                            </span>
-                                                            <% if (item.cancellationReason || item.returnReason) { %>
-                                                                <div class="reason-box">
-                                                                    <small class="text-muted">
-                                                                        Reason: <%= item.cancellationReason ||
-                                                                            item.returnReason %>
-                                                                    </small>
-                                                                </div>
-                                                                <% } %>
-                                                        </td>
-                                                        <td class="action-buttons">
-                                                            <% if (item.orderStatus==='Cancelled' ) { %>
-                                                                <!-- <button class="btn btn-sm btn-success"
-                                                                    onclick="handleCancellation('<%= item._id %>', true)">
-                                                                    Accept Cancel
-                                                                </button>
-                                                                <button class="btn btn-sm btn-danger"
-                                                                    onclick="handleCancellation('<%= item._id %>', false)">
-                                                                    Reject Cancel
-                                                                </button> -->
-                                                                <a href="" class="badge bg-warning"> product Cancelled
-                                                                </a>
-                                                                <% } %>
-                                                                    <% if (item.orderStatus==='Return Request' ) { %>
-                                                                        <button class="btn btn-sm btn-success"
-                                                                            onclick="handleReturn('<%= item._id %>', true)">
-                                                                            Accept Return
-                                                                        </button>
-                                                                        <button class="btn btn-sm btn-danger"
-                                                                            onclick="handleReturn('<%= item._id %>', false)">
-                                                                            Reject Return
-                                                                        </button>
-                                                                        <% } %>
-                                                        </td>
+                                                        <th>Product</th>
+                                                        <th>Size</th>
+                                                        <th>Quantity</th>
+                                                        <th>Price</th>
+                                                        <th>Status</th>
+                                                        <th>Actions</th>
                                                     </tr>
-                                                    <% }); %>
-                                            </tbody>
-                                        </table>
-                                    </div>
-
-                                    <!-- Total Breakdown -->
-                                    <div class="total-breakdown mt-4">
-                                        <div class="d-flex justify-content-between mb-2">
-                                            <span>Total Price</span>
-                                            <span>$<%= order.subtotal.toFixed(2) %></span>
+                                                </thead>
+                                                <tbody>
+                                                    <% order.orderedItems.forEach((item, index)=> { %>
+                                                        <tr>
+                                                            <td>
+                                                                <div class="d-flex align-items-center">
+                                                                    <img src="/product-images/<%= item.product?.productImages?.[0] || '/images/default-product.jpg' %>"
+                                                                        alt="<%= item.product?.productName || 'N/A' %>"
+                                                                        class="product-image me-3">
+                                                                    <span>
+                                                                        <%= item.product?.productName || 'N/A' %>
+                                                                    </span>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <%= item.size || 'N/A' %>
+                                                            </td>
+                                                            <td>
+                                                                <%= item.quantity %>
+                                                            </td>
+                                                            <td>$<%= item.price.toFixed(2) %>
+                                                            </td>
+                                                            <td>
+                                                                <span class="product-status bg-light"
+                                                                    id="status-<%= index %>">
+                                                                    <%= item.orderStatus || 'Active' %>
+                                                                </span>
+                                                                <% if (item.cancellationReason || item.returnReason) { %>
+                                                                    <div class="reason-box">
+                                                                        <small class="text-muted">
+                                                                            Reason: <%= item.cancellationReason ||
+                                                                                item.returnReason %>
+                                                                        </small>
+                                                                    </div>
+                                                                    <% } %>
+                                                            </td>
+                                                            <td class="action-buttons">
+                                                                <% if (item.orderStatus==='Cancelled' ) { %>
+                                                                    <!-- <button class="btn btn-sm btn-success"
+                                                                        onclick="handleCancellation('<%= item._id %>', true)">
+                                                                        Accept Cancel
+                                                                    </button>
+                                                                    <button class="btn btn-sm btn-danger"
+                                                                        onclick="handleCancellation('<%= item._id %>', false)">
+                                                                        Reject Cancel
+                                                                    </button> -->
+                                                                    <a href="" class="badge bg-warning"> product Cancelled
+                                                                    </a>
+                                                                    <% } %>
+                                                                        <% if (item.orderStatus==='Return Request' ) { %>
+                                                                            <button class="btn btn-sm btn-success"
+                                                                                onclick="handleReturn('<%= item._id %>', true)">
+                                                                                Accept Return
+                                                                            </button>
+                                                                            <button class="btn btn-sm btn-danger"
+                                                                                onclick="handleReturn('<%= item._id %>', false)">
+                                                                                Reject Return
+                                                                            </button>
+                                                                            <% } %>
+                                                            </td>
+                                                        </tr>
+                                                        <% }); %>
+                                                </tbody>
+                                            </table>
                                         </div>
-                                        <div class="d-flex justify-content-between mb-2">
-                                            <span>Discount</span>
-                                            <span>$<%= order.discount.toFixed(2) %></span>
-                                        </div>
-                                        <hr>
-                                        <div class="d-flex justify-content-between fw-bold">
-                                            <span>Total Payable</span>
-                                            <span>$<%= (order.totalPrice).toFixed(2) %></span>
+    
+                                        <!-- Total Breakdown -->
+                                        <div class="total-breakdown mt-4">
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <span>Total Price</span>
+                                                <span>$<%= order.subtotal.toFixed(2) %></span>
+                                            </div>
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <span>Discount</span>
+                                                <span>$<%= order.discount.toFixed(2) %></span>
+                                            </div>
+                                            <hr>
+                                            <div class="d-flex justify-content-between fw-bold">
+                                                <span>Total Payable</span>
+                                                <span>$<%= (order.totalPrice).toFixed(2) %></span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
                     </div>
+                </div>
+
+                   
             </div>
     </div>
 

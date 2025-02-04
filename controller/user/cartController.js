@@ -556,6 +556,14 @@ const checkout = async (req, res) => {
     // Explicitly set `couponApplied` status
     const couponApplied = Boolean(appliedCoupon);
 
+    // if(totalPrice >2000){
+    //   res.status(400).json({
+    //     success: false,
+    //     message:"Order above Rs 2000 should not be allowed for COD"
+        
+    //   })
+    // }
+
     // Create the order
     const newOrder = new Order({
       userId,
@@ -891,6 +899,112 @@ const paymentFailed = async (req, res) => {
   }
 };
 
+
+const getOrderDetails = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const order = await Order.findOne({ _id: orderId });
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: "Order not found" });
+    }
+
+    if (order.paymentStatus === "Paid") {
+      return res.status(400).json({ success: false, message: "Order already paid" });
+    }
+
+    // If order doesn't have a Razorpay order ID, create one
+    let razorpayOrderId = order.orderId;
+    if (!razorpayOrderId) {
+      const razorpayOrder = await razorpay.orders.create({
+        amount: order.totalPrice * 100, // Amount in paise
+        currency: "INR",
+        receipt: `order_rcpt_${orderId}`,
+      });
+
+      razorpayOrderId = razorpayOrder.id;
+      order.orderId = razorpayOrder.id;
+      await order.save(); // Save the Razorpay Order ID in the database
+    }
+
+    res.json({
+      success: true,
+      key: process.env.RAZORPAY_KEY_ID,
+      amount: order.totalPrice * 100, // Convert to paise
+      currency: "INR",
+      orderId: order._id, // Your internal order ID
+      razorpayOrderId, // Existing or newly created Razorpay Order ID
+    });
+  } catch (error) {
+    console.error("Error fetching order details:", error);
+    res.status(500).json({ success: false, message: "Failed to fetch order details" });
+  }
+};
+
+
+
+
+const razorpayPaymentinOrder = async (req, res) => {
+  try {
+    const {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+      orderId,
+    } = req.body;
+    
+    console.log("Received Order ID:", orderId); // Debugging
+
+    if (!orderId) {
+      return res.status(400).json({ success: false, message: "Order ID is missing." });
+    }
+
+    // Convert orderId to ObjectId if needed
+    const objectId = mongoose.Types.ObjectId.isValid(orderId)
+      ? new mongoose.Types.ObjectId(orderId)
+      : orderId;
+
+    console.log("Converted Object ID:", objectId); // Debugging
+
+    // Verify Razorpay Signature
+    const hmac = crypto.createHmac("sha256", process.env.RAZORPAY_KEY_SECRET);
+    const generatedSignature = hmac
+      .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+      .digest("hex");
+
+    if (generatedSignature !== razorpay_signature) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid payment signature.",
+      });
+    }
+
+    // Find and update the order
+    const order = await Order.findOneAndUpdate(
+      { _id: objectId },
+      {
+        paymentStatus: "Paid",
+        orderStatus: "Processing",
+        "orderedItems.$[].paymentStatus": "Paid",
+        "orderedItems.$[].orderStatus": "Processing",
+      },
+      { new: true }
+    );
+
+    if (!order) {
+      console.log("Order not found in DB:", objectId);
+      return res.status(404).json({ success: false, message: "Order not found." });
+    }
+
+    res.status(200).json({ success: true, message: "Payment verified successfully." });
+  } catch (error) {
+    console.error("Error verifying payment:", error);
+    res.status(500).json({ success: false, message: "Payment verification failed." });
+  }
+};
+
+
+
 module.exports = {
 
   loadCart,
@@ -905,4 +1019,7 @@ module.exports = {
   razorpayOrder,
   paymentFailed,
   applyCoupon,
+  getOrderDetails,
+  razorpayPaymentinOrder
+  
 };

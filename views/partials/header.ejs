@@ -71,6 +71,133 @@
             z-index: 500;
         }
     </style>
+
+    <style>
+        /* Search Form Container */
+        .search-form-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 700px;
+            padding: 10px 15px;
+            background: #fff;
+            border-radius: 50px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        /* Search Input Group */
+        .search-input-group {
+            display: flex;
+            flex-grow: 1;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .search-input-group input,
+        .search-input-group select {
+            flex: 1;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+            background: transparent;
+            outline: none;
+        }
+
+        /* Search Button */
+        .search-form-container button {
+            background: #2346e3;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        /* Advanced Search Section */
+        .advanced-search {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            background: #f9f9f9;
+            padding: 15px;
+            margin-top: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Show Advanced Search */
+        .advanced-search.active {
+            display: flex;
+        }
+
+        /* Advanced Search Inputs */
+        .advanced-search input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        /* Toggle Advanced Search */
+        .search-toggle {
+            margin-top: 10px;
+            color: #0d48d1;
+            text-align: center;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Search Results */
+        #searchResults {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            z-index: 10;
+        }
+
+        #searchResults.active {
+            display: block;
+        }
+
+        /* Suggestion Items */
+        .suggestion-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        .suggestion-item img {
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+            object-fit: cover;
+        }
+
+        .suggestion-name {
+            font-size: 14px;
+        }
+    </style>
+
+
 </head>
 
 <body>
@@ -147,14 +274,23 @@
             <!-- Header Meta Data -->
             <div class="header-meta d-flex clearfix justify-content-end">
                 <!-- Search Area -->
-                <div class="search-area">
-                    <form action="#" method="post">
-                        <input type="search" name="search" id="headerSearch" placeholder="Type for search" />
+                <!-- Modern Search Area -->
+                <div class="search-container">
+                    <form id="searchForm" class="search-box">
+                        <input type="search" id="headerSearch" placeholder="Search for products...">
+                        <select id="searchCategory">
+                            <option value="">All Categories</option>
+                            <option value="mens">Mens</option>
+                            <option value="womens">Womens</option>
+                            <option value="kids">kids</option>
+                        </select>
                         <button type="submit">
-                            <i class="fa fa-search" aria-hidden="true"></i>
+                            <i class="fa fa-search"></i>
                         </button>
                     </form>
+                    <div id="searchResults"></div>
                 </div>
+
 
 
 
@@ -205,12 +341,13 @@
                 <!-- Cart Area -->
                 <div class="cart-area">
                     <a href="/cart" id="essenceCartBtn">
-                      <img src="/user/essence/img/core-img/bag.svg" alt="" />
+                        <img src="/user/essence/img/core-img/bag.svg" alt="" />
                     </a>
-                  </div>
+                </div>
             </div>
         </div>
     </header>
     <!-- ##### Header Area End ##### -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/user/js/usercheck.js"></script>
+    <script src="/user/js/search.js"></script>

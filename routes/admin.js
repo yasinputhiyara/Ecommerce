@@ -18,7 +18,7 @@ var router = express.Router();
 /* GET home page. */
 router.get('/login',adminController.loadLogin);
 router.post('/login',adminController.verifyAdminLogin)
-router.get('/',adminAuth,adminController.loadDashboard)
+router.get('/',adminController.loadDashboard)
 
 //-------User-------//
 router.get('/view-users',adminAuth ,adminController.viewUsers )
@@ -75,6 +75,8 @@ router.delete('/delete-coupon/:couponId',couponController.deleteCoupon)
 
 
 router.get('/sales-report', salesReport.getSalesReport)
+router.get('/sales-report/pdf', salesReport.getPdf);
+router.get('/sales-report/excel', salesReport.getExcel);
 
 
 router.get('/logout', (req, res) => {

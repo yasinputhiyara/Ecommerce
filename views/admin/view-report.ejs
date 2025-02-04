@@ -1,42 +1,192 @@
-<select id="salesFilter">
-    <option value="daily">Daily</option>
-    <option value="weekly">Weekly</option>
-    <option value="monthly">Monthly</option>
-    <option value="yearly">Yearly</option>
-    <option value="custom">Custom Date</option>
-</select>
-<input type="date" id="startDate">
-<input type="date" id="endDate">
-<button onclick="fetchSalesReport()">Generate Report</button>
+<%- include("../partials/adminheader") %>
 
-<div id="salesData"></div>
-<button onclick="downloadPDF()">Download PDF</button>
-<button onclick="downloadExcel()">Download Excel</button>
+    <div class="container-scroller">
+        <%- include("../partials/adminSidebar") %>
+
+            <div class="container-fluid page-body-wrapper">
+                <%- include("../partials/adminNav") %>
+
+                    <div class="main-panel ">
+                        <div class="content-wrapper bg-light">
+                            <div class="container mt-4">
+                                <h2 class="text-center mb-4">📊 Sales Report</h2>
+
+                                <!-- Filter Selection -->
+                                <div class="row mb-3">
+                                    <div class="col-md-3">
+                                        <label for="salesFilter" class="form-label">Select Report Type:</label>
+                                        <select id="salesFilter" class="form-select">
+                                            <option value="daily">Daily</option>
+                                            <option value="weekly">Weekly</option>
+                                            <option value="monthly">Monthly</option>
+                                            <option value="yearly">Yearly</option>
+                                            <option value="custom">Custom Date</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="startDate" class="form-label">Start Date:</label>
+                                        <input type="date" id="startDate" class="form-control">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="endDate" class="form-label">End Date:</label>
+                                        <input type="date" id="endDate" class="form-control">
+                                    </div>
+                                    <div class="col-md-3 d-flex align-items-end">
+                                        <button class="btn btn-primary w-100" onclick="fetchSalesReport()">Generate
+                                            Report</button>
+                                    </div>
+                                </div>
+
+                                <!-- Sales Report Summary -->
+                                <div id="salesSummary" class="text-center mb-4">
+                                    <h5>Total Sales: <span id="totalSales">
+                                            <%= salesData.totalSales %>
+                                        </span></h5>
+                                    <h5>Total Revenue: ₹<span id="totalRevenue">
+                                            <%= salesData.totalRevenue.toFixed(2) %>
+                                        </span></h5>
+                                    <h5>Total Discount: ₹<span id="totalDiscount">
+                                            <%= salesData.totalDiscount.toFixed(2) %>
+                                        </span></h5>
+                                    <h5>Coupon Discount: ₹<span id="totalCouponDiscount">
+                                            <%= salesData.totalCouponDiscount.toFixed(2) %>
+                                        </span></h5>
+                                </div>
+
+                                <!-- Sales Table -->
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Order ID</th>
+                                            <th>Date</th>
+                                            <th>Total Price</th>
+                                            <th>Discount</th>
+                                            <th>Coupon Used</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% salesData.orders.forEach(order=> { %>
+                                            <tr>
+                                                <td>
+                                                    <%= order.orderId %>
+                                                </td>
+                                                <td>
+                                                    <%= order.createdOn.toDateString() %>
+                                                </td>
+                                                <td>₹<%= order.totalPrice.toFixed(2) %>
+                                                </td>
+                                                <td>₹<%= order.discount.toFixed(2) %>
+                                                </td>
+                                                <td>
+                                                    <%= order.couponApplied ? "Yes" : "No" %>
+                                                </td>
+                                                <td>
+                                                    <%= order.orderStatus %>
+                                                </td>
+                                            </tr>
+                                            <% }) %>
+                                    </tbody>
+                                </table>
+
+                                <!-- Download Buttons -->
+                                <div class="text-center">
+                                    <button class="btn btn-danger me-2" onclick="downloadPDF()">Download PDF</button>
+                                    <button class="btn btn-success" onclick="downloadExcel()">Download Excel</button>
+                                </div>
+                            </div>
+                        </div>
 
 
-<script>
-    async function fetchSalesReport() {
-    let filter = document.getElementById("salesFilter").value;
-    let startDate = document.getElementById("startDate").value;
-    let endDate = document.getElementById("endDate").value;
+                    </div>
+            </div>
+    </div>
 
-    let url = `/admin/sales-report?filter=${filter}`;
-    if (filter === "custom") {
-        url += `&startDate=${startDate}&endDate=${endDate}`;
-    }
+    <script>
+        async function fetchSalesReport() {
+            let filter = document.getElementById("salesFilter").value;
+            let startDate = document.getElementById("startDate").value;
+            let endDate = document.getElementById("endDate").value;
 
-    const response = await fetch(url);
-    const data = await response.json();
+            let url = `/admin/sales-report?filter=${filter}`;
+            if (filter === "custom") {
+                url += `&startDate=${startDate}&endDate=${endDate}`;
+            }
 
-    if (data.success) {
-        document.getElementById("salesData").innerHTML = `
-            <p>Total Sales: ${data.totalSales}</p>
-            <p>Total Revenue: ${data.totalRevenue}</p>
-            <p>Total Discount: ${data.totalDiscount}</p>
-        `;
-    } else {
-        alert("Failed to fetch sales report.");
-    }
-}
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest", // Make sure the backend knows this is an AJAX request
+                    },
+                });
 
-</script>
+                const data = await response.json();
+
+                console.log("API Response:", data); // Debugging
+
+                if (data.success) {
+                    // ✅ Update Sales Summary
+                    document.getElementById("totalSales").textContent = data.totalSales;
+                    document.getElementById("totalRevenue").textContent = data.totalRevenue.toFixed(2);
+                    document.getElementById("totalDiscount").textContent = data.totalDiscount.toFixed(2);
+                    document.getElementById("totalCouponDiscount").textContent = data.totalCouponDiscount.toFixed(2);
+
+                    // ✅ Update Sales Table
+                    let tableBody = document.querySelector("tbody");
+                    tableBody.innerHTML = ""; // Clear old data before inserting new rows
+
+                    data.orders.forEach(order => {
+                        let row = `
+                    <tr>
+                        <td>${order.orderId}</td>
+                        <td>${new Date(order.createdOn).toDateString()}</td>
+                        <td>₹${order.totalPrice.toFixed(2)}</td>
+                        <td>₹${order.discount.toFixed(2)}</td>
+                        <td>${order.couponApplied ? "Yes" : "No"}</td>
+                        <td>${order.orderStatus}</td>
+                    </tr>
+                `;
+                        tableBody.innerHTML += row;
+                    });
+
+                    Swal.fire("Success", "Sales report generated!", "success");
+                } else {
+                    Swal.fire("Error", "Failed to fetch sales report.", "error");
+                }
+            } catch (error) {
+                console.error("Fetch Sales Report Error:", error);
+                Swal.fire("Error", "Something went wrong.", "error");
+            }
+        }
+
+
+
+        function downloadPDF() {
+            let filter = document.getElementById("salesFilter").value;
+            let startDate = document.getElementById("startDate").value;
+            let endDate = document.getElementById("endDate").value;
+
+            let url = `/admin/sales-report/pdf?filter=${filter}`;
+            if (filter === "custom") {
+                url += `&startDate=${startDate}&endDate=${endDate}`;
+            }
+
+            window.location.href = url;
+        }
+
+        function downloadExcel() {
+            let filter = document.getElementById("salesFilter").value;
+            let startDate = document.getElementById("startDate").value;
+            let endDate = document.getElementById("endDate").value;
+
+            let url = `/admin/sales-report/excel?filter=${filter}`;
+            if (filter === "custom") {
+                url += `&startDate=${startDate}&endDate=${endDate}`;
+            }
+
+            window.location.href = url;
+        }
+
+    </script>
+
+    <%- include("../partials/adminfooter") %>

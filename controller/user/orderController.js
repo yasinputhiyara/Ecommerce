@@ -28,6 +28,8 @@ const loadOrders = async (req, res) => {
   }
 };
 
+
+
 const loadOrderDetails = async (req, res) => {
   try {
     const user = req.session.user;
@@ -50,7 +52,7 @@ const loadOrderDetails = async (req, res) => {
     console.log("Order Details:", order);
 
     // Extract the address ID from the order
-    const addressId = order.address;
+    // const addressId = order.address;
     // console.log("Order AddressId:", addressId);
     // console.log("Order Address name :", order.address.name);
 
@@ -340,56 +342,6 @@ const cancelProduct = async (req, res) => {
   }
 };
 
-const returnOrder = async (req, res) => {
-  try {
-    const { orderId } = req.params;
-    const returnReason  = req.body.reason;
-
-    console.log("Returning order:", { orderId, returnReason });
-
-    // Find the order
-    const order = await Orders.findById(orderId);
-    if (!order) {
-      return res.status(404).json({
-        success: false,
-        message: "Order not found.",
-      });
-    }
-
-    // Check if the order is already returned
-    if (order.orderStatus === "Return Request") {
-      return res.status(400).json({
-        success: false,
-        message: "Return request is already placed for this order.",
-      });
-    }
-
-    // Update all products to "Return Request"
-    order.orderedItems.forEach((item) => {
-      item.orderStatus = "Return Request";
-      item.returnReason = returnReason || "No reason provided";
-    });
-
-    // Set order-level return request
-    order.orderStatus = "Return Request";
-    order.returnReason = returnReason || "No reason provided";
-
-    // Save the order
-    await order.save();
-
-    return res.status(200).json({
-      success: true,
-      message: "Return request submitted successfully.",
-      orderStatus: order.orderStatus,
-    });
-  } catch (error) {
-    console.error("Error processing return request:", error);
-    return res.status(500).json({
-      success: false,
-      message: error.message || "Internal server error.",
-    });
-  }
-};
 
 const returnSingleProduct = async (req, res) => {
   try {
@@ -461,11 +413,11 @@ const returnSingleProduct = async (req, res) => {
 
 
 
+
 module.exports = {
   loadOrders,
   loadOrderDetails,
   cancelOrder,
   cancelProduct,
-  returnOrder,
   returnSingleProduct
 };

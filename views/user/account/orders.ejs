@@ -1,6 +1,7 @@
 <%- include("../../partials/header") %>
 
   <link rel="stylesheet" href="/user/stylesheets/profile.css" />
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
   <style>
     * {
@@ -281,12 +282,12 @@
                           </button>
                           <% } else if (order.orderStatus.toLowerCase()==='shipped' ) { %>
                             <button class="btn cancel-btn" disabled>Cancel Order</button>
-                            <% }  %>
-                                <% if (order.paymentStatus.toLowerCase()==='pending' && order.paymentMethod.toLowerCase()==='razorpay' ) { %>
-                                  <button class="btn pay-now-btn bg-info" onclick="payNow('<%= order._id %>')">
-                                    Pay Now
-                                  </button>
-                                  <% } %>
+                            <% } %>
+                              <% if (order.paymentStatus.toLowerCase()==='pending' && order.paymentMethod.toLowerCase()==='razorpay' ) { %>
+                                <button class="btn pay-now-btn bg-info" onclick="payNow('<%= order._id %>')">
+                                  Pay Now
+                                </button>
+                                <% } %>
                       </td>
 
                     </tr>
@@ -299,7 +300,7 @@
               </tbody>
             </table>
           </div>
-          
+
         </div>
       </div>
     </div>
@@ -351,19 +352,86 @@
       });
     }
 
-    function payNow(orderId) {
-      Swal.fire({
-        title: "Proceed to Payment",
-        text: "You will be redirected to complete the payment.",
-        icon: "info",
-        showCancelButton: true,
-        confirmButtonText: "Pay Now",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          window.location.href = `/pay-now/${orderId}`;
-        }
-      });
+    
+  function payNow(orderId) {
+  Swal.fire({
+    title: "Proceed to Payment",
+    text: "You will be redirected to complete the payment.",
+    icon: "info",
+    showCancelButton: true,
+    confirmButtonText: "Pay Now",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      fetch(`/get-order-details/${orderId}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (!data.success) {
+            Swal.fire("Error!", data.message, "error");
+            return;
+          }
+
+          // Ensure Razorpay is loaded
+          if (typeof Razorpay === "undefined") {
+            Swal.fire("Error!", "Razorpay SDK not loaded.", "error");
+            return;
+          }
+
+          // Razorpay Payment Options
+          const options = {
+            key: data.key, // Razorpay Key ID
+            amount: data.amount,
+            currency: "INR",
+            name: "SHOEZO",
+            description: "Retry Payment for Order",
+            order_id: data.razorpayOrderId, // Use the correct Razorpay order ID
+            handler: function (response) {
+              fetch("/verify-razorpay-payment-order", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_signature: response.razorpay_signature,
+                  orderId: data.orderId,
+                }),
+              })
+                .then((res) => res.json())
+                .then((paymentResult) => {
+                  if (paymentResult.success) {
+                    Swal.fire("Success!", "Payment completed successfully!", "success").then(() => {
+                      location.reload();
+                    });
+                  } else {
+                    Swal.fire("Error!", paymentResult.message, "error");
+                  }
+                });
+            },
+            prefill: {
+              name: "Customer Name",
+              email: "customer@example.com",
+              contact: "9999999999",
+            },
+            theme: {
+              color: "#3399cc",
+            },
+          };
+
+          const razorpayInstance = new Razorpay(options);
+          razorpayInstance.open();
+        })
+        .catch((error) => {
+          console.error("Payment retry error:", error);
+          Swal.fire("Error!", "Failed to retry payment.", "error");
+        });
     }
+  });
+}
+
+
+
 
   </script>
 

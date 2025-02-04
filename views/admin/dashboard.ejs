@@ -1,34 +1,428 @@
-
 <%- include("../partials/adminheader") %>
 
-<div class="container-scroller">
-    <%- include("../partials/adminSidebar") %>
 
-    <div class="container-fluid page-body-wrapper">
-        <%- include("../partials/adminNav") %>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-        <div class="main-panel">
-            <div class="content-wrapper">
+    <style>
+        /* Custom Styles for Enhanced Responsiveness and UI */
+        body {
+            background-color: #f4f6f9;
+        }
 
-                <h1>welcome to admin dashboard</h1>
-                
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .icontext {
+            display: flex;
+            align-items: center;
+        }
+
+        .icontext .icon {
+            margin-right: 15px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dashboard-stats .card {
+            transition: all 0.3s ease;
+        }
+
+        .dashboard-stats .card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .trending-products .img-fluid {
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .trending-products .img-fluid:hover {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .main-panel {
+                padding: 10px;
+            }
+
+            .dashboard-stats .col-sm-12 {
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+
+    <div class="container-scroller">
+        <%- include("../partials/adminSidebar") %>
+
+            <div class="container-fluid page-body-wrapper">
+                <%- include("../partials/adminNav") %>
+
+                    <div class="main-panel">
+                        <div class="content-wrapper bg-light">
+                            <section class="content-main">
+                                <div class="content-header mb-4">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-6">
+                                            <h2 class="content-title card-title">Dashboard</h2>
+                                        </div>
+                                        <div class="col-md-6 text-md-end">
+                                            <button class="btn btn-outline-primary me-2">
+                                                <i class="fas fa-download me-1"></i> Generate Report
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Dashboard Stats -->
+                                <div class="row dashboard-stats">
+                                    <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+                                        <div class="card card-hover card-body">
+                                            <article class="icontext">
+                                                <span class="icon icon-sm rounded-circle bg-primary-light">
+                                                    <i class="fas fa-shopping-cart text-primary"></i>
+                                                </span>
+                                                <div class="text">
+                                                    <h6 id="totalOrders" class="mb-1 card-title text-dark">
+                                                        <%= totalOrders %>
+                                                    </h6>
+                                                    <span class="text-muted">Total Orders</span>
+                                                </div>
+                                            </article>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+                                        <div class="card card-hover card-body">
+                                            <article class="icontext">
+                                                <span class="icon icon-sm rounded-circle bg-success-light">
+                                                    <i class="fas fa-shipping-fast text-success"></i>
+                                                </span>
+                                                <div class="text">
+                                                    <h6 id="totalDeliveries" class="mb-1 card-title text-dark">
+                                                        <%= totalDeliveries %>
+                                                    </h6>
+                                                    <span class="text-muted">Total Deliveries</span>
+                                                </div>
+                                            </article>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+                                        <div class="card card-hover card-body">
+                                            <article class="icontext">
+                                                <span class="icon icon-sm rounded-circle bg-warning-light">
+                                                    <i class="fas fa-cogs text-warning"></i>
+                                                </span>
+                                                <div class="text">
+                                                    <h6 id="totalProducts" class="mb-1 card-title text-dark">
+                                                        <%= totalProducts %>
+                                                    </h6>
+                                                    <span class="text-muted">Products</span>
+                                                </div>
+                                            </article>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+                                        <div class="card card-hover card-body">
+                                            <article class="icontext">
+                                                <span class="icon icon-sm rounded-circle bg-info-light">
+                                                    <i class="fas fa-users text-info"></i>
+                                                </span>
+                                                <div class="text">
+                                                    <h6 id="newCustomers" class="mb-1 card-title text-dark">
+                                                        <%= totalUsers %>
+                                                    </h6>
+                                                    <span class="text-muted">Total Customers</span>
+                                                </div>
+                                            </article>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Top Products and Charts Section -->
+                                <div class="row">
+                                    <div class="col-xl-6 col-lg-12 mb-3">
+                                        <div class="card h-100">
+                                            <div class="card-body">
+                                                <h4 class="card-title text-dark mb-3">Top Products</h4>
+                                                <div class="table-responsive">
+                                                    <table class="table table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Name</th>
+                                                                <th>Popularity</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="top-products-body">
+                                                            <% topProducts.forEach((product, index)=> { %>
+                                                                <tr>
+                                                                    <td>
+                                                                        <%= product.name %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="progress">
+                                                                            <div class="progress-bar bg-primary"
+                                                                                role="progressbar">
+                                                                                <%= product.popularity %>%
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                                <% }) %>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xl-6 col-lg-12 mb-3">
+                                        <div class="card h-100">
+                                            <div class="card-body">
+                                                <h4 class="card-title text-dark mb-3">Customer Fulfillment</h4>
+                                                <div class="chartjs-wrapper">
+                                                    <canvas id="myChart" width="400" height="300"></canvas>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Earnings Section -->
+                                <div class="row">
+                                    <div class="col-xl-6 col-lg-12 mb-3">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h4 class="card-title text-dark mb-3">Earnings</h4>
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <h2 class="mb-0" id="earningsAmount">₹<%= earningsAmount %>
+                                                    </h2>
+                                                    <div class="badge rounded-pill bg-success" id="earningsPercentage">
+                                                        0%</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Trending Now Section -->
+                                <div class="row">
+                                    <div class="col-xl-8 col-lg-12 mb-3">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h4 class="card-title text-dark mb-3">Trending Now</h4>
+                                                <div class="row trending-products gallery-grid">
+                                                    <% products.forEach(product=> { %>
+                                                        <div class="col-xl-3 col-lg-4 col-md-6 col-6 mb-3">
+                                                            <a href="#" class="item-grid d-block">
+                                                                <img src="/product-images/<%= product.productImages[0] %>"
+                                                                    alt="<%= product.productName %>"
+                                                                    class="img-fluid rounded" />
+                                                            </a>
+                                                        </div>
+                                                        <% }) %>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xl-4 col-lg-12 mb-3">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h4 class="card-title text-dark mb-3">Customers</h4>
+                                                <div class="table-responsive">
+                                                    <table class="table table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Name</th>
+                                                                <th>Email</th>
+                                                                <th>Orders</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <% customers.forEach(customer=> { %>
+                                                                <tr>
+                                                                    <td>
+                                                                        <%= customer.username %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <%= customer.email %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <%= customer.orderCount %>
+                                                                    </td>
+                                                                </tr>
+                                                                <% }) %>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Top Categories & Brands Section -->
+                                <div class="row">
+                                    <div class="col-xl-4 col-lg-12 mb-3">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h4 class="card-title text-dark mb-3">Top 10 Categories</h4>
+                                                <div class="table-responsive">
+                                                    <table class="table table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Category</th>
+                                                                <th>Products</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <% topCategories.forEach(category=> { %>
+                                                                <tr>
+                                                                    <td>
+                                                                        <%= category.categoryName %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <%= category.productCount %>
+                                                                    </td>
+                                                                </tr>
+                                                                <% }) %>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xl-4 col-lg-12 mb-3">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h4 class="card-title text-dark mb-3">Top 10 Brands</h4>
+                                                <div class="table-responsive">
+                                                    <table class="table table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Brand</th>
+                                                                <th>Products</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <% topBrands.forEach(brand=> { %>
+                                                                <tr>
+                                                                    <td>
+                                                                        <%= brand.brandName %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <%= brand.productCount %>
+                                                                    </td>
+                                                                </tr>
+                                                                <% }) %>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
             </div>
-
-            
-            <footer class="footer">
-                <div class="d-sm-flex justify-content-center justify-content-sm-between">
-                  <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © bootstrapdash.com 2020</span>
-                  <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center"> Free <a href="https://www.bootstrapdash.com/bootstrap-admin-template/" target="_blank">Bootstrap admin templates</a> from Bootstrapdash.com</span>
-                </div>
-            </footer>
-        </div>
-
-
     </div>
-</div>
 
-<%- include("../partials/adminfooter") %>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
 
+    <script>
+        // Add this to your dashboard template or a separate JS file
+        document.addEventListener('DOMContentLoaded', function () {
+            // Total Orders Counter Animation
+            function animateCounter(element, start, end, duration) {
+                let startTimestamp = null;
+                const step = (timestamp) => {
+                    if (!startTimestamp) startTimestamp = timestamp;
+                    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                    element.textContent = Math.floor(progress * (end - start) + start);
+                    if (progress < 1) {
+                        window.requestAnimationFrame(step);
+                    }
+                };
+                window.requestAnimationFrame(step);
+            }
 
+            // Animate counters
+            const totalOrdersEl = document.getElementById('totalOrders');
+            const totalDeliveriesEl = document.getElementById('totalDeliveries');
+            const totalProductsEl = document.getElementById('totalProducts');
+            const newCustomersEl = document.getElementById('newCustomers');
+
+            if (totalOrdersEl) animateCounter(totalOrdersEl, 0, parseInt(totalOrdersEl.textContent), 1000);
+            if (totalDeliveriesEl) animateCounter(totalDeliveriesEl, 0, parseInt(totalDeliveriesEl.textContent), 1000);
+            if (totalProductsEl) animateCounter(totalProductsEl, 0, parseInt(totalProductsEl.textContent), 1000);
+            if (newCustomersEl) animateCounter(newCustomersEl, 0, parseInt(newCustomersEl.textContent), 1000);
+
+
+            // Chart.js for Customer Fulfillment
+            const orderStatusCounts = JSON.parse(`<%- JSON.stringify(orderStatusCounts) %>`) || [];
+            let orderStatusLabels = JSON.parse(`<%- JSON.stringify(orderStatusLabels) %>`) || [];
+
+            console.log("Order Status Data:", typeof orderStatusCounts, orderStatusCounts);
+            console.log("Order Status Labels:", typeof orderStatusLabels, orderStatusLabels);
+
+            // Chart.js for Customer Fulfillment
+            const ctx1 = document.getElementById('myChart');
+
+            if (ctx1) {
+                new Chart(ctx1, {
+                    type: 'pie',
+                    data: {
+                        labels: orderStatusLabels,  // Labels must be an array
+                        datasets: [{
+                            label: 'Order Status',
+                            data: orderStatusCounts,  // Data must be an array
+                            backgroundColor: [
+                                'rgba(75, 192, 192, 0.6)',
+                                'rgba(255, 205, 86, 0.6)',
+                                'rgba(54, 162, 235, 0.6)',
+                                'rgba(255, 99, 132, 0.6)',
+                                'rgba(200, 99, 132, 0.6)',
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            }
+                        }
+                    }
+                });
+            } else {
+                console.error("Chart canvas not found!");
+            }
+
+
+
+
+            // Earnings Percentage Calculation
+            const earningsAmount = document.getElementById('earningsAmount');
+            const earningsPercentage = document.getElementById('earningsPercentage');
+            if (earningsAmount && earningsPercentage) {
+                // This is a placeholder. In a real app, you'd calculate actual percentage
+                const amount = parseFloat(earningsAmount.textContent.replace('₹', '').replace(',', ''));
+                const percentage = ((amount / 100000) * 100).toFixed(2);
+                earningsPercentage.textContent = `${percentage}%`;
+            }
+        });
+    </script>
+
+    <%- include("../partials/adminfooter") %>

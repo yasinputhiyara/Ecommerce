@@ -38,6 +38,7 @@ const orderDetails = async (req, res) => {
   }
 };
 
+
 const updateOrderStatus = async (req, res) => {
   const { orderId, orderStatus } = req.body;
 
@@ -45,35 +46,25 @@ const updateOrderStatus = async (req, res) => {
     // Fetch the order
     const order = await Order.findById(orderId);
     if (!order) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Order not found" });
+      return res.status(404).json({ success: false, message: "Order not found" });
     }
 
     // Business logic restrictions
-    if (
-      order.orderStatus === "Delivered" ||
-      order.orderStatus === "Cancelled"
-    ) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Cannot update a Delivered or Cancelled order.",
-        });
+    if (order.orderStatus === "Delivered" || order.orderStatus === "Cancelled") {
+      return res.status(400).json({
+        success: false,
+        message: "Cannot update a Delivered or Cancelled order.",
+      });
     }
 
     if (
       order.orderStatus === "Shipped" &&
       (orderStatus === "Pending" || orderStatus === "Processing")
     ) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message:
-            "Cannot change a Shipped order back to Pending or Processing.",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Cannot change a Shipped order back to Pending or Processing.",
+      });
     }
 
     // Update order status
@@ -85,6 +76,17 @@ const updateOrderStatus = async (req, res) => {
         item.orderStatus = orderStatus;
       }
     });
+
+    // If the order is COD and is being marked as Delivered, update payment status
+    if (order.paymentMethod === "cod" && orderStatus === "Delivered") {
+      order.paymentStatus = "Paid";
+
+      // Update each product's order status and payment status
+      order.orderedItems.forEach((item) => {
+        item.orderStatus = "Delivered";
+        item.paymentStatus = "Paid";
+      });
+    }
 
     await order.save();
 
@@ -123,11 +125,11 @@ const handleReturnRequest = async (req, res) => {
       }
 
       if (isAccepted) {
-          // Approve return: Update status to "Returned" and process refund
+          // Approve return: Update status to "Returned"
           item.orderStatus = "Returned";
 
           // Refund logic (if payment was made via Razorpay)
-          if (order.paymentMethod === "razorpay" && order.paymentStatus === "Paid") {
+          if (order.paymentMethod === "razorpay" || order.paymentMethod === "cod" && order.paymentStatus === "Paid") {
               let wallet = await Wallet.findOne({ userId: order.userId });
 
               if (!wallet) {
@@ -149,6 +151,12 @@ const handleReturnRequest = async (req, res) => {
                   description: `Refund for product ${item._id} in order ${order._id}`,
               });
 
+              // Update order details after refund
+              item.paymentStatus = "Refunded"; 
+              order.totalPrice -= refundAmount
+              // order.subtotal -= refundAmount
+              
+
               await wallet.save();
           }
       } else {
@@ -160,13 +168,14 @@ const handleReturnRequest = async (req, res) => {
 
       return res.status(200).json({
           success: true,
-          message: isAccepted ? "Return approved and refund processed." : "Return request rejected.",
+          message: isAccepted ? "Return approved, refund processed, and order updated." : "Return request rejected.",
       });
   } catch (error) {
       console.error("Error handling return request:", error);
       return res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+ 
 
 module.exports = {
   viewOrders,

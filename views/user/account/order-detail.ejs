@@ -532,7 +532,9 @@
                                                     onclick="confirmReturnProduct('<%= order._id %>', '<%= index %>')">
                                                     Return Item
                                                 </button>
-                                                <% } %>
+                                                <% }else if (item.orderStatus === 'Returned'){ %>
+                                                    <p class="badge bg-success">Return Successfully</p>
+                                                    <% } %>
                                     </div>
                                 </div>
                                 <% }); %>
