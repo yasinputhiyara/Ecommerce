@@ -38,9 +38,7 @@ async function removeFromWishlist(productId) {
   try {
     const response = await fetch("/wishlist/remove", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ productId }),
     });
 
@@ -51,25 +49,10 @@ async function removeFromWishlist(productId) {
         icon: "success",
         title: "Removed from Wishlist",
         text: result.message,
+      }).then(() => {
+        location.reload(); // 🔄 Reload after confirmation
       });
 
-      // Remove the product row from the DOM
-      const row = document.querySelector(`tr[data-product-id="${productId}"]`);
-      if (row) row.remove();
-
-      // Check if the wishlist is empty
-      const wishlistTableBody = document.querySelector(
-        ".table-responsive tbody"
-      );
-      if (!wishlistTableBody.querySelector("tr[data-product-id]")) {
-        wishlistTableBody.innerHTML = `
-                    <tr>
-                        <td colspan="5" class="text-center">
-                            <p class="lead mb-4">No items found in Wishlist</p>
-                        </td>
-                    </tr>
-                `;
-      }
     } else {
       Swal.fire({
         icon: "error",
@@ -90,40 +73,60 @@ async function removeFromWishlist(productId) {
 async function toggleWishlist(productId) {
   try {
     const wishlistIcon = document.getElementById(`wishlist-${productId}`);
-    const isInWishlist = wishlistIcon.classList.contains("text-danger"); // Check if red
 
-    // Decide the action based on the current state
+    if (!wishlistIcon) {
+      console.error(`Element #wishlist-${productId} not found`);
+      return;
+    }
+
+    const isInWishlist = wishlistIcon.classList.contains("text-danger");
     const url = isInWishlist ? "/remove-from-wishlist" : "/add-to-wishlist";
-    const method = "POST";
 
     const response = await fetch(url, {
-      method,
+      method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ productId }),
     });
 
-    const result = await response.json();
+    // 🔥 Debugging Step: Log response before JSON parsing
+    const responseText = await response.text();
+    console.log("Raw Response:", responseText);
+
+    // Check if response is HTML (which means redirect/error occurred)
+    if (responseText.startsWith("<!DOCTYPE html>")) {
+      throw new Error("Received an HTML response instead of JSON. Possible redirect or server error.");
+    }
+
+    const result = JSON.parse(responseText);
 
     if (result.success) {
-      // Toggle the icon class
-      if (isInWishlist) {
-        wishlistIcon.classList.remove("fa-heart", "text-danger");
-        wishlistIcon.classList.add("fa-heart-o");
-      } else {
-        wishlistIcon.classList.remove("fa-heart-o");
-        wishlistIcon.classList.add("fa-heart", "text-danger");
-      }
+      wishlistIcon.classList.toggle("fa-heart", !isInWishlist);
+      wishlistIcon.classList.toggle("text-danger", !isInWishlist);
+      wishlistIcon.classList.toggle("fa-heart-o", isInWishlist);
 
       Swal.fire({
         icon: "success",
         title: result.message,
+        showConfirmButton: false,
+        timer: 1500,
       });
     } else {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: result.message,
-      });
+      if (result.message === "User not logged in.") {
+        Swal.fire({
+          icon: "error",
+          title: "Login Required",
+          text: "Please log in to add products to your wishlist.",
+          confirmButtonText: "Login",
+        }).then(() => {
+          window.location.href = "/login";
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: result.message,
+        });
+      }
     }
   } catch (error) {
     console.error("Error toggling wishlist:", error);
@@ -134,3 +137,5 @@ async function toggleWishlist(productId) {
     });
   }
 }
+
+

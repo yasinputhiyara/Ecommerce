@@ -1,5 +1,7 @@
 <%- include("../partials/header") %>
 
+<link rel="stylesheet" href="/user/essence/css/core-style.css">
+
   <style>
     html * {
       -webkit-font-smoothing: antialiased;
@@ -213,7 +215,7 @@
   .product-img {
     position: relative;
     overflow: hidden;
-    padding-top: 10%; /* Maintain aspect ratio */
+    padding-top: 20%; /* Maintain aspect ratio */
   }
   
   .image-wrapper {
@@ -602,9 +604,6 @@
 
                     <!-- Quick View & Wishlist -->
                     <div class="product-actions">
-                      <a href="/product-details/<%= product._id %>" class="quick-view-btn">
-                        <i class="fa fa-eye"></i>
-                      </a>
                       <a href="#" class="wishlist-btn">
                         <i class="fa fa-heart"></i>
                       </a>

@@ -329,33 +329,33 @@ const loadDashboard = async (req, res) => {
 
 const viewUsers = async (req, res) => {
   try {
-    // Extract search query and page number from query parameters
-    const searchQuery = req.query.search || ""; // Search query from the URL, defaulting to an empty string
-    const page = parseInt(req.query.page) || 1; // Page number, defaulting to 1 if not provided
-    const limit = 5; // Number of users per page
-    const skip = (page - 1) * limit; // Skip calculation for pagination
+    
+    const searchQuery = req.query.search || ""; 
+    const page = parseInt(req.query.page) || 1; 
+    const limit = 5;
+    const skip = (page - 1) * limit; 
 
     // Build the search filter for the query
     const searchFilter = searchQuery
-      ? { username: { $regex: searchQuery, $options: "i" } } // Case-insensitive search for username
-      : {}; // Empty filter if no search query is provided
+      ? { username: { $regex: searchQuery, $options: "i" } } 
+      : {};
 
-    // Fetch the users with the search filter, sorting by creation date, and paginated
+    
     const users = await User.find(searchFilter)
-      .sort({ createdOn: -1 }) // Sort by creation date in descending order
-      .skip(skip) // Skip records for pagination
-      .limit(limit); // Limit the number of records per page
+      .sort({ createdOn: -1 }) 
+      .skip(skip) 
+      .limit(limit);
 
     // Get the total count of users for pagination calculation
-    const totalUsers = await User.countDocuments(searchFilter); // Total number of users matching the search filter
-    const totalPages = Math.ceil(totalUsers / limit); // Total number of pages
+    const totalUsers = await User.countDocuments(searchFilter); 
+    const totalPages = Math.ceil(totalUsers / limit); 
 
-    // Render the view with users, search query, pagination details, and other necessary data
+    
     res.render("admin/view-users", {
       users,
-      searchQuery, // Pass the search query to the template
-      currentPage: page, // Current page number
-      totalPages, // Total pages for pagination
+      searchQuery, 
+      currentPage: page,
+      totalPages, 
     });
   } catch (error) {
     console.error("Error fetching users:", error);

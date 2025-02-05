@@ -65,6 +65,9 @@ router.get('/',checkBan,userController.loadHome)
 router.get('/shop',checkBan,userController.loadShop)
 router.get('/product-details/:id',checkBan, productController.loadProductDetail)
 router.get("/search",productController.search)
+router.post('/shop/add-to-wishlist' , userController.addToWishlist)
+router.post('/shop/remove-from-wishlist' , userController.removeToWishlist)
+
 
 // router.get('/filter',productController.filterProducts)
 

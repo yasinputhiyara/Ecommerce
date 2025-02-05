@@ -30,50 +30,38 @@ const loadWishlist = async (req, res) => {
   }
 };
 
+
 const addToWishlist = async (req, res) => {
   try {
-    const userId = req.session.user?._id; // Ensure user is logged in
+    const userId = req.session.user?._id;
     if (!userId) {
-      return res.redirect("/login");
+      return res.status(401).json({ success: false, message: "User not logged in." });
     }
 
     const { productId } = req.body;
+    const productExists = await Product.findOne({ _id: productId, isBlocked: false });
 
-    // Check if the product exists and is not blocked
-    const productExists = await Product.findOne({
-      _id: productId,
-      isBlocked: false,
-    });
     if (!productExists) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Product not found." });
+      return res.status(404).json({ success: false, message: "Product not found." });
     }
 
-    // Find or create the user's wishlist
     let wishlist = await Wishlist.findOne({ userId });
     if (!wishlist) {
       wishlist = new Wishlist({ userId, products: [] });
     }
 
-    // Check if the product is already in the wishlist
     const productAlreadyInWishlist = wishlist.products.some(
       (item) => item.productId.toString() === productId
     );
 
     if (productAlreadyInWishlist) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Product already in wishlist." });
+      return res.status(400).json({ success: false, message: "Product already in wishlist." });
     }
 
-    // Add product to the wishlist
     wishlist.products.push({ productId });
     await wishlist.save();
 
-    res
-      .status(200)
-      .json({ success: true, message: "Product added to wishlist." });
+    res.status(200).json({ success: true, message: "Product added to wishlist." });
   } catch (error) {
     console.error("Error adding to wishlist:", error);
     res.status(500).json({ success: false, message: "Internal server error." });
@@ -84,37 +72,28 @@ const removeFromWishlist = async (req, res) => {
   try {
     const userId = req.session.user?._id;
     if (!userId) {
-      return res.redirect("/login");
+      return res.status(401).json({ success: false, message: "User not logged in." });
     }
 
     const { productId } = req.body;
-
-    // Find the user's wishlist
     const wishlist = await Wishlist.findOne({ userId });
+
     if (!wishlist) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Wishlist not found." });
+      return res.status(404).json({ success: false, message: "Wishlist not found." });
     }
 
-    // Check if the product is in the wishlist
     const productIndex = wishlist.products.findIndex(
       (item) => item.productId.toString() === productId
     );
 
     if (productIndex === -1) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Product not in wishlist." });
+      return res.status(404).json({ success: false, message: "Product not in wishlist." });
     }
 
-    // Remove the product from the wishlist
     wishlist.products.splice(productIndex, 1);
     await wishlist.save();
 
-    res
-      .status(200)
-      .json({ success: true, message: "Product removed from wishlist." });
+    res.status(200).json({ success: true, message: "Product removed from wishlist." });
   } catch (error) {
     console.error("Error removing from wishlist:", error);
     res.status(500).json({ success: false, message: "Internal server error." });

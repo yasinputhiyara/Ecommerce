@@ -1,6 +1,7 @@
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const { User } = require("../../model/User");
+const Wishlist = require("../../model/Wishlist");
 require("dotenv").config();
 
 const { Brand, Category, Product } = require("../../model/Product");
@@ -212,12 +213,10 @@ const resendOtp = async (req, res) => {
         .status(200)
         .json({ success: true, message: "OTP Resend Successfully" });
     } else {
-      res
-        .status(500)
-        .json({
-          success: false,
-          message: "Failed to resend OTP , please try again",
-        });
+      res.status(500).json({
+        success: false,
+        message: "Failed to resend OTP , please try again",
+      });
     }
   } catch (error) {
     console.error("Error Resending OTP ", error);
@@ -233,20 +232,19 @@ const loadHome = async (req, res) => {
       return res.redirect("/login");
     }
     const brand = await Brand.find({ isBlocked: false }).limit(5);
-    console.log(brand)
+    console.log(brand);
     const user = req.session.user;
     const categories = await Category.find({ isListed: true });
     let productData = await Product.find({ isBlocked: false })
       .sort({ createdAt: -1 })
       .limit(8);
 
-    res.render("user/home", { products: productData, user ,brand });
+    res.render("user/home", { products: productData, user, brand });
   } catch (error) {
     console.error("Error in loading Home Page", error);
     res.status(500).send("Internal Server Error");
   }
 };
-
 
 const loadShop = async (req, res) => {
   try {
@@ -261,9 +259,9 @@ const loadShop = async (req, res) => {
     if (req.query.category) {
       const category = await Category.findOne({ name: req.query.category });
       if (category) {
-        filterQuery.category = category._id; // Use the ObjectId of the category
+        filterQuery.category = category._id;
       } else {
-        filterQuery.category = null; // No matching category
+        filterQuery.category = null;
       }
     }
 
@@ -275,30 +273,32 @@ const loadShop = async (req, res) => {
     // Price range filter
     if (req.query.minPrice || req.query.maxPrice) {
       filterQuery.salePrice = {};
-      if (req.query.minPrice) filterQuery.salePrice.$gte = parseInt(req.query.minPrice);
-      if (req.query.maxPrice) filterQuery.salePrice.$lte = parseInt(req.query.maxPrice);
+      if (req.query.minPrice)
+        filterQuery.salePrice.$gte = parseInt(req.query.minPrice);
+      if (req.query.maxPrice)
+        filterQuery.salePrice.$lte = parseInt(req.query.maxPrice);
     }
 
     // Build sort query
     let sortQuery = {};
     switch (req.query.sort) {
-      case 'price-low-high':
+      case "price-low-high":
         sortQuery = { salePrice: 1 };
         break;
-      case 'price-high-low':
+      case "price-high-low":
         sortQuery = { salePrice: -1 };
         break;
-      case 'newest':
+      case "newest":
         sortQuery = { createdAt: -1 };
         break;
-      case 'a-z':
+      case "a-z":
         sortQuery = { productName: 1 };
         break;
-      case 'z-a':
+      case "z-a":
         sortQuery = { productName: -1 };
         break;
       default:
-        sortQuery = { createdAt: -1 }; // Default sort
+        sortQuery = { createdAt: -1 };
     }
 
     // Count total filtered products
@@ -311,11 +311,28 @@ const loadShop = async (req, res) => {
       .skip((page - 1) * itemsPerPage)
       .limit(itemsPerPage);
 
-    const categories = await Category.find({isListed:true});
+    const categories = await Category.find({ isListed: true });
     const brands = await Brand.find({ isBlocked: false });
 
+    // Fetch user's wishlist
+    let wishlistProductIds = [];
+    if (user) {
+      const wishlist = await Wishlist.findOne({ userId: user._id }).select(
+        "products"
+      );
+      wishlistProductIds = wishlist
+     ? wishlist.products.map((p) => p.productId.toString()) // Ensure correct field
+     : [];
+    }
+
+    // Add `isInWishlist` property to each product
+    const updatedProducts = products.map((product) => ({
+      ...product.toObject(),
+      isInWishlist: wishlistProductIds.includes(product._id.toString()),
+    }));
+
     res.render("user/shop", {
-      products,
+      products: updatedProducts, // Use updated product list
       categories,
       brands,
       totalProducts,
@@ -323,18 +340,97 @@ const loadShop = async (req, res) => {
       currentPage: page,
       user,
       filters: {
-        category: req.query.category || '',
-        brand: req.query.brand || '',
-        minPrice: req.query.minPrice || '',
-        maxPrice: req.query.maxPrice || '',
-        sort: req.query.sort || ''
-      }
+        category: req.query.category || "",
+        brand: req.query.brand || "",
+        minPrice: req.query.minPrice || "",
+        maxPrice: req.query.maxPrice || "",
+        sort: req.query.sort || "",
+      },
     });
   } catch (err) {
     console.error(err);
     res.status(500).send("Server Error");
   }
 };
+
+const addToWishlist = async (req, res) => {
+  try {
+    const userId = req.session.user?._id; // Ensure user is logged in
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "User not logged in." });
+    }
+
+    const { productId } = req.body;
+
+    // Check if the product exists and is not blocked
+    const productExists = await Product.findOne({ _id: productId, isBlocked: false });
+    if (!productExists) {
+      return res.status(404).json({ success: false, message: "Product not found." });
+    }
+
+    // Find or create the user's wishlist
+    let wishlist = await Wishlist.findOne({ userId });
+    if (!wishlist) {
+      wishlist = new Wishlist({ userId, products: [] });
+    }
+
+    // Check if the product is already in the wishlist
+    const productAlreadyInWishlist = wishlist.products.some(
+      (item) => item.productId.toString() === productId
+    );
+
+    if (productAlreadyInWishlist) {
+      return res.status(400).json({ success: false, message: "Product already in wishlist." });
+    }
+
+    // Add product to the wishlist
+    wishlist.products.push({ productId });
+    await wishlist.save();
+
+    res.status(200).json({ success: true, message: "Product added to wishlist." });
+  } catch (error) {
+    console.error("Error adding to wishlist:", error);
+    res.status(500).json({ success: false, message: "Internal server error." });
+  }
+};
+
+
+const removeToWishlist = async (req,res)=>{
+  try {
+    const userId = req.session.user?._id;
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "User not logged in." });
+    }
+
+    const { productId } = req.body;
+
+    // Find the user's wishlist
+    const wishlist = await Wishlist.findOne({ userId });
+    if (!wishlist) {
+      return res.status(404).json({ success: false, message: "Wishlist not found." });
+    }
+
+    // Check if the product is in the wishlist
+    const productIndex = wishlist.products.findIndex(
+      (item) => item.productId.toString() === productId
+    );
+
+    if (productIndex === -1) {
+      return res.status(404).json({ success: false, message: "Product not in wishlist." });
+    }
+
+    // Remove the product from the wishlist
+    wishlist.products.splice(productIndex, 1);
+    await wishlist.save();
+
+    res.status(200).json({ success: true, message: "Product removed from wishlist." });
+  } catch (error) {
+    console.error("Error removing from wishlist:", error);
+    res.status(500).json({ success: false, message: "Internal server error." });
+  }
+}
+
+
 
 
 module.exports = {
@@ -347,4 +443,6 @@ module.exports = {
   verifyLogin,
   loadHome,
   loadShop,
+  addToWishlist,
+  removeToWishlist
 };

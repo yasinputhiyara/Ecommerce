@@ -61,34 +61,21 @@ const loadProductDetail = async (req, res) => {
     const productId = req.params.id;
     const product = await Product.findById(productId).populate("category");
 
-    // Check if the product is in the user's wishlist
-    const wishlist = await Wishlist.findOne({ userId }); // Fetch user's wishlist
-    const isInWishlist = wishlist?.products.some(
-      (product) => product.toString() === productId
-    );
-
-    if (product.isBlocked) {
+    if (!product || product.isBlocked) {
       return res.status(404).send("Product not found");
     }
 
-    // Dummy discount/coupon data
-    const dummyDiscounts = [
-      {
-        code: "SUMMER25",
-        value: 25,
-        validUntil: new Date("2025-08-31"),
-      },
-      {
-        code: "NEWUSER10",
-        value: 10,
-        validUntil: new Date("2025-12-31"),
-      },
-      {
-        code: "FLASH50",
-        value: 50,
-        validUntil: new Date("2025-02-01"),
-      },
-    ];
+    // Check if the product is in the user's wishlist
+    let isInWishlist = false;
+    if (userId) {
+      const wishlist = await Wishlist.findOne({ userId }).select("products");
+
+      if (wishlist) {
+        isInWishlist = wishlist.products.some(
+          (p) => p.productId.toString() === productId
+        );
+      }
+    }
 
     // Dummy review data
     const dummyReviews = [
@@ -122,7 +109,6 @@ const loadProductDetail = async (req, res) => {
     // Combine real product data with dummy data
     const enrichedProduct = {
       ...product._doc,
-      discounts: dummyDiscounts,
       reviews: dummyReviews,
       averageRating: averageRating,
     };
@@ -131,6 +117,12 @@ const loadProductDetail = async (req, res) => {
       _id: { $ne: productId },
       category: product.category,
     }).limit(4);
+
+    // console.log("Wishlist Check:", {
+    //   userId,
+    //   productId,
+    //   isInWishlist,
+    // });
 
     res.render("user/view-productDetails", {
       product: enrichedProduct,

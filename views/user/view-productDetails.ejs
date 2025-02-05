@@ -478,23 +478,6 @@
           <span class="old-price">$<%= product.regularPrice %></span>
           <span class="sale-price text-decoration-none">$<%= product.salePrice %></span>
         </p>
-
-        <!-- Discounts/Coupons Section -->
-        <div class="discount-section">
-          <% if (product.discounts && product.discounts.length> 0) { %>
-            <div class="available-discounts">
-              <h6>Available Discounts:</h6>
-              <% product.discounts.forEach(discount=> { %>
-                <div class="discount-tag ">
-                  <span class="discount-code text-white">
-                    <%= discount.code %>
-                  </span>
-                  <span class="discount-value text-danger">-<%= discount.value %>%</span>
-                </div>
-                <% }); %>
-            </div>
-            <% } %>
-        </div>
       </div>
 
       <p class="product-desc">
@@ -542,14 +525,21 @@
           <button id="addToCartBtn" type="submit" name="addtocart" class="btn bg-primary essence-btn" disabled>
             Add to cart
           </button>
-          <div class="product-favourite ml-4">
-            <a href="#" 
-               type="button" 
-               id="wishlist-<%= product._id %>" 
-               class="favme fa <%= isInWishlist ? 'fa-heart text-danger' : 'fa-heart-o' %>" 
-               onclick="toggleWishlist('<%= product._id %>')">
+          <!-- <div class="product-favourite ml-4">
+            <a href="#" type="button" id="wishlist-<%= product._id %>"
+              class="favme fa <%= isInWishlist ? 'fa-heart text-danger' : 'fa-heart-o' %>"
+              onclick="toggleWishlist('<%= product._id %>'); return false;">
             </a>
-        </div>
+          </div> -->
+          <div class="product-favourite ml-4">
+            <a href="#" type="button" 
+               id="wishlist-<%= product._id %>"
+               class="favme fa <%= isInWishlist ? 'fa-heart text-danger' : 'fa-heart-o' %>"
+               onclick="toggleWishlist('<%= product._id %>'); return false;">
+            </a>
+          </div>
+          
+
         </div>
       </form>
 
@@ -694,14 +684,14 @@
                     <% } %>
 
                       <!-- Quick View & Wishlist -->
-                      <div class="product-actions">
+                      <!-- <div class="product-actions">
                         <a href="/product-details/<%= product._id %>" class="quick-view-btn">
                           <i class="fa fa-eye"></i>
                         </a>
                         <a href="#" class="wishlist-btn">
                           <i class="fa fa-heart"></i>
                         </a>
-                      </div>
+                      </div> -->
                 </div>
 
                 <!-- Product Description -->
@@ -742,7 +732,7 @@
       <script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
 
 
-      
+
 
 
       <script>
