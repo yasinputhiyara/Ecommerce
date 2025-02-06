@@ -95,7 +95,7 @@
                                                     <%= field.label %> <span>*</span>
                                                 </label>
                                                 <input type="text" class="form-control" id="<%= field.id %>"
-                                                    name="<%= field.name %>" required>
+                                                    name="<%= field.name %>">
                                             </div>
                                             <% }); %>
                                                 <div class="col-12">
@@ -119,6 +119,15 @@
                         <div class="coupon-input-group">
                             <input type="text" id="couponCode" class="form-control" placeholder="Enter coupon code">
                             <button class="btn essence-btn ml-2" onclick="applyCoupon()">Apply</button>
+                        </div>
+                        <div id="appliedCouponSection" class="mt-3" style="display: none;">
+                            <div class="alert alert-success d-flex justify-content-between align-items-center">
+                                <span>
+                                    Applied Coupon: <strong id="appliedCouponCode"></strong>
+                                    <span id="appliedCouponDiscount"></span>
+                                </span>
+                                <button class="btn btn-sm btn-danger" onclick="removeCoupon()">Remove</button>
+                            </div>
                         </div>
 
                         <div class="available-coupons mt-3">
@@ -155,27 +164,27 @@
                             <h5>Your Order</h5>
                             <p>The Details</p>
                         </div>
-                    
+
                         <!-- Order Summary -->
                         <ul class="order-details-form mb-4">
                             <li><span>Product</span> <span>Total</span></li>
-                            <% let subtotal = 0; %>
-                            <% if (cart && cart.items && cart.items.length > 0) { %>
-                                <% cart.items.forEach((item) => { %>
-                                    <% const itemTotal = item.productId.salePrice * item.quantity; %>
-                                    <% subtotal += itemTotal; %>
-                                    <li>
-                                        <span>
-                                            <%= item.productId.productName %> x <%= item.quantity %>
-                                        </span>
-                                        <span>&#8377;<%= itemTotal.toFixed(2) %></span>
-                                    </li>
-                                <% }); %>
-                            <% } else { %>
-                                <li>Your cart is empty.</li>
-                            <% } %>
+                            <% let subtotal=0; %>
+                                <% if (cart && cart.items && cart.items.length> 0) { %>
+                                    <% cart.items.forEach((item)=> { %>
+                                        <% const itemTotal=item.productId.salePrice * item.quantity; %>
+                                            <% subtotal +=itemTotal; %>
+                                                <li>
+                                                    <span>
+                                                        <%= item.productId.productName %> x <%= item.quantity %>
+                                                    </span>
+                                                    <span>&#8377;<%= itemTotal.toFixed(2) %></span>
+                                                </li>
+                                                <% }); %>
+                                                    <% } else { %>
+                                                        <li>Your cart is empty.</li>
+                                                        <% } %>
                         </ul>
-                    
+
                         <!-- Total Summary -->
                         <ul class="list-group">
                             <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -184,20 +193,20 @@
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 Delivery Charge
-                                <% const deliveryCharge = subtotal < 1000 ? 100 : 0; %>
-                                <span id="deliveryCharge">&#8377;<%= deliveryCharge.toFixed(2) %></span>
+                                <% const deliveryCharge=subtotal < 1000 ? 100 : 0; %>
+                                    <span id="deliveryCharge">&#8377;<%= deliveryCharge.toFixed(2) %></span>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 Discount
                                 <span id="discountAmount">&#8377;0.00</span>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <% const total = subtotal + deliveryCharge; %>
-                                Total
-                                <strong id="finalTotal">&#8377;<%= total.toFixed(2) %></strong>
+                                <% const total=subtotal + deliveryCharge; %>
+                                    Total
+                                    <strong id="finalTotal">&#8377;<%= total.toFixed(2) %></strong>
                             </li>
                         </ul>
-                    
+
                         <!-- Payment Method -->
                         <h5>Select Payment Method</h5>
                         <div class="payment-methods">
@@ -206,22 +215,26 @@
                                     id="razorpayRadio">
                                 <label class="form-check-label" for="razorpayRadio">Razorpay</label>
                             </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="paymentMethod" value="wallet"
-                                    id="walletRadio">
-                                <label class="form-check-label" for="walletRadio"> Wallet</label>
-                            </div>
-                            <% const isCodDisabled = total > 2000 || total > 20000; %>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="paymentMethod" value="cod"
-                                    id="codRadio" <%= isCodDisabled ? 'disabled' : '' %>>
-                                <label class="form-check-label" for="codRadio">
-                                    Cash on Delivery (COD) 
-                                    <%= isCodDisabled ? '(Not Available)' : '' %>
-                                </label>
-                            </div>
+                            <% if (wallet && wallet.balance> 0) { %>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" value="wallet"
+                                        id="walletRadio">
+                                    <label class="form-check-label" for="walletRadio">
+                                        Wallet (Balance: ₹<%= wallet.balance.toFixed(2) %>)
+                                    </label>
+                                </div>
+                                <% } %>
+                                    <% const isCodDisabled=total> 2000 || total > 20000; %>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="paymentMethod"
+                                                value="cod" id="codRadio" <%=isCodDisabled ? 'disabled' : '' %>>
+                                            <label class="form-check-label" for="codRadio">
+                                                Cash on Delivery (COD)
+                                                <%= isCodDisabled ? '(Not Available)' : '' %>
+                                            </label>
+                                        </div>
                         </div>
-                    
+
                         <!-- Place Order Button -->
                         <form id="orderForm" method="POST">
                             <input type="hidden" name="selectedAddress" id="selectedAddress">
@@ -235,14 +248,117 @@
     </div>
 
 
-
     <script>
+        function validatePhone(phone) {
+            const phoneRegex = /^[6-9]\d{9}$/;  // Indian phone number format
+            return phoneRegex.test(phone);
+        }
+
+        function validatePincode(pincode) {
+            const pincodeRegex = /^[1-9][0-9]{5}$/;  // Indian pincode format
+            return pincodeRegex.test(pincode);
+        }
+
+        function validateField(value, fieldName) {
+            if (!value || value.trim() === '') {
+                return `${fieldName} is required`;
+            }
+            return null;
+        }
+
+        // Real-time validation handlers
+        function handlePhoneValidation(event) {
+            const phoneInput = event.target;
+            const isValid = validatePhone(phoneInput.value);
+
+            if (phoneInput.value && !isValid) {
+                phoneInput.setCustomValidity('Please enter a valid 10-digit phone number starting with 6-9');
+                phoneInput.reportValidity();
+            } else {
+                phoneInput.setCustomValidity('');
+            }
+        }
+
+        function handleAltPhoneValidation(event) {
+            const phoneInput = event.target;
+            if (phoneInput.value) {  // Only validate if a value is entered
+                const isValid = validatePhone(phoneInput.value);
+
+                if (!isValid) {
+                    phoneInput.setCustomValidity('Please enter a valid 10-digit phone number starting with 6-9');
+                    phoneInput.reportValidity();
+                } else {
+                    phoneInput.setCustomValidity('');
+                }
+            } else {
+                phoneInput.setCustomValidity('');  // Clear validation if empty
+            }
+        }
+
+        function handlePincodeValidation(event) {
+            const pincodeInput = event.target;
+            const isValid = validatePincode(pincodeInput.value);
+
+            if (pincodeInput.value && !isValid) {
+                pincodeInput.setCustomValidity('Please enter a valid 6-digit pincode');
+                pincodeInput.reportValidity();
+            } else {
+                pincodeInput.setCustomValidity('');
+            }
+        }
+
+        // Form submission handler
         document.getElementById('addressForm').addEventListener('submit', async (event) => {
-            event.preventDefault(); // Prevent the default form submission
+            event.preventDefault();
 
             const form = event.target;
             const formData = new FormData(form);
             const data = Object.fromEntries(formData.entries());
+
+            // Validation checks
+            const errors = [];
+
+            // Check for empty fields
+            const requiredFields = [
+                { name: 'addressType', label: 'Address Type' },
+                { name: 'name', label: 'Name' },
+                { name: 'landMark', label: 'Street Address' },
+                { name: 'city', label: 'Town/City' },
+                { name: 'state', label: 'Province' },
+                { name: 'pincode', label: 'Pincode' },
+                { name: 'phone', label: 'Phone Number' }
+            ];
+
+            requiredFields.forEach(field => {
+                const error = validateField(data[field.name], field.label);
+                if (error) errors.push(error);
+            });
+
+            // Validate phone number
+            if (data.phone && !validatePhone(data.phone)) {
+                errors.push('Please enter a valid 10-digit phone number starting with 6-9');
+            }
+
+            // Validate alternate phone if provided
+            if (data.altPhone && !validatePhone(data.altPhone)) {
+                errors.push('Please enter a valid alternate phone number');
+            }
+
+            // Validate pincode
+            if (data.pincode && !validatePincode(data.pincode)) {
+                errors.push('Please enter a valid 6-digit pincode');
+            }
+
+            // If there are validation errors, show them and stop submission
+            if (errors.length > 0) {
+                Swal.fire({
+                    title: 'Validation Error!',
+                    html: errors.join('<br>'),
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
 
             try {
                 const response = await fetch('/add-address', {
@@ -262,7 +378,7 @@
                         icon: 'success',
                         confirmButtonText: 'OK',
                     }).then(() => {
-                        location.reload(); // Reload the page to reflect changes
+                        location.reload();
                     });
                 } else {
                     Swal.fire({
@@ -273,16 +389,20 @@
                     });
                 }
             } catch (error) {
+                console.error('Error:', error);
                 Swal.fire({
                     title: 'Error!',
                     text: 'Something went wrong. Please check your connection and try again.',
                     icon: 'error',
                     confirmButtonText: 'OK',
                 });
-                console.error('Error:', error);
             }
         });
 
+        // Add real-time validation listeners
+        document.getElementById('phone').addEventListener('input', handlePhoneValidation);
+        document.getElementById('altPhone').addEventListener('input', handleAltPhoneValidation);
+        document.getElementById('pincode').addEventListener('input', handlePincodeValidation);
     </script>
 
     <!-- ADDRESS TOGGLE -->
@@ -372,7 +492,7 @@
                     const response = await fetch('/create-razorpay-order', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ selectedAddress: selectedAddress.value , couponCode })
+                        body: JSON.stringify({ selectedAddress: selectedAddress.value, couponCode })
                     });
 
                     if (!response.ok) {
@@ -472,6 +592,9 @@
             const couponCode = couponCodeInput.value.trim();
             const discountElement = document.getElementById('discountAmount');
             const finalTotalElement = document.getElementById('finalTotal');
+            const appliedCouponSection = document.getElementById('appliedCouponSection');
+            const appliedCouponCode = document.getElementById('appliedCouponCode');
+            const appliedCouponDiscount = document.getElementById('appliedCouponDiscount');
 
             fetch('/apply-coupon', {
                 method: 'POST',
@@ -483,8 +606,18 @@
                 .then(response => response.json())
                 .then(result => {
                     if (result.success) {
+                        // Update discount and total
                         discountElement.textContent = `₹${result.discount.toFixed(2)}`;
                         finalTotalElement.textContent = `₹${result.finalTotal.toFixed(2)}`;
+
+                        // Show applied coupon section
+                        appliedCouponSection.style.display = 'block';
+                        appliedCouponCode.textContent = result.couponName;
+                        appliedCouponDiscount.textContent = ` (-₹${result.discount})`;
+
+                        // Disable input and apply button
+                        couponCodeInput.disabled = true;
+                        applyButton.disabled = true;
 
                         Swal.fire({
                             title: 'Success!',
@@ -492,9 +625,6 @@
                             icon: 'success',
                             confirmButtonText: 'OK'
                         });
-
-                        couponCodeInput.disabled = true;
-                        applyButton.disabled = true;
                     } else {
                         Swal.fire({
                             title: 'Error!',
@@ -509,6 +639,58 @@
                     Swal.fire({
                         title: 'Error!',
                         text: 'An error occurred while applying the coupon',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                });
+        }
+
+        function removeCoupon() {
+            const couponCodeInput = document.getElementById('couponCode');
+            const applyButton = document.querySelector('.coupon-input-group button');
+            const appliedCouponSection = document.getElementById('appliedCouponSection');
+            const discountElement = document.getElementById('discountAmount');
+            const finalTotalElement = document.getElementById('finalTotal');
+
+            fetch('/remove-coupon', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Reset UI elements
+                        appliedCouponSection.style.display = 'none';
+                        discountElement.textContent = '₹0.00';
+                        finalTotalElement.textContent = `₹${data.total.toFixed(2)}`;
+
+                        // Re-enable input and apply button
+                        couponCodeInput.disabled = false;
+                        applyButton.disabled = false;
+                        couponCodeInput.value = '';
+
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'Coupon removed successfully',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: data.message || 'Error removing coupon',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'An error occurred while removing the coupon',
                         icon: 'error',
                         confirmButtonText: 'OK'
                     });

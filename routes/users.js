@@ -108,6 +108,7 @@ router.post('/place-order',cartController.checkout)
 router.post('/place-order/wallet',cartController.walletPayment)
 // router.get('/order-success',cartController.loadOrderSuccess)
 router.post('/apply-coupon',cartController.applyCoupon)
+router.post('/remove-coupon', cartController.removeCoupon)
 
 //-------- RAZORPAY INTEGRATION ---------//
 router.post('/create-razorpay-order',cartController.razorpayOrder)

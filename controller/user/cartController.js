@@ -324,6 +324,8 @@ const loadCheckoutPage = async (req, res) => {
       "items.productId"
     );
 
+    const wallet = await Wallet.findOne({userId:userId})
+
     if (!user) {
       return res.render("unautherisedUser", {
         message: "You need to log in to access this page.",
@@ -393,6 +395,7 @@ const loadCheckoutPage = async (req, res) => {
       cart,
       subtotal,
       availableCoupons: coupons,
+      wallet
     });
   } catch (error) {
     console.error("Checkout Page Error:", error);
@@ -1226,6 +1229,38 @@ const walletPayment = async (req, res) => {
   }
 };
 
+const removeCoupon = async (req, res) => {
+  try {
+      const userId = req.session.user;
+      
+      // Find the cart and calculate original total
+      const cart = await Cart.findOne({ userId }).populate("items.productId");
+      let subtotal = 0;
+      if (cart && cart.items.length > 0) {
+          subtotal = cart.items.reduce(
+              (total, item) => total + item.productId.salePrice * item.quantity,
+              0
+          );
+      }
+
+      // Add delivery charge if applicable
+      const deliveryCharge = subtotal < 1000 ? 100 : 0;
+      const total = subtotal + deliveryCharge;
+
+      res.json({
+          success: true,
+          total,
+          message: "Coupon removed successfully"
+      });
+  } catch (error) {
+      console.error("Remove Coupon Error:", error);
+      res.status(500).json({
+          success: false,
+          message: "Error removing coupon"
+      });
+  }
+};
+
 module.exports = {
 
   loadCart,
@@ -1242,6 +1277,8 @@ module.exports = {
   applyCoupon,
   getOrderDetails,
   razorpayPaymentinOrder,
-  walletPayment
+  walletPayment,
+  removeCoupon
+  
   
 };

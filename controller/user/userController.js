@@ -7,7 +7,7 @@ require("dotenv").config();
 const { Brand, Category, Product } = require("../../model/Product");
 
 const loadLogin = async (req, res) => {
-  const errorMessage = req.session.errorMessage || null; // Retrieve and clear error
+  const errorMessage = req.session.errorMessage || null; 
   req.session.errorMessage = null;
   res.render("user/login", { message: errorMessage, user: null });
 };

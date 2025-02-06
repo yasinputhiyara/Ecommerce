@@ -389,6 +389,45 @@
       padding: 0 20px;
     }
   }
+
+  .wishlist-container {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      z-index: 3;
+    }
+
+    .wishlist-btn {
+      width: 40px;
+      height: 40px;
+      background: white;
+      border: none;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .wishlist-btn i {
+      color: #999;
+      transition: color 0.3s ease;
+    }
+
+    .wishlist-btn:hover {
+      background: #ff084e;
+    }
+
+    .wishlist-btn:hover i {
+      color: white;
+    }
+
+    .wishlist-btn.active i {
+      color: #ff084e;
+    }
+
   </style>
   
 
@@ -603,10 +642,11 @@
                   <% } %>
 
                     <!-- Quick View & Wishlist -->
-                    <div class="product-actions">
-                      <a href="#" class="wishlist-btn">
-                        <i class="fa fa-heart"></i>
-                      </a>
+                    <div class="wishlist-container">
+                      <button id="wishlist-<%= product._id %>"
+                        class="wishlist-btn fa <%= product.isInWishlist ? 'fa-heart text-danger' : 'fa-heart-o' %>"
+                        onclick="toggleWishlist('<%= product._id %>')">
+                      </button>
                     </div>
               </div>
 
@@ -655,6 +695,49 @@
 
   </div>
   <!-- ##### Brands Area End ##### -->
+
+
+  <script>
+    async function toggleWishlist(productId) {
+      try {
+        const wishlistIcon = document.getElementById(`wishlist-${productId}`);
+        if (!wishlistIcon) {
+          console.error("Wishlist button not found for product:", productId);
+          return;
+        }
+
+        const isInWishlist = wishlistIcon.classList.contains("text-danger");
+
+        const url = isInWishlist ? "/shop/remove-from-wishlist" : "/shop/add-to-wishlist";
+
+        const response = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ productId }),
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          if (isInWishlist) {
+            wishlistIcon.classList.remove("text-danger", "fa-heart");
+            wishlistIcon.classList.add("fa-heart-o");
+          } else {
+            wishlistIcon.classList.add("text-danger", "fa-heart");
+            wishlistIcon.classList.remove("fa-heart-o");
+          }
+
+          Swal.fire({ icon: "success", title: result.message });
+        } else {
+          Swal.fire({ icon: "error", title: "Error", text: result.message });
+        }
+      } catch (error) {
+        console.error("Error toggling wishlist:", error);
+        Swal.fire({ icon: "error", title: "Error", text: "Failed to update wishlist." });
+      }
+    }
+
+  </script>
 
 
 
