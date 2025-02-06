@@ -174,32 +174,14 @@
   </style>
 
 
-  </style>
+
 
   <div class="profile-session-container">
     <div class="container-fluid">
       <div class="dashboard">
         <!-- Sidebar -->
-        <div class="sidebar">
-          <a href="/dashboard" class="w-100">
-            <button class="nav-button w-100">Dashboard</button>
-          </a>
-          <a href="/orders" class="w-100">
-            <button class="nav-button active w-100">Orders</button>
-          </a>
-          <a href="/update-profile" class="w-100">
-            <button class="nav-button w-100">Update Profile</button>
-          </a>
-          <a href="/address" class="w-100">
-            <button class="nav-button w-100">My Address</button>
-          </a>
-          <a href="/wallet" class="w-100">
-            <button class="nav-button w-100">Wallet</button>
-          </a>
-          <a href="/logout" class="w-100">
-            <button class="nav-button w-100">Logout</button>
-          </a>
-        </div>
+        <%- include("../../partials/profileSideBar") %>
+
 
         <!-- Main Content -->
         <div class="container w-75 h-100 my-5 py-4 rounded shadow-lg bg-light">

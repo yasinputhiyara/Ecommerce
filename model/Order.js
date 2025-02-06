@@ -65,10 +65,15 @@ const orderSchema = new Schema({
     type:Number,
     required:true
   },
+  shippingCharge:{
+    type:Number
+
+  },
   totalPrice: {
     type: Number,
     required: true,
   },
+
   discount: {
     type: Number,
     default: 0,
@@ -124,7 +129,7 @@ const orderSchema = new Schema({
   paymentMethod: {
     type: String,
     required: true,
-    enum: ["cod", "razorpay"],
+    enum: ["cod", "razorpay" , "wallet"],
   },
   paymentStatus: {
     type: String,
@@ -147,6 +152,11 @@ const orderSchema = new Schema({
     default: Date.now,
     required: true,
   },
+  appliedCoupon:{
+    type:String
+
+  },
+
   couponApplied: {
     type: Boolean,
     default: false,

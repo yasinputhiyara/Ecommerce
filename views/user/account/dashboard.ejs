@@ -21,41 +21,10 @@
   <div class="container-fluid">
     <div class="dashboard">
       <!-- Sidebar -->
-      <div class="sidebar">
-        <a href="/dashboard" class="w-100">
-          <button class="nav-button active w-100">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-              />
-            </svg>
-            Dashboard
-          </button>
-        </a>
-        <a href="/orders" class="w-100">
-          <button class="nav-button w-100">Orders</button>
-        </a>
-        <a href="/update-profile" class="w-100">
-          <button class="nav-button w-100">Update Profile</button>
-        </a>
-        <a href="/address" class="w-100">
-          <button class="nav-button w-100">My Address</button>
-        </a>
-        <a href="/wallet" class="w-100">
-          <button class="nav-button w-100">Wallet</button>
-        </a>
-        <a href="/logout" class="w-100">
-          <button class="nav-button w-100">Logout</button>
-        </a>
-      </div>
+
+      <%- include("../../partials/profileSideBar") %>
+
+      
 
       <!-- Main Content -->
       <div class="container w-75 h-100 my-5 py-4 rounded shadow-lg bg-light">
@@ -68,7 +37,7 @@
           <!-- Profile Overview Section -->
           <div class="profile-overview mb-5">
             <h3 class="section-title text-secondary border-bottom pb-2">
-              John Doe
+              <%=userData.username %>
             </h3>
             <div class="profile-info mt-4">
               <p class="mb-3">

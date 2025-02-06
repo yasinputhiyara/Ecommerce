@@ -330,26 +330,7 @@
         <div class="container-fluid">
             <div class="dashboard">
                 <!-- Sidebar -->
-                <div class="sidebar">
-                    <a href="/dashboard" class="w-100">
-                        <button class="nav-button w-100">Dashboard</button>
-                    </a>
-                    <a href="/orders" class="w-100">
-                        <button class="nav-button active w-100">Orders</button>
-                    </a>
-                    <a href="/update-profile" class="w-100">
-                        <button class="nav-button w-100">Update Profile</button>
-                    </a>
-                    <a href="/address" class="w-100">
-                        <button class="nav-button w-100">My Address</button>
-                    </a>
-                    <a href="/wallet" class="w-100">
-                        <button class="nav-button w-100">Wallet</button>
-                    </a>
-                    <a href="/logout" class="w-100">
-                        <button class="nav-button w-100">Logout</button>
-                    </a>
-                </div>
+                <%- include("../../partials/profileSideBar") %>
 
                 <!-- Main Content -->
                 <div class="container w-75 h-100 my-5 py-4 rounded shadow-lg bg-light">
@@ -569,13 +550,19 @@
                                 </div>
                                 <div class="summary-row">
                                     <span>Shipping:</span>
-                                    <span>₹0</span>
+                                    <span>₹<%= order.shippingCharge || 0 %></span>
                                 </div>
                                 <div class="summary-row font-weight-bold">
                                     <span>Total Amount:</span>
                                     <span>₹<%= order.totalPrice.toFixed(2) %></span>
                                 </div>
                             </div>
+                        
+                            <% if (order.paymentStatus === 'Paid' && order.orderStatus === 'Delivered') { %>
+                                <button class="btn btn-primary mt-3" onclick="downloadInvoice('<%= order._id %>')">
+                                    Download Invoice
+                                </button>
+                            <% } %>
                         </div>
 
                         <a href="/orders" class="back-btn">Back to Orders</a>
@@ -786,5 +773,27 @@
                 .catch(error => Swal.fire('Error!', error.message || 'Something went wrong.', 'error'));
         }
     </script>
+
+<script>
+    function downloadInvoice(orderId) {
+        fetch(`/orders/${orderId}/invoice`, {
+            method: 'GET',
+        })
+        .then(response => response.blob())
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `invoice_${orderId}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire('Error!', 'Failed to download the invoice.', 'error');
+        });
+    }
+</script>
 
     <%- include("../../partials/footer") %>

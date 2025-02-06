@@ -1,7 +1,7 @@
 var express = require('express');
 const passport = require('passport')
 var router = express.Router();
-const {Product} = require('../model/Product')
+const {Product, Brand} = require('../model/Product')
 
 const checkBan = require('../middleware/isBan')
 
@@ -38,10 +38,10 @@ router.get('/dashboard',checkBan,isLoggedOut,profileController.loadDashboard)
 router.get('/update-profile',checkBan,isLoggedOut, profileController.loadProfilePage);
 router.get('/address',checkBan,isLoggedOut, profileController.loadAddressPage);
 // router.get('/wallet',isLoggedOut,profileController.loadWalletPage);
-router.get('/wallet',isLoggedOut,walletController.getWallet);
+router.get('/wallet',checkBan,isLoggedOut,walletController.getWallet);
 
 router.post('/add-address',isLoggedOut,profileController.addAddress)
-router.get('/get-address/:id',profileController.getAddressById)
+router.get('/get-address/:id',checkBan,profileController.getAddressById)
 router.put('/edit-address',profileController.editAddress)
 router.delete('/delete-address/:id',profileController.deleteAddress )
 
@@ -52,12 +52,30 @@ router.put('/profile/change-password',isLoggedOut,profileController.updatePasswo
 
 //----- GOOGLE AUTHENTICTION ----//
 router.get('/auth/google',checkBan,isLoggedIn,passport.authenticate('google',{scope:['profile','email']}))
-router.get('/auth/google/callback',checkBan,isLoggedIn,passport.authenticate('google',{failureRedirect:'/login'}), async (req,res)=>{
+
+const preventAuthPageAccess = (req, res, next) => {
+    if (req.session.user) {
+        return res.redirect('/'); 
+    }
+    next();
+};
+
+router.get('/auth/google/callback', checkBan,preventAuthPageAccess, isLoggedIn, passport.authenticate('google', {failureRedirect: '/login'}), async (req,res) => {
     let user = req.user
     req.session.user = user
-    console.log(user)
-    let products = await Product.find({isBlocked:false})
-    res.render('user/home',{user , products})
+    if(req.session.user){
+        // Add these headers to prevent caching
+        res.set('Cache-Control', 'no-cache, no-store, must-revalidate')
+        res.set('Pragma', 'no-cache')
+        res.set('Expires', '0')
+
+        console.log(req.session)
+        let products = await Product.find({isBlocked:false})
+        let brand = await Brand.find({}).limit(5)
+        res.render('user/home',{user , products , brand})
+    }else{
+        res.redirect('/login');
+    }
 })
 
 
@@ -87,6 +105,7 @@ router.get('/validateCartStock', cartController.validateCartStock)
 
 router.get('/checkout',checkBan , cartController.loadCheckoutPage)
 router.post('/place-order',cartController.checkout)
+router.post('/place-order/wallet',cartController.walletPayment)
 // router.get('/order-success',cartController.loadOrderSuccess)
 router.post('/apply-coupon',cartController.applyCoupon)
 
@@ -97,21 +116,23 @@ router.get('/payment-failed',cartController.paymentFailed)
 
 //------- ORDER ROUTES --------//
 router.get('/orders',orderController.loadOrders )
-router.get('/order-details/:id',orderController.loadOrderDetails)
+router.get('/order-details/:id',checkBan,orderController.loadOrderDetails)
 router.post('/orders/:orderId/products/:productIndex/cancel',orderController.cancelProduct)
 router.post('/orders/:orderId/cancel', orderController.cancelOrder);
 // router.post('/orders/:orderId/return',orderController.returnOrder);
 router.post('/orders/:orderId/products/:productIndex/return', orderController.returnSingleProduct);
 
-router.get('/get-order-details/:orderId',cartController.getOrderDetails)
+router.get('/get-order-details/:orderId',checkBan,cartController.getOrderDetails)
 router.post('/verify-razorpay-payment-order',cartController.razorpayPaymentinOrder)
+
+router.get('/orders/:orderId/invoice',orderController.InvoiceDownload )
 
 
 
 
 
 //----------  WISHLIST MANAGEMENT -----------//
-router.get('/wishlist',wishlistController.loadWishlist)
+router.get('/wishlist',checkBan,wishlistController.loadWishlist)
 router.post('/add-to-wishlist',wishlistController.addToWishlist)
 router.post('/remove-from-wishlist',wishlistController.removeFromWishlist)
 router.post('/wishlist/remove',wishlistController.removeFromWishlist)

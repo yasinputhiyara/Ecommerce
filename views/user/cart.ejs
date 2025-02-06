@@ -113,56 +113,58 @@
           </div>
 
           <!-- Right Column: Order Summary -->
-          <div class="col-md-4">
-            <div class="card shadow-sm">
-              <div class="card-body">
-                <h5 class="card-title mb-4">Order Summary</h5>
-                <div class="summary-items">
-                  <div class="shipping-info mt-3 text-muted small">
-                    <i class="fas fa-truck"></i>
-                    <% if (cartData && cartData.shippingCost === 0) { %>
-                      Free shipping applied! 🎉
-                    <% } else { %>
-                      Add ₹<%= 1000 - (cartData ? cartData.subtotal : 0) %> more to get free shipping
-                    <% } %>
-                  </div>
-                  
-                  <div class="d-flex justify-content-between mb-2">
-                    <span>Subtotal</span>
-                    <span class="subtotal">
-                      &#8377;<%= cartData ? cartData.items.reduce((acc, item)=> acc + (item.price * item.quantity), 0) :
-                        0 %>
-                    </span>
-                  </div>
-                  <!-- <div class="d-flex justify-content-between mb-2">
+          <% if(cartData && cartData.items.length> 0){ %>
+
+            <div class="col-md-4">
+              <div class="card shadow-sm">
+                <div class="card-body order-summary" >
+                  <h5 class="card-title mb-4">Order Summary</h5>
+                  <div class="summary-items">
+                    <div class="shipping-info mt-3 text-muted small">
+                      <i class="fas fa-truck"></i>
+                      
+                        Free shipping applied for orders above 1000🎉
+                        
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-2">
+                      <span>Subtotal</span>
+                      <span class="subtotal">
+                        &#8377;<%= cartData ? cartData.items.reduce((acc, item)=> acc + (item.price * item.quantity), 0)
+                          :
+                          0 %>
+                      </span>
+                    </div>
+                    <!-- <div class="d-flex justify-content-between mb-2">
                     <span>Discount</span>
                     <span class="discount">₹0</span>
                   </div> -->
-                  <div class="d-flex justify-content-between mb-2">
-                    <span>Shipping</span>
-                    <span class="shipping">
-                      &#8377;<%= cartData && cartData.shippingCost ? cartData.shippingCost : 0 %>
-                    </span>
+                    <div class="d-flex justify-content-between mb-2">
+                      <span>Shipping</span>
+                      <span class="shipping">
+                        &#8377;<%= cartData && cartData.shippingCost ? cartData.shippingCost : 0 %>
+                      </span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-3">
+                      <strong>Total</strong>
+                      <strong class="total">
+                        &#8377;<%= cartData && cartData.total ? cartData.total : 0 %>
+                      </strong>
+                    </div>
                   </div>
-                  <hr>
-                  <div class="d-flex justify-content-between mb-3">
-                    <strong>Total</strong>
-                    <strong class="total">
-                      &#8377;<%= cartData && cartData.total ? cartData.total : 0 %>
-                    </strong>
-                  </div>
+
+                  <% if(cartData && cartData.items.length> 0){ %>
+                    <a href="/checkout" id="checkoutBtn" class="btn btn-primary w-100">Proceed to Checkout</a>
+                    <% }else{ %>
+                      <a href="" onclick="validateCart()" class="btn btn-primary w-100">Proceed to Checkout</a>
+                      <% } %>
+
+
                 </div>
-
-                <% if(cartData && cartData.items.length> 0){ %>
-                  <a href="/checkout" id="checkoutBtn" class="btn btn-primary w-100">Proceed to Checkout</a>
-                  <% }else{ %>
-                    <a href="" onclick="validateCart()" class="btn btn-primary w-100">Proceed to Checkout</a>
-                    <% } %>
-
-
               </div>
             </div>
-          </div>
+            <% } %>
         </div>
       </div>
     </div>
@@ -312,6 +314,9 @@
       const updateCartDisplay = () => {
         const cartItems = document.querySelectorAll('.cart-item');
         const cartTable = document.querySelector('.cart-table tbody');
+        const orderSummary = document.querySelector('.order-summary'); // Select the order summary column
+        const shippingStatus = document.querySelector('.shipping-info')
+
 
         if (cartItems.length === 0) {
           cartTable.innerHTML = `
@@ -326,6 +331,13 @@
         </tr>
       `;
 
+      if(orderSummary){
+        orderSummary.style.display = 'none';
+      }
+      
+
+
+
           // Update checkout button
           const checkoutBtn = document.querySelector('a[href="/checkout"]');
           if (checkoutBtn) {
@@ -339,7 +351,7 @@
       const updateOrderSummary = () => {
         let subtotal = 0;
         const FREE_SHIPPING_THRESHOLD = 1000; // Free shipping for orders over ₹1000
-        const SHIPPING_COST = 50; // Standard shipping cost
+        const SHIPPING_COST = 100; // Standard shipping cost
 
         document.querySelectorAll('.cart-item').forEach(item => {
           const price = parseFloat(item.querySelector('.item-price').textContent.replace('₹', ''));

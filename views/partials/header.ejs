@@ -79,7 +79,6 @@
             align-items: center;
             justify-content: space-between;
             width: 100%;
-            
             max-width: 700px;
             padding: 10px 15px;
             background: #fff;
@@ -118,31 +117,6 @@
             font-size: 16px;
         }
 
-        /* Advanced Search Section */
-        .advanced-search {
-            display: none;
-            flex-direction: column;
-            gap: 10px;
-            background: #f9f9f9;
-            padding: 15px;
-            margin-top: 10px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Show Advanced Search */
-        .advanced-search.active {
-            display: flex;
-        }
-
-        /* Advanced Search Inputs */
-        .advanced-search input {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 14px;
-            outline: none;
-        }
 
         /* Toggle Advanced Search */
         .search-toggle {
@@ -198,6 +172,174 @@
         }
     </style>
 
+    <!-- <style>
+        @media (max-width: 991px) {
+            .header_area {
+                padding: 10px 0;
+            }
+
+            .header-meta {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 10px;
+            }
+
+            .search-container {
+                order: 3;
+                width: 100%;
+                margin-top: 10px;
+            }
+
+            .search-box {
+                width: 100%;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .search-box input,
+            .search-box select {
+                width: 100%;
+            }
+
+            .favourite-area,
+            .user-login-info,
+            .cart-area {
+                margin: 0 10px;
+            }
+        }
+
+        /* Mobile styles */
+        @media (max-width: 767px) {
+            .classy-nav-container {
+                flex-direction: column;
+            }
+
+            .header-meta {
+                width: 100%;
+                justify-content: space-around;
+                padding: 10px;
+            }
+
+            .nav-brand img {
+                max-width: 120px;
+            }
+
+            .classynav ul {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .classynav ul li {
+                padding: 10px 0;
+            }
+
+            .dropdown-menu {
+                position: static !important;
+                width: 100%;
+            }
+
+            .search-form-container {
+                max-width: 100%;
+                border-radius: 25px;
+            }
+
+            .search-input-group {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .search-input-group input,
+            .search-input-group select {
+                width: 100%;
+                margin: 5px 0;
+            }
+        }
+
+        /* Updated search container styles */
+        .search-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 10px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border-radius: 25px;
+            padding: 5px 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-box input {
+            flex: 1;
+            border: none;
+            padding: 8px;
+            outline: none;
+        }
+
+        .search-box select {
+            border: none;
+            padding: 8px;
+            outline: none;
+            background: transparent;
+        }
+
+        .search-box button {
+            background: #2346e3;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        /* Dropdown menu styles */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-menu {
+            min-width: 200px;
+            padding: 10px;
+        }
+
+        .dropdown-item {
+            padding: 8px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Navigation toggle button */
+        .classy-navbar-toggler {
+            display: none;
+        }
+
+        @media (max-width: 991px) {
+            .classy-navbar-toggler {
+                display: block;
+                margin-left: 15px;
+            }
+
+            .classy-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: white;
+                padding: 15px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            }
+
+            .classy-menu.active {
+                display: block;
+            }
+        }
+    </style> -->
+
 
 </head>
 
@@ -237,7 +379,7 @@
                                 </div> -->
                             </li>
                             <li>
-                                <a href="/shop?category=Mens&minPrice=100&maxPrice=4000">MEN</a>
+                                <a href="/shop?category=Mens&minPrice=100&maxPrice=10000">MEN</a>
                                 <!-- <div class="megamenu">
                                     <ul class="single-mega cn-col-4">
                                         <li class="title"><a href="/shop?category=Mens&minPrice=100&maxPrice=4000">Men's Collection</a></li>
@@ -247,7 +389,7 @@
                                 </div> -->
                             </li>
                             <li>
-                                <a href="/shop?category=Womens&minPrice=100&maxPrice=4000">WOMEN</a>
+                                <a href="/shop?category=Womens&minPrice=100&maxPrice=10000">WOMEN</a>
                                 <!-- <div class="megamenu">
                                     <ul class="single-mega cn-col-4">
                                         <li class="title"><a href="">Women's Collection</a></li>
@@ -257,7 +399,7 @@
                                 </div> -->
                             </li>
                             <li>
-                                <a href="/shop?category=Kids&minPrice=100&maxPrice=4000">KIDS</a>
+                                <a href="/shop?category=Kids&minPrice=100&maxPrice=10000">KIDS</a>
                                 <!-- <div class="megamenu">
                                     <ul class="single-mega cn-col-4">
                                         <li class="title"><a href="">Kid's Collection</a></li>
@@ -276,6 +418,7 @@
             <div class="header-meta d-flex clearfix justify-content-end">
                 <!-- Search Area -->
                 <!-- Modern Search Area -->
+
                 <div class="search-container">
                     <form id="searchForm" class="search-box">
                         <input type="search" id="headerSearch" placeholder="Search for products...">
@@ -300,11 +443,14 @@
                 <div class="favourite-area">
                     <% if (user) { %>
                         <div class="dropdown mt-4">
-                            <button class="btn btn-primary dropdown-toggle rounded-pill px-4 py-2" type="button"
-                                id="accountDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-person-circle me-2"></i>
-                                <%= user.username %>
-                            </button>
+                            <!-- <a href="/dashboard"> -->
+                                <button class="btn btn-primary dropdown-toggle rounded-pill px-4 py-2" type="button"
+                                    id="accountDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-person-circle me-2"></i>
+                                    <%= user.username %>
+                                </button>
+                            <!-- </a> -->
+
                             <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="accountDropdown">
                                 <li>
                                     <a class="dropdown-item d-flex align-items-center" href="/dashboard">
@@ -349,6 +495,3 @@
         </div>
     </header>
     <!-- ##### Header Area End ##### -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="/user/js/usercheck.js"></script>
-    <script src="/user/js/search.js"></script>

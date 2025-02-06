@@ -1,3 +1,4 @@
+const { path } = require('pdfkit');
 const Wallet = require('../../model/Wallet');
 
 module.exports = {
@@ -26,7 +27,8 @@ module.exports = {
           currentPage: 1,
           totalPages: 1,
           hasNextPage: false,
-          hasPrevPage: false
+          hasPrevPage: false,
+          path:"/wallet"
         });
       }
 
@@ -60,7 +62,8 @@ module.exports = {
         currentPage: page,
         totalPages,
         hasNextPage: endIndex < totalTransactions,
-        hasPrevPage: startIndex > 0
+        hasPrevPage: startIndex > 0,
+         path:"/wallet"
       });
     } catch (error) {
       console.error('Error in getWallet:', error);

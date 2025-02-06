@@ -30,16 +30,16 @@ router.get('/unblock-user',adminAuth ,userController.unBlockUser )
 
 //------Product ------///
 router.get('/view-products',adminAuth ,productController.loadProducts )
-router.get('/add-product', productController.loadAddProduct)
-router.post('/add-product',upload.array("images", 4),productController.addProduct)
+router.get('/add-product',adminAuth, productController.loadAddProduct)
+router.post('/add-product',adminAuth,upload.array("images", 4),productController.addProduct)
 router.get('/blockProduct',adminAuth ,productController.blockProduct )
 router.get('/unblockProduct' ,adminAuth, productController.unblockProduct)
-router.get('/edit-product/:id',productController.loadEditProduct);
-router.put('/edit-product/:id' ,upload.array('images',4), productController.editProduct)
-router.delete('/delete-product-image/:productId/:imageName', productController.deleteProductImage);
+router.get('/edit-product/:id',adminAuth,productController.loadEditProduct);
+router.put('/edit-product/:id' ,adminAuth,upload.array('images',4), productController.editProduct)
+router.delete('/delete-product-image/:productId/:imageName',adminAuth, productController.deleteProductImage);
 
 router.post('/addProductOffer',adminAuth,productController.addProductOffer)
-router.post('/removeProductOffer',productController.removeProductOffer)
+router.post('/removeProductOffer',adminAuth,productController.removeProductOffer)
 
 
 //-----Category------//
@@ -61,22 +61,22 @@ router.post('/editBrand',adminAuth,upload.single('image'),brandcontroller.editBr
 
 
 //---------- ORDER MANNAGEMENT --------//
-router.get('/view-orders',orderController.viewOrders)
+router.get('/view-orders',adminAuth,orderController.viewOrders)
 
-router.get('/order-details/:id',orderController.orderDetails)
-router.post('/update-order-status',orderController.updateOrderStatus)
-router.post('/handle-return/:productId', orderController.handleReturnRequest)
+router.get('/order-details/:id',adminAuth,orderController.orderDetails)
+router.post('/update-order-status',adminAuth,orderController.updateOrderStatus)
+router.post('/handle-return/:productId',adminAuth, orderController.handleReturnRequest)
                                                                                                                                                            
 
 //---------- COUPON MANAGEMENT ----------//
-router.get('/view-coupons',couponController.loadCoupons)
-router.post('/add-coupon',couponController.addCoupon)   
-router.delete('/delete-coupon/:couponId',couponController.deleteCoupon)
+router.get('/view-coupons',adminAuth,couponController.loadCoupons)
+router.post('/add-coupon',adminAuth,couponController.addCoupon)   
+router.delete('/delete-coupon/:couponId',adminAuth,couponController.deleteCoupon)
 
 
-router.get('/sales-report', salesReport.getSalesReport)
-router.get('/sales-report/pdf', salesReport.getPdf);
-router.get('/sales-report/excel', salesReport.getExcel);
+router.get('/sales-report',adminAuth, salesReport.getSalesReport)
+router.get('/sales-report/pdf',adminAuth, salesReport.getPdf);
+router.get('/sales-report/excel',adminAuth, salesReport.getExcel);
 
 
 router.get('/logout', (req, res) => {

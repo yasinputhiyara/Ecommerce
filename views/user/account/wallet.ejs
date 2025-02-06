@@ -9,6 +9,20 @@
             --secondary-gradient: linear-gradient(135deg, #FF6B6B 0%, #FF000F 100%);
         }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+                Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+        }
+
         .wallet-card {
             background: var(--primary-gradient);
             border-radius: 20px;
@@ -85,174 +99,152 @@
         <div class="container-fluid">
             <div class="dashboard">
                 <!-- Sidebar -->
-                <div class="sidebar">
-                    <a href="/dashboard" class="w-100">
-                        <button class="nav-button w-100">dashboard</button>
-                    </a>
-
-                    <a href="/orders" class="w-100">
-                        <button class="nav-button w-100">orders</button>
-                    </a>
-
-                    <a href="/profile" class="w-100">
-                        <button class="nav-button w-100">Update Profile</button>
-                    </a>
-                    <a href="/address" class="w-100">
-                        <button class="nav-button w-100">My Address</button>
-                    </a>
-                    <a href="/wallet" class="w-100">
-                        <button class="nav-button active w-100">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                            </svg>
-                            wallet
-                        </button>
-                    </a>
-                    <a href="/logout" class="w-100">
-                        <button class="nav-button w-100">Logout</button>
-                    </a>
-                </div>
+                <%- include("../../partials/profileSideBar") %>
 
 
-                <!-- Main Content -->
-                <div class="col-md-9 col-lg-10 p-4 main-content">
-                    <!-- Wallet Cards Row -->
-                    <div class="row mb-4">
-                        <div class="col-lg-6">
-                            <div class="wallet-card p-4 text-white">
-                                <div class="card-overlay"></div>
-                                <h5 class="mb-3">Current Balance</h5>
-                                <h2 id="wallet-balance" class="display-4 fw-bold mb-3">₹ <%= balance.toFixed(2) %>
-                                </h2>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span>Virtual Wallet</span>
-                                    <span id="wallet-card-id">**** 1234</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="row g-3">
-                                <div class="col-6">
-                                    <div class="transaction-card p-3">
-                                        <h6 class="text-muted mb-2">Total Income</h6>
-                                        <h4 id="total-income" class="text-success mb-0">₹ <%= totalIncome.toFixed(2) %>
-                                        </h4>
+
+                    <!-- Main Content -->
+                    <div class="col-md-9 col-lg-10 p-4 main-content">
+                        <!-- Wallet Cards Row -->
+                        <div class="row mb-4">
+                            <div class="col-lg-6">
+                                <div class="wallet-card p-4 text-white">
+                                    <div class="card-overlay"></div>
+                                    <h5 class="mb-3">Current Balance</h5>
+                                    <h2 id="wallet-balance" class="display-4 fw-bold mb-3">₹ <%= balance.toFixed(2) %>
+                                    </h2>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span>Virtual Wallet</span>
+                                        <span id="wallet-card-id">**** 1234</span>
                                     </div>
                                 </div>
-                                <div class="col-6">
-                                    <div class="transaction-card p-3">
-                                        <h6 class="text-muted mb-2">Total Spent</h6>
-                                        <h4 id="total-spent" class="text-danger mb-0">₹ <%= totalSpent.toFixed(2) %>
-                                        </h4>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="row g-3">
+                                    <div class="col-6">
+                                        <div class="transaction-card p-3">
+                                            <h6 class="text-muted mb-2">Total Income</h6>
+                                            <h4 id="total-income" class="text-success mb-0">₹ <%= totalIncome.toFixed(2)
+                                                    %>
+                                            </h4>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="transaction-card p-3">
+                                            <h6 class="text-muted mb-2">Total Spent</h6>
+                                            <h4 id="total-spent" class="text-danger mb-0">₹ <%= totalSpent.toFixed(2) %>
+                                            </h4>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Transactions Table -->
+                        <!-- Transactions Table -->
 
-                    <div class="transaction-card p-4">
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h4 class="mb-0">Transaction History</h4>
-                            <div class="dropdown">
-                                <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                    Filter
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#" onclick="filterTransactions('all')">All</a>
-                                    </li>
-                                    <li><a class="dropdown-item" href="#"
-                                            onclick="filterTransactions('credit')">Credits</a></li>
-                                    <li><a class="dropdown-item" href="#"
-                                            onclick="filterTransactions('debit')">Debits</a></li>
-                                </ul>
+                        <div class="transaction-card p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h4 class="mb-0">Transaction History</h4>
+                                <div class="dropdown">
+                                    <button class="btn btn-light dropdown-toggle" type="button"
+                                        data-bs-toggle="dropdown">
+                                        Filter
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#"
+                                                onclick="filterTransactions('all')">All</a>
+                                        </li>
+                                        <li><a class="dropdown-item" href="#"
+                                                onclick="filterTransactions('credit')">Credits</a></li>
+                                        <li><a class="dropdown-item" href="#"
+                                                onclick="filterTransactions('debit')">Debits</a></li>
+                                    </ul>
+                                </div>
                             </div>
-                        </div>
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Date</th>
-                                        <th>Description</th>
-                                        <th>Type</th>
-                                        <th>Amount</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="transaction-history">
-                                    <% if (transactionHistory && transactionHistory.length> 0) { %>
-                                        <% transactionHistory.forEach((transaction, index)=> { %>
-                                            <tr>
-                                                <td>
-                                                    <%= index + 1 %>
-                                                </td>
-                                                <td>
-                                                    <%= new Date(transaction.transactionDate).toLocaleDateString() %>
-                                                </td>
-                                                <td>
-                                                    <%= transaction.description %>
-                                                </td>
-                                                <td>
-                                                    <span
-                                                        class="badge <%= transaction.transactionType === 'CREDIT' ? 'badge-credit' : 'badge-debit' %>">
-                                                        <%= transaction.transactionType.toLowerCase() %>
-                                                    </span>
-                                                </td>
-                                                <td
-                                                    class="<%= transaction.transactionType === 'CREDIT' ? 'text-success' : 'text-danger' %>">
-                                                    ₹ <%= transaction.transactionAmount.toFixed(2) %>
-                                                </td>
-                                            </tr>
-                                            <% }); %>
-                                                <% } else { %>
-                                                    <tr>
-                                                        <td colspan="5" class="text-center">No transactions found</td>
-                                                    </tr>
-                                                    <% } %>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-
-                    <nav aria-label="Transaction pagination" class="mt-4">
-                        <ul class="pagination justify-content-center">
-                            <% if (hasPrevPage) { %>
-                                <li class="page-item">
-                                    <a class="page-link" href="?page=<%= currentPage - 1 %>">&laquo;</a>
-                                </li>
-                                <% } else { %>
-                                    <li class="page-item disabled">
-                                        <a class="page-link" tabindex="-1" aria-disabled="true">&laquo;</a>
-                                    </li>
-                                    <% } %>
-                                        <% for (let i=1; i <=totalPages; i++) { %>
-                                            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                                                <a class="page-link" href="?page=<%= i %>">
-                                                    <%= i %>
-                                                </a>
-                                            </li>
-                                            <% } %>
-                                                <% if (hasNextPage) { %>
-                                                    <li class="page-item">
-                                                        <a class="page-link"
-                                                            href="?page=<%= currentPage + 1 %>">&raquo;</a>
-                                                    </li>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Date</th>
+                                            <th>Description</th>
+                                            <th>Type</th>
+                                            <th>Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="transaction-history">
+                                        <% if (transactionHistory && transactionHistory.length> 0) { %>
+                                            <% transactionHistory.forEach((transaction, index)=> { %>
+                                                <tr>
+                                                    <td>
+                                                        <%= index + 1 %>
+                                                    </td>
+                                                    <td>
+                                                        <%= new Date(transaction.transactionDate).toLocaleDateString()
+                                                            %>
+                                                    </td>
+                                                    <td>
+                                                        <%= transaction.description %>
+                                                    </td>
+                                                    <td>
+                                                        <span
+                                                            class="badge <%= transaction.transactionType === 'CREDIT' ? 'badge-credit' : 'badge-debit' %>">
+                                                            <%= transaction.transactionType.toLowerCase() %>
+                                                        </span>
+                                                    </td>
+                                                    <td
+                                                        class="<%= transaction.transactionType === 'CREDIT' ? 'text-success' : 'text-danger' %>">
+                                                        ₹ <%= transaction.transactionAmount.toFixed(2) %>
+                                                    </td>
+                                                </tr>
+                                                <% }); %>
                                                     <% } else { %>
-                                                        <li class="page-item disabled">
-                                                            <a class="page-link" tabindex="-1"
-                                                                aria-disabled="true">&raquo;</a>
-                                                        </li>
+                                                        <tr>
+                                                            <td colspan="5" class="text-center">No transactions found
+                                                            </td>
+                                                        </tr>
                                                         <% } %>
-                        </ul>
-                    </nav>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+
+                        <nav aria-label="Transaction pagination" class="mt-4">
+                            <ul class="pagination justify-content-center">
+                                <% if (hasPrevPage) { %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=<%= currentPage - 1 %>">&laquo;</a>
+                                    </li>
+                                    <% } else { %>
+                                        <li class="page-item disabled">
+                                            <a class="page-link" tabindex="-1" aria-disabled="true">&laquo;</a>
+                                        </li>
+                                        <% } %>
+                                            <% for (let i=1; i <=totalPages; i++) { %>
+                                                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                                    <a class="page-link" href="?page=<%= i %>">
+                                                        <%= i %>
+                                                    </a>
+                                                </li>
+                                                <% } %>
+                                                    <% if (hasNextPage) { %>
+                                                        <li class="page-item">
+                                                            <a class="page-link"
+                                                                href="?page=<%= currentPage + 1 %>">&raquo;</a>
+                                                        </li>
+                                                        <% } else { %>
+                                                            <li class="page-item disabled">
+                                                                <a class="page-link" tabindex="-1"
+                                                                    aria-disabled="true">&raquo;</a>
+                                                            </li>
+                                                            <% } %>
+                            </ul>
+                        </nav>
 
 
 
-                </div>
+                    </div>
             </div>
         </div>
     </div>

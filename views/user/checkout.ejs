@@ -155,27 +155,27 @@
                             <h5>Your Order</h5>
                             <p>The Details</p>
                         </div>
-
+                    
                         <!-- Order Summary -->
                         <ul class="order-details-form mb-4">
                             <li><span>Product</span> <span>Total</span></li>
-                            <% let subtotal=0; %>
-                                <% if (cart && cart.items && cart.items.length> 0) { %>
-                                    <% cart.items.forEach((item)=> { %>
-                                        <% const itemTotal=item.productId.salePrice * item.quantity; %>
-                                            <% subtotal +=itemTotal; %>
-                                                <li>
-                                                    <span>
-                                                        <%= item.productId.productName %> x <%= item.quantity %>
-                                                    </span>
-                                                    <span>&#8377;<%= itemTotal.toFixed(2) %></span>
-                                                </li>
-                                                <% }); %>
-                                                    <% } else { %>
-                                                        <li>Your cart is empty.</li>
-                                                        <% } %>
+                            <% let subtotal = 0; %>
+                            <% if (cart && cart.items && cart.items.length > 0) { %>
+                                <% cart.items.forEach((item) => { %>
+                                    <% const itemTotal = item.productId.salePrice * item.quantity; %>
+                                    <% subtotal += itemTotal; %>
+                                    <li>
+                                        <span>
+                                            <%= item.productId.productName %> x <%= item.quantity %>
+                                        </span>
+                                        <span>&#8377;<%= itemTotal.toFixed(2) %></span>
+                                    </li>
+                                <% }); %>
+                            <% } else { %>
+                                <li>Your cart is empty.</li>
+                            <% } %>
                         </ul>
-
+                    
                         <!-- Total Summary -->
                         <ul class="list-group">
                             <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -183,15 +183,21 @@
                                 <span>&#8377;<%= subtotal.toFixed(2) %></span>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Delivery Charge
+                                <% const deliveryCharge = subtotal < 1000 ? 100 : 0; %>
+                                <span id="deliveryCharge">&#8377;<%= deliveryCharge.toFixed(2) %></span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
                                 Discount
                                 <span id="discountAmount">&#8377;0.00</span>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <% const total = subtotal + deliveryCharge; %>
                                 Total
-                                <strong id="finalTotal">&#8377;<%= subtotal.toFixed(2) %></strong>
+                                <strong id="finalTotal">&#8377;<%= total.toFixed(2) %></strong>
                             </li>
                         </ul>
-
+                    
                         <!-- Payment Method -->
                         <h5>Select Payment Method</h5>
                         <div class="payment-methods">
@@ -201,17 +207,25 @@
                                 <label class="form-check-label" for="razorpayRadio">Razorpay</label>
                             </div>
                             <div class="form-check">
+                                <input class="form-check-input" type="radio" name="paymentMethod" value="wallet"
+                                    id="walletRadio">
+                                <label class="form-check-label" for="walletRadio"> Wallet</label>
+                            </div>
+                            <% const isCodDisabled = total > 2000 || total > 20000; %>
+                            <div class="form-check">
                                 <input class="form-check-input" type="radio" name="paymentMethod" value="cod"
-                                    id="codRadio">
-                                <label class="form-check-label" for="codRadio">Cash on Delivery (COD)</label>
+                                    id="codRadio" <%= isCodDisabled ? 'disabled' : '' %>>
+                                <label class="form-check-label" for="codRadio">
+                                    Cash on Delivery (COD) 
+                                    <%= isCodDisabled ? '(Not Available)' : '' %>
+                                </label>
                             </div>
                         </div>
-
+                    
                         <!-- Place Order Button -->
                         <form id="orderForm" method="POST">
                             <input type="hidden" name="selectedAddress" id="selectedAddress">
                             <input type="hidden" name="paymentMethod" id="paymentMethod">
-                            <!-- <input type="hidden" name="couponCode" id="couponCode" > -->
                             <button type="button" class="btn essence-btn" id="placeOrderButton">Place Order</button>
                         </form>
                     </div>
@@ -316,6 +330,28 @@
                     body: JSON.stringify({
                         selectedAddress: selectedAddress.value,
                         paymentMethod: 'cod',
+                        couponCode
+                    })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    Swal.fire('Success', 'Order placed successfully!', 'success').then(() => {
+                        // window.location.href = `/order-success?orderId=${result.orderId}`;
+                        window.location.href = `/orders`;
+                    });
+                } else {
+                    Swal.fire('Error', result.message || 'Failed to place order.', 'error');
+                }
+            }
+
+            if (paymentMethod.value === 'wallet') {
+                const response = await fetch('/place-order/wallet', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        selectedAddress: selectedAddress.value,
+                        paymentMethod: 'wallet',
                         couponCode
                     })
                 });

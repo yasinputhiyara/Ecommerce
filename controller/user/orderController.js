@@ -2,6 +2,9 @@ const Orders = require("../../model/Order");
 const Address = require("../../model/Address");
 const Wallet = require("../../model/Wallet");
 const { Product } = require("../../model/Product");
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
+
 
 const loadOrders = async (req, res) => {
   try {
@@ -21,7 +24,7 @@ const loadOrders = async (req, res) => {
       console.log(`Order ${index + 1} AddressId:`, addressId);
     });
 
-    res.render("user/account/orders", { user, orders });
+    res.render("user/account/orders", { user, orders  , path:"/orders"});
   } catch (error) {
     console.error("Order Page Error:", error);
     res.status(500).send("An error occurred while loading the orders.");
@@ -71,6 +74,7 @@ const loadOrderDetails = async (req, res) => {
       user,
       order,
       products,
+      path:'/orders'
     });
   } catch (error) {
     console.error("Order Details Page Error:", error);
@@ -410,6 +414,52 @@ const returnSingleProduct = async (req, res) => {
 };
 
 
+const InvoiceDownload = async (req,res)=>{
+  try {
+    const order = await Orders.findById(req.params.orderId).populate('orderedItems.product');
+
+    if (!order) {
+        return res.status(404).send('Order not found');
+    }
+
+    const doc = new PDFDocument();
+    const filename = `invoice_${order.orderId}.pdf`;
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
+
+    doc.pipe(res);
+
+    doc.fontSize(25).text('Invoice', { align: 'center' });
+    doc.moveDown();
+    doc.fontSize(14).text(`Order ID: ${order.orderId}`);
+    doc.text(`Order Date: ${new Date(order.createdOn).toLocaleDateString()}`);
+    doc.moveDown();
+
+    doc.fontSize(18).text('Order Details', { underline: true });
+    order.orderedItems.forEach((item, index) => {
+        doc.moveDown();
+        doc.text(`Product: ${item.product.productName}`);
+        doc.text(`Size: ${item.size}`);
+        doc.text(`Quantity: ${item.quantity}`);
+        doc.text(`Price: ₹${item.price.toFixed(2)}`);
+        doc.text(`Total: ₹${(item.price * item.quantity).toFixed(2)}`);
+    });
+
+    doc.moveDown();
+    doc.fontSize(18).text('Order Summary', { underline: true });
+    doc.text(`Subtotal: ₹${order.subtotal.toFixed(2)}`);
+    doc.text(`Discount: -₹${order.discount.toFixed(2)}`);
+    doc.text(`Total Amount: ₹${order.totalPrice.toFixed(2)}`);
+
+    doc.end();
+} catch (error) {
+    console.error('Error generating invoice:', error);
+    res.status(500).send('Error generating invoice');
+}
+}
+
+
 
 
 
@@ -419,5 +469,6 @@ module.exports = {
   loadOrderDetails,
   cancelOrder,
   cancelProduct,
-  returnSingleProduct
+  returnSingleProduct,
+  InvoiceDownload
 };

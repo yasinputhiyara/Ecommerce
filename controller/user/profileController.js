@@ -206,7 +206,7 @@ const loadDashboard = async (req, res) => {
     const user = req.session.user || null;
     console.log("User:", user);
     let findUser = await User.findOne({ _id: user._id });
-    res.render("user/account/dashboard", { userData: findUser, user });
+    res.render("user/account/dashboard", { userData: findUser, user , path : "/dashboard" });
   } catch (error) {
     console.error("Error loading dashboard", error);
   }
@@ -221,7 +221,7 @@ const loadProfilePage = async (req, res) => {
     const user = req.session.user ;
 
     const userData = await User.findOne({ _id: user._id });
-    res.render("user/account/profile", { user, userData });
+    res.render("user/account/profile", { user, userData , path :"/update-profile" });
   } catch (error) {
     console.error("Error loading profile page", error);
   }
@@ -236,7 +236,7 @@ const loadAddressPage = async (req, res) => {
     // Extract the address array or default to an empty array
     const addressId = addresses.map((address) => address._id).toString();
     console.log(addressId);
-    res.render("user/account/address", { user, addresses });
+    res.render("user/account/address", { user, addresses , path : "/address" });
   } catch (error) {
     console.error("Error loading address page", error);
   }
@@ -245,45 +245,12 @@ const loadAddressPage = async (req, res) => {
 const loadWalletPage = async (req, res) => {
   try {
     const user = req.session.user || null;
-    res.render("user/account/wallet", { user });
+    res.render("user/account/wallet", { user , path:"/wallet" });
   } catch (error) {
     console.error("Error loading wallet page", error);
   }
 };
 
-// const updateProfile = async (req, res) => {
-//   try {
-//     const user = req.session.user || null;
-//     const { name, phone } = req.body;
-
-//     const updatedUser = await User.findOneAndUpdate(
-//       { email: user.email },
-//       { username: name, phone: phone },
-//       { new: true } // Return the updated user
-//     );
-
-//     if (updatedUser) {
-//       res.status(200).json({
-//         message: "Profile updated successfully",
-//         user: updatedUser,
-//       });
-//     } else {
-//       res.status(400).json({
-//         message: "User not found or update failed",
-//       });
-//     }
-
-//     req.session.user = {
-//       ...req.session.user,
-//       username: name,
-//     };
-//   } catch (error) {
-//     console.error("Error updating profile:", error);
-//     res.status(500).json({
-//       message: "An error occurred while updating profile",
-//     });
-//   }
-// };
 
 const updateProfile = async (req, res) => {
   try {
@@ -384,6 +351,7 @@ const updatePassword = async (req, res) => {
     });
   }
 };
+
 
 const addAddress = async (req, res) => {
   try {
