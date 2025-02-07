@@ -27,6 +27,7 @@ router.post('/resend-otp' ,isLoggedIn, userController.resendOtp)
 //----- USER FORGOT PASSWORD ROUTES ----//
 router.get('/forgot-password',checkBan,isLoggedIn,profileController.loadForgetPasswordPage)
 router.post('/forgot-email-valid',isLoggedIn,profileController.verifyForgetEmail)
+router.get('/forgot-otp-page', isLoggedIn,profileController.otpPage)
 router.post('/forgot-pass-otp',isLoggedIn,profileController.verifyOtp)
 router.post('/resend-forgot-otp',isLoggedIn,profileController.resendOtp)
 router.get('/change-password',checkBan,isLoggedIn,profileController.loadChangePasswordPage)

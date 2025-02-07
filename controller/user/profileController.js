@@ -70,7 +70,7 @@ const verifyForgetEmail = async (req, res) => {
         req.session.userOtp = otp; // Consider encrypting this value
         req.session.email = email;
         console.log("OTP sent successfully", otp);
-        res.render("user/forgot-pass-otp");
+        res.redirect("/forgot-otp-page");
       } else {
         res.json({ success: false, message: "Error sending OTP" });
       }
@@ -82,6 +82,18 @@ const verifyForgetEmail = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+const otpPage =async (req,res)=>{
+  try {
+    res.render("user/forgot-pass-otp", {user:null})
+    
+  } catch (error) {
+    console.log("Otp page load error", error)
+    
+  }
+}
+
+
 
 const verifyOtp = async (req, res) => {
   try {
@@ -137,7 +149,7 @@ const resendOtp = async (req, res) => {
 
 const loadChangePasswordPage = async (req, res) => {
   try {
-    res.render("user/new-pass");
+    res.render("user/new-pass", {user:null});
   } catch (error) {
     console.error("Error loading change password page", error);
   }
@@ -555,6 +567,7 @@ module.exports = {
   loadForgetPasswordPage,
   verifyForgetEmail,
   verifyOtp,
+  otpPage,
   resendOtp,
   loadChangePasswordPage,
   resetPassword,

@@ -1,192 +1,313 @@
-
 <%- include("../partials/header") %>
-<link rel="stylesheet" href="/user/essence/css/core-style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/user/essence/css/core-style.css">
 
-    
-    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> -->
-    <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"> -->
     <style>
         body {
-            background-color: #f4f6f9;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        .signup-container {
-            background-color: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-        .signup-form {
-            padding: 3rem;
-        }
-        .signup-image {
-            background-image: url('/banner/banner1.png');
-            background-size: cover;
-            background-position: center;
+            font-family: 'Inter', sans-serif;
             min-height: 100vh;
         }
-        .form-control {
-            border-radius: 10px;
-            padding: 0.75rem;
+
+        .register-container {
+            margin-top: 6rem;
+            margin-bottom: 2rem;
         }
-        .btn-primary {
-            background-color: #0d002e;
+
+        .card {
             border: none;
-            transition: transform 0.2s;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
+
+        .card-body {
+            padding: 3rem 2rem;
+        }
+
+        .register-image {
+            object-fit: cover;
+            height: 100%;
+            min-height: 400px;
+            border-radius: 0 16px 16px 0;
+        }
+
+        .form-control {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+
+        .input-group .btn {
+            border-color: #e9ecef;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
         .btn-primary:hover {
-            background-color: #1a0055;
-            transform: scale(1.02);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
+
+        .google-btn {
+            background: #fff;
+            color: #333;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .google-btn:hover {
+            background: #f8f9fa;
+            border-color: #ddd;
+            color: #333;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 1.5rem 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .divider span {
+            padding: 0 1rem;
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+
         .error-message {
             color: #dc3545;
-            font-size: 0.85rem;
-            margin-top: 5px;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
         }
-        .password-toggle {
+
+        .back-button {
             position: absolute;
-            top: 50%;
-            right: 15px;
-            transform: translateY(-50%);
-            cursor: pointer;
+            top: 1.5rem;
+            left: 1.5rem;
+            background: none;
+            border: none;
             color: #6c757d;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 0.5rem;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .back-button:hover {
+            background-color: #f8f9fa;
+            color: #667eea;
+            transform: translateX(-3px);
+        }
+
+        @media (max-width: 768px) {
+            .card-body {
+                padding: 2rem 1.5rem;
+            }
+
+            .register-image-container {
+                display: none;
+            }
         }
     </style>
 
+    <div class="container register-container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-10">
+                <div class="card">
+                    <div class="row g-0">
+                        <div class="col-md-6">
+                            <div class="card-body">
+                                <button onclick="history.back()" class="back-button" title="Go back">
+                                    <i class="fas fa-arrow-left"></i>
+                                </button>
+                                <h2 class="text-center mb-4 fw-bold">Create Account</h2>
 
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-6 d-none d-md-block signup-image"></div>
-            <div class="col-md-6 d-flex align-items-center justify-content-center">
-                <div class="signup-container w-100 p-4">
-                    <form id="signupForm" method="post" action="/register" class="signup-form">
-                        <h2 class="text-center mb-4">Create Your Account</h2>
-                        
-                        <div class="mb-3 position-relative">
-                            <label for="username" class="form-label">Username</label>
-                            <input type="text" class="form-control" id="username" name="username" required>
-                            <div id="usernameError" class="error-message"></div>
+
+
+                                <form action="/register" method="post" id="registerForm">
+                                    <div class="mb-3">
+                                        <label class="form-label">Username</label>
+                                        <input type="text" id="username" name="username" class="form-control"
+                                            placeholder="Choose a username">
+                                        <div id="usernameError" class="error-message"></div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Email address</label>
+                                        <input type="email" id="email" name="email" class="form-control"
+                                            placeholder="name@example.com">
+                                        <div id="emailError" class="error-message"></div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Password</label>
+                                        <div class="input-group">
+                                            <input type="password" id="password" name="password" class="form-control"
+                                                placeholder="Create a password">
+                                            <button type="button" id="togglePassword" class="btn btn-outline-secondary">
+                                                <i class="far fa-eye"></i>
+                                            </button>
+                                        </div>
+                                        <div id="passwordError" class="error-message"></div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Confirm Password</label>
+                                        <div class="input-group">
+                                            <input type="password" id="confirmPassword" name="confirmPassword"
+                                                class="form-control" placeholder="Confirm your password">
+                                            <button type="button" id="toggleConfirmPassword"
+                                                class="btn btn-outline-secondary">
+                                                <i class="far fa-eye"></i>
+                                            </button>
+                                        </div>
+                                        <div id="confirmPasswordError" class="error-message"></div>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary text-white w-100 mb-3">
+                                        Create Account
+                                    </button>
+
+                                    <div class="divider">
+                                        <span>or continue with</span>
+                                    </div>
+
+                                    <a href="/auth/google" class="btn google-btn w-100">
+                                        <i class="fab fa-google me-2"></i> Sign up with Google
+                                    </a>
+
+                                    <p class="text-center mt-4 mb-0">
+                                        Already have an account?
+                                        <a href="/login" class="text-decoration-none">Sign in</a>
+                                    </p>
+                                </form>
+                            </div>
                         </div>
-                        
-                        <div class="mb-3 position-relative">
-                            <label for="email" class="form-label">Email Address</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
-                            <div id="emailError" class="error-message"></div>
+                        <div class="col-md-6 register-image-container">
+                            <img src="/banner/banner1.png" alt="Register" class="register-image w-100">
                         </div>
-                        
-                        <div class="mb-3 position-relative">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password" name="password" required>
-                            <div id="passwordError" class="error-message"></div>
-                        </div>
-                        
-                        <div class="mb-3 position-relative">
-                            <label for="confirmPassword" class="form-label">Confirm Password</label>
-                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
-                            <span class="password-toggle" onclick="togglePasswordVisibility()">
-                                <i class="fas fa-eye"></i>
-                            </span>
-                            <div id="confirmPasswordError" class="error-message"></div>
-                        </div>
-                        
-                        <div class="d-grid gap-2 mb-3">
-                            <button type="submit" class="btn btn-primary btn-lg">Sign Up</button>
-                        </div>
-                        
-                        <div class="text-center mb-3">
-                            <p>Already have an account? <a href="/login" class="link-primary">Log in</a></p>
-                        </div>
-                        
-                        <div class="d-grid gap-2">
-                            <a href="/auth/google" class="btn btn-lg btn-outline-dark">
-                                <i class="fab fa-google me-2"></i> Sign up with Google
-                            </a>
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        function togglePasswordVisibility() {
-            const confirmPassword = document.getElementById("confirmPassword");
-            const eyeIcon = document.querySelector(".password-toggle i");
-            
-            if (confirmPassword.type === "password") {
-                confirmPassword.type = "text";
-                eyeIcon.classList.remove("fa-eye");
-                eyeIcon.classList.add("fa-eye-slash");
-            } else {
-                confirmPassword.type = "password";
-                eyeIcon.classList.remove("fa-eye-slash");
-                eyeIcon.classList.add("fa-eye");
-            }
-        }
-
-        document.getElementById("signupForm").addEventListener("submit", function(event) {
+        document.getElementById("registerForm").addEventListener("submit", function (event) {
             event.preventDefault();
-            
-            const email = document.getElementById("email");
+
             const username = document.getElementById("username");
+            const email = document.getElementById("email");
             const password = document.getElementById("password");
             const confirmPassword = document.getElementById("confirmPassword");
 
-            const emailError = document.getElementById("emailError");
             const usernameError = document.getElementById("usernameError");
+            const emailError = document.getElementById("emailError");
             const passwordError = document.getElementById("passwordError");
             const confirmPasswordError = document.getElementById("confirmPasswordError");
 
             let isValid = true;
 
-            // Email validation
-            if (!email.value.trim()) {
-                emailError.textContent = "Email cannot be empty.";
-                isValid = false;
-            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
-                emailError.textContent = "Please enter a valid email.";
-                isValid = false;
-            } else {
-                emailError.textContent = "";
-            }
+            // Reset errors
+            usernameError.textContent = "";
+            emailError.textContent = "";
+            passwordError.textContent = "";
+            confirmPasswordError.textContent = "";
 
             // Username validation
             if (!username.value.trim()) {
-                usernameError.textContent = "Username cannot be empty.";
+                usernameError.textContent = "Username is required";
                 isValid = false;
             } else if (!/^[a-zA-Z0-9]+$/.test(username.value)) {
-                usernameError.textContent = "Username can only contain letters and numbers.";
+                usernameError.textContent = "Username can only contain letters and numbers";
                 isValid = false;
-            } else {
-                usernameError.textContent = "";
+            }
+
+            // Email validation
+            if (!email.value.trim()) {
+                emailError.textContent = "Email address is required";
+                isValid = false;
+            } else if (!/\S+@\S+\.\S+/.test(email.value)) {
+                emailError.textContent = "Please enter a valid email address";
+                isValid = false;
             }
 
             // Password validation
             if (!password.value.trim()) {
-                passwordError.textContent = "Password cannot be empty.";
+                passwordError.textContent = "Password is required";
                 isValid = false;
-            } else if (password.value.length < 8 || !/[A-Z]/.test(password.value) || !/[a-z]/.test(password.value) || !/[0-9]/.test(password.value) || !/[!@#$%^&*]/.test(password.value)) {
-                passwordError.textContent = "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.";
+            } else if (password.value.length < 8 || !/[A-Z]/.test(password.value) ||
+                !/[a-z]/.test(password.value) || !/[0-9]/.test(password.value) ||
+                !/[!@#$%^&*]/.test(password.value)) {
+                passwordError.textContent = "Password must be at least 8 characters and include uppercase, lowercase, number, and special character";
                 isValid = false;
-            } else {
-                passwordError.textContent = "";
             }
 
             // Confirm password validation
             if (!confirmPassword.value.trim()) {
-                confirmPasswordError.textContent = "Please confirm your password.";
+                confirmPasswordError.textContent = "Please confirm your password";
                 isValid = false;
             } else if (confirmPassword.value !== password.value) {
-                confirmPasswordError.textContent = "Passwords do not match.";
+                confirmPasswordError.textContent = "Passwords do not match";
                 isValid = false;
-            } else {
-                confirmPasswordError.textContent = "";
             }
 
             if (isValid) {
                 this.submit();
             }
         });
+
+        // Toggle password visibility
+        function togglePasswordVisibility(inputId, buttonId) {
+            const input = document.getElementById(inputId);
+            const button = document.getElementById(buttonId);
+            const icon = button.querySelector("i");
+
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        }
+
+        document.getElementById("togglePassword").addEventListener("click", function () {
+            togglePasswordVisibility("password", "togglePassword");
+        });
+
+        document.getElementById("toggleConfirmPassword").addEventListener("click", function () {
+            togglePasswordVisibility("confirmPassword", "toggleConfirmPassword");
+        });
     </script>
 
-<%- include("../partials/footer") %>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <%- include("../partials/footer") %>

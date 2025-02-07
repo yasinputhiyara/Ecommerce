@@ -139,7 +139,7 @@ const verifyRegister = async (req, res) => {
 };
 
 const loadOtpPage = async (req, res) => {
-  res.render("user/otp-verify");
+  res.render("user/otp-verify",{user:null});
 };
 
 const verifyOtp = async (req, res) => {
@@ -200,7 +200,7 @@ const resendOtp = async (req, res) => {
     if (!email) {
       return res
         .status(400)
-        .json({ success: false, massage: "Email not found in session" });
+        .json({ success: false, message: "Email not found in session" });
     }
 
     const otp = generateOtp();
@@ -215,7 +215,8 @@ const resendOtp = async (req, res) => {
     } else {
       res.status(500).json({
         success: false,
-        message: "Failed to resend OTP , please try again",
+        message: "Failed to resend OTP, please try again",
+        redirect: "/register", // Adding redirect flag
       });
     }
   } catch (error) {
@@ -223,6 +224,7 @@ const resendOtp = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
+
 
 const loadHome = async (req, res) => {
   try {
