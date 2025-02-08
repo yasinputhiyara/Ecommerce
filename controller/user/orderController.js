@@ -5,7 +5,6 @@ const { Product } = require("../../model/Product");
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
 
-
 const loadOrders = async (req, res) => {
   try {
     const user = req.session.user;
@@ -13,18 +12,34 @@ const loadOrders = async (req, res) => {
       return res.redirect("/login");
     }
 
+    // Pagination parameters
+    const page = parseInt(req.query.page) || 1;
+    const limit = 10; // Orders per page
+    const skip = (page - 1) * limit;
+
+    // Get total count for pagination
+    const totalOrders = await Orders.countDocuments({ userId: user._id });
+    const totalPages = Math.ceil(totalOrders / limit);
+
+    // Get paginated orders
     const orders = await Orders.find({ userId: user._id })
       .populate("orderedItems.product")
       .populate("address")
-      .sort({ createdOn: -1 });
+      .sort({ createdOn: -1 })
+      .skip(skip)
+      .limit(limit);
 
-    orders.forEach((order, index) => {
-      let addressId = order.address;
-
-      console.log(`Order ${index + 1} AddressId:`, addressId);
+    res.render("user/account/orders", {
+      user,
+      orders,
+      path: "/orders",
+      pagination: {
+        page,
+        totalPages,
+        hasNext: page < totalPages,
+        hasPrev: page > 1
+      }
     });
-
-    res.render("user/account/orders", { user, orders  , path:"/orders"});
   } catch (error) {
     console.error("Order Page Error:", error);
     res.status(500).send("An error occurred while loading the orders.");

@@ -4,172 +4,339 @@
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-        Ubuntu, Cantarell, sans-serif;
-    }
-
     body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: #f8f9fa;
       min-height: 100vh;
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-      padding: 20px;
     }
 
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-      /* background: white; */
-      border-radius: 10px;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    /* Container styles */
+    .profile-session-container {
+      padding-top: 5rem;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 20px 0;
+    /* Dashboard layout */
+    .dashboard {
+      display: flex;
+      gap: 1.5rem;
+      padding: 1rem;
+    }
+
+    /* Sidebar styles */
+    .sidebar {
       background: white;
-      border-radius: 8px;
+      border-radius: 0.75rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+      height: fit-content;
+      transition: all 0.3s ease;
+    }
+
+    .nav-button {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      padding: 0.875rem 1.25rem;
+      margin-bottom: 0.75rem;
+      border: none;
+      border-radius: 0.5rem;
+      background: transparent;
+      color: #4b5563;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .nav-button:hover {
+      background: #f3f4f6;
+      color: #1f2937;
+    }
+
+    .nav-button.active {
+      background: #0d6efd;
+      color: white;
+    }
+
+    .nav-button svg {
+      margin-right: 1rem;
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+
+    /* Table styles */
+    .table-responsive {
+      background: white;
+      border-radius: 0.75rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
       overflow: hidden;
     }
 
-    th,
-    td {
-      padding: 15px;
-      text-align: left;
-      border-bottom: 1px solid #eee;
+    .table {
+      margin-bottom: 0;
     }
 
-    th {
-      background-color: #f8f9fa;
+    .table th {
+      background: #f8f9fa;
       font-weight: 600;
-      color: #2c3e50;
+      color: #374151;
+      border-bottom: 2px solid #e5e7eb;
+      padding: 1rem;
     }
 
-    tr:hover {
-      background-color: #f8f9fa;
+    .table td {
+      padding: 1rem;
+      vertical-align: middle;
+      color: #4b5563;
     }
 
+    /* Status badges */
     .status {
-      padding: 6px 12px;
-      border-radius: 15px;
-      font-size: 14px;
+      display: inline-block;
+      padding: 0.375rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
       font-weight: 500;
+      text-transform: capitalize;
     }
 
-    .status.completed {
-      background: #e8f5e9;
-      color: #2e7d32;
-    }
-
+    .status.completed,
     .status.paid {
-      background: #e8f5e9;
-      color: #2e7d32;
+      background: #d1fae5;
+      color: #065f46;
     }
 
     .status.pending {
-      background: #fff3e0;
-      color: #ef6c00;
+      background: #fff7ed;
+      color: #9a3412;
+    }
+
+    .status.processing {
+      background: #eff6ff;
+      color: #1e40af;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
     }
 
     .view-btn {
-      padding: 8px 16px;
-      background: #4caf50;
+      background: #0d6efd;
       color: white;
       border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background 0.3s ease;
     }
 
     .view-btn:hover {
-      background: #388e3c;
+      background: #0b5ed7;
+      transform: translateY(-1px);
     }
 
     .cancel-btn {
-      background: #ff5252;
+      background: #dc3545;
       color: white;
+      border: none;
     }
 
     .cancel-btn:hover {
-      background: #d32f2f;
+      background: #bb2d3b;
     }
 
-    .action-buttons {
-      display: flex;
-      gap: 8px;
+    .pay-now-btn {
+      background: #0dcaf0;
+      color: white;
+      border: none;
     }
 
-    /* Modal Styles */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
+    .pay-now-btn:hover {
+      background: #0bacce;
     }
 
+    /* Product images */
+    .product-image {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 0.375rem;
+    }
+
+    /* Responsive breakpoints */
+    @media (max-width: 991.98px) {
+      .dashboard {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        margin-bottom: 1rem;
+      }
+    }
+
+    @media (max-width: 767.98px) {
+      .table-responsive {
+        border-radius: 0;
+      }
+
+      .status {
+        width: 100%;
+        text-align: center;
+      }
+
+      .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+      }
+    }
+
+    @media (max-width: 575.98px) {
+      .profile-session-container {
+        padding-top: 4rem;
+      }
+
+      .table th,
+      .table td {
+        padding: 0.75rem;
+      }
+    }
+
+    /* Modal styles */
     .modal-content {
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      max-width: 600px;
-      width: 90%;
-      max-height: 90vh;
-      overflow-y: auto;
-      position: relative;
-    }
-
-    .close-btn {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      font-size: 24px;
-      cursor: pointer;
-      color: #666;
-      background: none;
+      border-radius: 0.75rem;
       border: none;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     }
 
-    .product-details {
-      margin-top: 20px;
+    .modal-header {
+      border-bottom: 1px solid #e5e7eb;
+      padding: 1.25rem;
     }
 
-    .detail-row {
-      display: flex;
-      margin: 10px 0;
-      padding: 10px 0;
-      border-bottom: 1px solid #eee;
+    .modal-body {
+      padding: 1.5rem;
     }
 
-    .detail-label {
-      width: 150px;
+    .modal-footer {
+      border-top: 1px solid #e5e7eb;
+      padding: 1.25rem;
+    }
+
+    /* Section title */
+    .section-title {
+      color: #111827;
       font-weight: 600;
-      color: #666;
+      margin-bottom: 1.5rem;
+      text-align: center;
     }
 
-    .detail-value {
-      flex: 1;
-      color: #2c3e50;
+    /* Form elements */
+    .form-control {
+      border-radius: 0.5rem;
+      border: 1px solid #d1d5db;
+      padding: 0.625rem 0.875rem;
     }
 
-    .close-btn {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      font-size: 24px;
-      cursor: pointer;
-      color: #666;
-      background: none;
-      border: none;
+    .form-control:focus {
+      border-color: #0d6efd;
+      box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin-bottom: 1rem;
+      max-width: 100%;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+      padding: 1rem;
+    }
+
+    .pagination-button {
+      padding: 0.5rem 1rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.375rem;
+      background: white;
+      color: #374151;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .pagination-button:hover:not(:disabled) {
+      background: #f3f4f6;
+      border-color: #9ca3af;
+    }
+
+    .pagination-button.active {
+      background: #0d6efd;
+      color: white;
+      border-color: #0d6efd;
+    }
+
+    .pagination-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 768px) {
+      .table {
+        display: block;
+        width: 100%;
+      }
+
+      .table thead {
+        display: none;
+      }
+
+      .table tbody tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        padding: 1rem;
+      }
+
+      .table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0;
+        border: none;
+      }
+
+      .table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        margin-right: 1rem;
+      }
+
+      .table td:not(:last-child) {
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+      }
     }
   </style>
 
@@ -183,107 +350,124 @@
         <%- include("../../partials/profileSideBar") %>
 
 
-        <!-- Main Content -->
-        <div class="container w-75 h-100 my-5 py-4 rounded shadow-lg bg-light">
-          <h2 class="section-title">Orders</h2>
-          <div class="container">
-            <table>
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Products</th>
-                  <th>Total</th>
-                  <th>Payment Status</th>
-                  <th>Order Status</th>
-                  <th>Payment Method</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% if (orders && orders.length> 0) { %>
-                  <% orders.forEach((order)=> { %>
-                    <tr>
-                      <!-- Order ID -->
-                      <td>
-                        <%= new Date(order.createdOn).toLocaleDateString() %>
-                      </td>
+          <!-- Main Content -->
 
-                      <!-- Products -->
-                      <td>
-                        <% if (order.orderedItems && order.orderedItems.length> 0) { %>
-                          <% order.orderedItems.forEach((item)=> { %>
-                            <% if (item.orderStatus !=='Cancelled' ) { %>
-                              <div>
-                                <!-- <%= item.product.productName %> x <%= item.quantity %> -->
-                                <img src="/product-images/<%= item.product.productImages[0]  %>" height="50px"
-                                  width="50px" alt="">
+          <div class="container  rounded shadow-lg bg-light">
+            <h2 class="section-title">Orders</h2>
+            <div class="table-wrapper">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Products</th>
+                    <th>Total</th>
+                    <th>Payment Status</th>
+                    <th>Order Status</th>
+                    <th>Payment Method</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if (orders && orders.length > 0) { %>
+                    <% orders.forEach((order) => { %>
+                      <tr>
+                        <td data-label="Date">
+                          <%= new Date(order.createdOn).toLocaleDateString() %>
+                        </td>
+                        <td data-label="Products">
+                          <!-- Your existing products code -->
+                          <% if (order.orderedItems && order.orderedItems.length> 0) { %>
+                            <% order.orderedItems.forEach((item)=> { %>
+                              <% if (item.orderStatus !=='Cancelled' ) { %>
+                                <div>
+                                  <!-- <%= item.product.productName %> x <%= item.quantity %> -->
+                                  <img src="/product-images/<%= item.product.productImages[0]  %>" height="50px"
+                                    width="50px" alt="">
 
-                              </div>
-                              <% } %>
-                                <% }); %>
-                                  <% } else { %>
-                                    <div>No products</div>
-                                    <% } %>
-                      </td>
-
-                      <!-- Total -->
-                      <td>₹<%= order.totalPrice.toFixed() %>
-                      </td>
-
-                      <!--Paymnet Status -->
-
-                      <td>
-                        <span class="status <%= order.paymentStatus.toLowerCase() %>">
-                          <%= order.paymentStatus %>
-                        </span>
-                      </td>
-
-                      <!--Order Status -->
-
-                      <td>
-                        <span class="status <%= order.orderStatus.toLowerCase() %>">
-                          <%= order.orderStatus %>
-                        </span>
-                      </td>
-
-                      <!--Payment Method -->
-                      <td>
-                        <%= order.paymentMethod %>
-                      </td>
-
-                      <!-- Actions -->
-
-                      <td>
-                        <a href="/order-details/<%= order._id  %>">
-                          <button class="view-btn">View Details</button>
-                        </a>
-
-                        <% if (order.orderStatus.toLowerCase()==='pending' || order.orderStatus.toLowerCase()==='processing' ) { %>
-                          <button class="btn cancel-btn" onclick="confirmAction('<%= order._id %>', 'cancel')">
-                            Cancel Order
-                          </button>
-                          <% } else if (order.orderStatus.toLowerCase()==='shipped' ) { %>
-                            <button class="btn cancel-btn" disabled>Cancel Order</button>
-                            <% } %>
-                              <% if (order.paymentStatus.toLowerCase()==='pending' && order.paymentMethod.toLowerCase()==='razorpay' ) { %>
-                                <button class="btn pay-now-btn bg-info" onclick="payNow('<%= order._id %>')">
-                                  Pay Now
-                                </button>
+                                </div>
                                 <% } %>
-                      </td>
+                                  <% }); %>
+                                    <% } else { %>
+                                      <div>No products</div>
+                                      <% } %>
+                        </td>
+                        <td data-label="Total">
+                          ₹<%= order.totalPrice.toFixed() %>
+                        </td>
+                        <td data-label="Payment Status">
+                          <span class="status <%= order.paymentStatus.toLowerCase() %>">
+                            <%= order.paymentStatus %>
+                          </span>
+                        </td>
+                        <td data-label="Order Status">
+                          <span class="status <%= order.orderStatus.toLowerCase() %>">
+                            <%= order.orderStatus %>
+                          </span>
+                        </td>
+                        <td data-label="Payment Method">
+                          <%= order.paymentMethod %>
+                        </td>
+                        <td data-label="Actions">
+                          <!-- Your existing actions code -->
+                          <a href="/order-details/<%= order._id  %>">
+                            <button class="btn view-btn">View Details</button>
+                          </a>
 
-                    </tr>
+                          <% if (order.orderStatus.toLowerCase()==='pending' || order.orderStatus.toLowerCase()==='processing' ) { %>
+                            <button class="btn cancel-btn" onclick="confirmAction('<%= order._id %>', 'cancel')">
+                              Cancel Order
+                            </button>
+                            <% } else if (order.orderStatus.toLowerCase()==='shipped' ) { %>
+                              <button class="btn cancel-btn" disabled>Cancel Order</button>
+                              <% } %>
+                                <% if (order.paymentStatus.toLowerCase()==='pending' && order.paymentMethod.toLowerCase()==='razorpay' ) { %>
+                                  <button class="btn pay-now-btn bg-info" onclick="payNow('<%= order._id %>')">
+                                    Pay Now
+                                  </button>
+                                  <% } %>
+                        </td>
+                      </tr>
                     <% }); %>
-                      <% } else { %>
-                        <tr>
-                          <td colspan="5" class="text-center">No orders found</td>
-                        </tr>
-                        <% } %>
-              </tbody>
-            </table>
+                  <% } else { %>
+                    <tr>
+                      <td colspan="7" class="text-center">No orders found</td>
+                    </tr>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+            
+            <!-- Add pagination controls -->
+            <% if (pagination.totalPages > 1) { %>
+              <div class="pagination">
+                <a href="?page=1" class="pagination-button" <%= pagination.page === 1 ? 'disabled' : '' %>>
+                  First
+                </a>
+                <a href="?page=<%= pagination.page - 1 %>" class="pagination-button" <%= !pagination.hasPrev ? 'disabled' : '' %>>
+                  Previous
+                </a>
+                
+                <% for(let i = Math.max(1, pagination.page - 2); i <= Math.min(pagination.totalPages, pagination.page + 2); i++) { %>
+                  <a href="?page=<%= i %>" class="pagination-button <%= pagination.page === i ? 'active' : '' %>">
+                    <%= i %>
+                  </a>
+                <% } %>
+                <% if(pagination.page == pagination.totalPages){ %>
+                <!-- <a href="?page=<%= pagination.page + 1 %>" class="pagination-button" <%= !pagination.hasNext ? 'disabled' : '' %>>
+                  Next
+                </a> -->
+                <% }else{ %>
+                  <a href="?page=<%= pagination.page + 1 %>" class="pagination-button" <%= !pagination.hasNext ? 'disabled' : '' %>>
+                    Next
+                  </a>
+                  <% } %>
+                <a href="?page=<%= pagination.totalPages %>" class="pagination-button" <%= pagination.page === pagination.totalPages ? 'disabled' : '' %>>
+                  Last
+                </a>
+              </div>
+            <% } %>
           </div>
-
-        </div>
+          
       </div>
     </div>
   </div>
@@ -334,83 +518,83 @@
       });
     }
 
-    
-  function payNow(orderId) {
-  Swal.fire({
-    title: "Proceed to Payment",
-    text: "You will be redirected to complete the payment.",
-    icon: "info",
-    showCancelButton: true,
-    confirmButtonText: "Pay Now",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      fetch(`/get-order-details/${orderId}`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (!data.success) {
-            Swal.fire("Error!", data.message, "error");
-            return;
-          }
 
-          // Ensure Razorpay is loaded
-          if (typeof Razorpay === "undefined") {
-            Swal.fire("Error!", "Razorpay SDK not loaded.", "error");
-            return;
-          }
+    function payNow(orderId) {
+      Swal.fire({
+        title: "Proceed to Payment",
+        text: "You will be redirected to complete the payment.",
+        icon: "info",
+        showCancelButton: true,
+        confirmButtonText: "Pay Now",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetch(`/get-order-details/${orderId}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (!data.success) {
+                Swal.fire("Error!", data.message, "error");
+                return;
+              }
 
-          // Razorpay Payment Options
-          const options = {
-            key: data.key, // Razorpay Key ID
-            amount: data.amount,
-            currency: "INR",
-            name: "SHOEZO",
-            description: "Retry Payment for Order",
-            order_id: data.razorpayOrderId, // Use the correct Razorpay order ID
-            handler: function (response) {
-              fetch("/verify-razorpay-payment-order", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  razorpay_payment_id: response.razorpay_payment_id,
-                  razorpay_order_id: response.razorpay_order_id,
-                  razorpay_signature: response.razorpay_signature,
-                  orderId: data.orderId,
-                }),
-              })
-                .then((res) => res.json())
-                .then((paymentResult) => {
-                  if (paymentResult.success) {
-                    Swal.fire("Success!", "Payment completed successfully!", "success").then(() => {
-                      location.reload();
+              // Ensure Razorpay is loaded
+              if (typeof Razorpay === "undefined") {
+                Swal.fire("Error!", "Razorpay SDK not loaded.", "error");
+                return;
+              }
+
+              // Razorpay Payment Options
+              const options = {
+                key: data.key, // Razorpay Key ID
+                amount: data.amount,
+                currency: "INR",
+                name: "SHOEZO",
+                description: "Retry Payment for Order",
+                order_id: data.razorpayOrderId, // Use the correct Razorpay order ID
+                handler: function (response) {
+                  fetch("/verify-razorpay-payment-order", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      razorpay_payment_id: response.razorpay_payment_id,
+                      razorpay_order_id: response.razorpay_order_id,
+                      razorpay_signature: response.razorpay_signature,
+                      orderId: data.orderId,
+                    }),
+                  })
+                    .then((res) => res.json())
+                    .then((paymentResult) => {
+                      if (paymentResult.success) {
+                        Swal.fire("Success!", "Payment completed successfully!", "success").then(() => {
+                          location.reload();
+                        });
+                      } else {
+                        Swal.fire("Error!", paymentResult.message, "error");
+                      }
                     });
-                  } else {
-                    Swal.fire("Error!", paymentResult.message, "error");
-                  }
-                });
-            },
-            prefill: {
-              name: "Customer Name",
-              email: "customer@example.com",
-              contact: "9999999999",
-            },
-            theme: {
-              color: "#3399cc",
-            },
-          };
+                },
+                prefill: {
+                  name: "Customer Name",
+                  email: "customer@example.com",
+                  contact: "9999999999",
+                },
+                theme: {
+                  color: "#3399cc",
+                },
+              };
 
-          const razorpayInstance = new Razorpay(options);
-          razorpayInstance.open();
-        })
-        .catch((error) => {
-          console.error("Payment retry error:", error);
-          Swal.fire("Error!", "Failed to retry payment.", "error");
-        });
+              const razorpayInstance = new Razorpay(options);
+              razorpayInstance.open();
+            })
+            .catch((error) => {
+              console.error("Payment retry error:", error);
+              Swal.fire("Error!", "Failed to retry payment.", "error");
+            });
+        }
+      });
     }
-  });
-}
 
 
 

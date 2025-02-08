@@ -53,35 +53,3 @@ document.addEventListener('click', (e) => {
         searchResults.classList.remove("active");
     }
 });
-
-// Basic Search UI
-document.addEventListener("DOMContentLoaded", () => {
-    const searchForm = document.getElementById("searchForm");
-    
-    searchForm.innerHTML = `
-        <div class="search-form-container pt-4">
-            <div class="search-input-group">
-                <input type="search" id="headerSearch" placeholder="Search products...">
-                <select id="searchCategory">
-                    <option value="">All Categories</option>
-                    <option value="mens">Mens</option>
-                    <option value="womens">Womens</option>
-                    <option value="kids">Kids</option>
-                </select>
-            </div>
-            <button type="submit">
-                <i class="fa fa-search" aria-hidden="true"></i>
-            </button>
-        </div>
-    `;
-});
-
-
-document.addEventListener('click', (e) => {
-    const searchResults = document.getElementById('searchResults');
-    const searchForm = document.getElementById('searchForm');
-
-    if (!searchForm.contains(e.target)) {
-        searchResults.classList.remove('active');
-    }
-});
