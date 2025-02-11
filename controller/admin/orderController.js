@@ -6,19 +6,31 @@ const Wallet = require('../../model/Wallet')
 
 const viewOrders = async (req, res) => {
   try {
+    let page = parseInt(req.query.page) || 1; // Default to page 1
+    let limit = parseInt(req.query.limit) || 10; // Default limit to 10 orders per page
+
+    let totalOrders = await Order.countDocuments(); // Get total count of orders
+    let totalPages = Math.ceil(totalOrders / limit); // Calculate total pages
+
     const orders = await Order.find({})
-      .populate("orderedItems.product", "productName productImages") // Populate product details
-      .populate("userId", "username") // Populate user details
-      .sort({ createdOn: -1 });
+      .populate("orderedItems.product", "productName productImages")
+      .populate("userId", "username")
+      .sort({ createdOn: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit);
 
-    // console.log("Admin Orders", orders);
-
-    res.render("admin/view-orders", { orders }); // Pass orders to the view
+    res.render("admin/view-orders", { 
+      orders, 
+      currentPage: page, 
+      totalPages, 
+      limit 
+    });
   } catch (error) {
     console.log("Admin Order Error ", error);
     res.status(500).send("Internal Server Error");
   }
 };
+
 
 const orderDetails = async (req, res) => {
   try {

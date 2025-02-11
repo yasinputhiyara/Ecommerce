@@ -1,6 +1,7 @@
 const Order = require("../../model/Order");
-const ExcelJS = require("exceljs");
 const PDFDocument = require("pdfkit");
+// require("pdfkit-table");
+const ExcelJS = require("exceljs");
 const fs = require("fs");
 
 const getSalesReport = async (req, res) => {
@@ -104,216 +105,6 @@ const getSalesReport = async (req, res) => {
   }
 };
 
-
-
-// const getPdf = async (req, res) => {
-//   try {
-//     let { startDate, endDate, filter } = req.query;
-
-//     let start, end;
-//     const now = new Date();
-
-//     switch (filter) {
-//       case "daily":
-//         start = new Date();
-//         start.setHours(0, 0, 0, 0);
-//         end = new Date();
-//         end.setHours(23, 59, 59, 999);
-//         break;
-
-//       case "weekly":
-//         start = new Date();
-//         start.setDate(start.getDate() - start.getDay()); // Start of the week (Sunday)
-//         start.setHours(0, 0, 0, 0);
-//         end = new Date(start);
-//         end.setDate(start.getDate() + 6); // End on Saturday
-//         end.setHours(23, 59, 59, 999);
-//         break;
-
-//       case "monthly":
-//         start = new Date(now.getFullYear(), now.getMonth(), 1);
-//         end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-//         end.setHours(23, 59, 59, 999);
-//         break;
-
-//       case "yearly":
-//         start = new Date(now.getFullYear(), 0, 1);
-//         end = new Date(now.getFullYear(), 11, 31);
-//         end.setHours(23, 59, 59, 999);
-//         break;
-
-//       case "custom":
-//         if (!startDate || !endDate) {
-//           return res
-//             .status(400)
-//             .json({ success: false, message: "Invalid date range" });
-//         }
-//         start = new Date(startDate);
-//         end = new Date(endDate);
-//         end.setHours(23, 59, 59, 999); // Ensure full last day is included
-//         break;
-
-//       default:
-//         start = new Date(0);
-//         end = new Date();
-//     }
-
-//     // Fetch filtered orders
-//     const orders = await Order.find({
-//       createdOn: { $gte: start, $lte: end },
-//       orderStatus: { $in: ["Delivered", "Completed"] },
-//     });
-
-//     if (!orders.length) {
-//       return res
-//         .status(404)
-//         .json({ success: false, message: "No orders found." });
-//     }
-
-//     // Generate PDF
-//     const doc = new PDFDocument();
-//     const fileName = `sales-report-${Date.now()}.pdf`;
-//     const stream = fs.createWriteStream(`./public/reports/${fileName}`);
-
-//     doc.pipe(stream);
-//     doc.fontSize(16).text("Sales Report", { align: "center" });
-//     doc.moveDown();
-//     doc.fontSize(12).text(`Filter: ${filter}`);
-//     doc.text(`Total Sales: ${orders.length}`);
-//     doc.text(
-//       `Total Revenue: ${orders.reduce(
-//         (acc, order) => acc + order.totalPrice,
-//         0
-//       )}`
-//     );
-//     doc.text(
-//       `Total Discount: ${orders.reduce(
-//         (acc, order) => acc + order.discount,
-//         0
-//       )}`
-//     );
-//     doc.moveDown();
-
-//     orders.forEach((order) => {
-//       doc.text(`Order ID: ${order._id}`);
-//       doc.text(`Date: ${order.createdOn.toDateString()}`);
-//       doc.text(`Total: ${order.totalPrice}`);
-//       doc.text(`Discount: ${order.discount}`);
-//       doc.moveDown();
-//     });
-
-//     doc.end();
-
-//     stream.on("finish", () => {
-//       res.download(`./public/reports/${fileName}`);
-//     });
-//   } catch (error) {
-//     console.error("PDF Generation Error:", error);
-//     res.status(500).json({ success: false, message: "Internal Server Error" });
-//   }
-// };
-
-// const getExcel = async (req, res) => {
-//   try {
-//     let { startDate, endDate, filter } = req.query;
-//     let start, end;
-//     const now = new Date();
-
-//     switch (filter) {
-//       case "daily":
-//         start = new Date();
-//         start.setHours(0, 0, 0, 0);
-//         end = new Date();
-//         end.setHours(23, 59, 59, 999);
-//         break;
-
-//       case "weekly":
-//         start = new Date();
-//         start.setDate(start.getDate() - start.getDay()); // Start of the week (Sunday)
-//         start.setHours(0, 0, 0, 0);
-//         end = new Date(start);
-//         end.setDate(start.getDate() + 6); // End on Saturday
-//         end.setHours(23, 59, 59, 999);
-//         break;
-
-//       case "monthly":
-//         start = new Date(now.getFullYear(), now.getMonth(), 1);
-//         end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-//         end.setHours(23, 59, 59, 999);
-//         break;
-
-//       case "yearly":
-//         start = new Date(now.getFullYear(), 0, 1);
-//         end = new Date(now.getFullYear(), 11, 31);
-//         end.setHours(23, 59, 59, 999);
-//         break;
-
-//       case "custom":
-//         if (!startDate || !endDate) {
-//           return res
-//             .status(400)
-//             .json({ success: false, message: "Invalid date range" });
-//         }
-//         start = new Date(startDate);
-//         end = new Date(endDate);
-//         end.setHours(23, 59, 59, 999); // Ensure full last day is included
-//         break;
-
-//       default:
-//         start = new Date(0);
-//         end = new Date();
-//     }
-
-//     const orders = await Order.find({
-//       createdOn: { $gte: start, $lte: end },
-//       orderStatus: { $in: ["Delivered", "Completed"] },
-//     });
-
-//     if (!orders.length) {
-//       return res
-//         .status(404)
-//         .json({ success: false, message: "No orders found." });
-//     }
-
-//     const workbook = new ExcelJS.Workbook();
-//     const sheet = workbook.addWorksheet("Sales Report");
-
-//     sheet.columns = [
-//       { header: "Order ID", key: "_id", width: 25 },
-//       { header: "Date", key: "createdOn", width: 20 },
-//       { header: "Total Amount", key: "totalPrice", width: 15 },
-//       { header: "Discount", key: "discount", width: 15 },
-//     ];
-
-//     orders.forEach((order) => {
-//       sheet.addRow({
-//         _id: order._id.toString(),
-//         createdOn: order.createdOn.toDateString(),
-//         totalPrice: order.totalPrice,
-//         discount: order.discount,
-//       });
-//     });
-
-//     res.setHeader(
-//       "Content-Type",
-//       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-//     );
-//     res.setHeader(
-//       "Content-Disposition",
-//       "attachment; filename=sales-report.xlsx"
-//     );
-
-//     await workbook.xlsx.write(res);
-//     res.end();
-//   } catch (error) {
-//     console.error("Excel Generation Error:", error);
-//     res.status(500).json({ success: false, message: "Internal Server Error" });
-//   }
-// };
-
-
-
-
 const getDateRange = (filter, startDate, endDate) => {
   const now = new Date();
   let start, end;
@@ -367,35 +158,116 @@ const getPdf = async (req, res) => {
     const { startDate, endDate, filter } = req.query;
     const { start, end } = getDateRange(filter, startDate, endDate);
 
-    console.log("Filter value:", filter);
-
     const orders = await Order.find({
       createdOn: { $gte: start, $lte: end },
       orderStatus: { $in: ["Delivered", "Completed"] },
     });
 
-    if (!orders.length) return res.status(404).json({ success: false, message: "No orders found." });
+    if (!orders.length) {
+      return res
+        .status(404)
+        .json({ success: false, message: "No orders found." });
+    }
 
-    const doc = new PDFDocument();
+    const doc = new PDFDocument({ margin: 30, size: 'A4' });
     const fileName = `sales-report-${Date.now()}.pdf`;
     const filePath = `./public/reports/${fileName}`;
     const stream = fs.createWriteStream(filePath);
 
     doc.pipe(stream);
-    doc.fontSize(16).text("Sales Report", { align: "center" }).moveDown();
-    doc.fontSize(12).text(`Filter: ${filter}`).text(`Total Sales: ${orders.length}`);
-    doc.text(`Total Revenue: ${orders.reduce((acc, order) => acc + order.totalPrice, 0)}`);
-    doc.text(`Total Discount: ${orders.reduce((acc, order) => acc + order.discount, 0)}`).moveDown();
 
-    orders.forEach(order => {
-      doc.text(`Order ID: ${order._id}`).text(`Date: ${order.createdOn.toDateString()}`);
-      doc.text(`Total: ${order.totalPrice}`).text(`Discount: ${order.discount}`).moveDown();
+    // Header Section
+    doc.fontSize(20).text("Sales Report", { align: "center" }).moveDown();
+    doc
+      .fontSize(12)
+      .text(`Filter: ${filter.charAt(0).toUpperCase() + filter.slice(1)}`);
+    doc.text(`Total Sales: ${orders.length}`);
+    doc.text(
+      `Total Revenue: ₹${orders
+        .reduce((acc, order) => acc + order.totalPrice, 0)
+        .toFixed(2)}`
+    );
+    doc
+      .text(
+        `Total Discount: ₹${orders
+          .reduce((acc, order) => acc + order.discount, 0)
+          .toFixed(2)}`
+      )
+      .moveDown();
+
+    // Table Headers
+    const tableTop = 200;
+    const columns = {
+      orderId: { x: 50, width: 150 },
+      date: { x: 200, width: 100 },
+      totalPrice: { x: 300, width: 100 },
+      discount: { x: 400, width: 100 }
+    };
+
+    // Draw Headers
+    doc
+      .font('Helvetica-Bold')
+      .fontSize(12);
+    
+    doc.text('Order ID', columns.orderId.x, tableTop);
+    doc.text('Date', columns.date.x, tableTop);
+    doc.text('Total Price (₹)', columns.totalPrice.x, tableTop);
+    doc.text('Discount (₹)', columns.discount.x, tableTop);
+
+    // Draw Rows
+    let yPosition = tableTop + 25;
+    
+    orders.forEach((order, i) => {
+      if (yPosition > 750) { // Check if we need a new page
+        doc.addPage();
+        yPosition = 50; // Reset Y position for new page
+      }
+
+      const rowBackground = i % 2 === 0 ? '#ffffff' : '#f5f5f5';
+      
+      // Draw row background
+      doc
+        .rect(40, yPosition - 5, 520, 20)
+        .fill(rowBackground);
+      
+      doc
+        .font('Helvetica')
+        .fontSize(10)
+        .fillColor('black');
+
+      doc.text(order.orderId.toString(), columns.orderId.x, yPosition, {
+        width: columns.orderId.width,
+        truncate: true
+      });
+      
+      doc.text(order.createdOn.toDateString(), columns.date.x, yPosition, {
+        width: columns.date.width
+      });
+      
+      doc.text(order.totalPrice.toFixed(2), columns.totalPrice.x, yPosition, {
+        width: columns.totalPrice.width,
+        align: 'right'
+      });
+      
+      doc.text(order.discount.toFixed(2), columns.discount.x, yPosition, {
+        width: columns.discount.width,
+        align: 'right'
+      });
+
+      yPosition += 20;
     });
+
+    // Add borders around the table
+    doc
+      .rect(40, tableTop - 10, 520, yPosition - tableTop + 10)
+      .stroke();
 
     doc.end();
-    stream.on("finish", () => {
-      res.download(filePath, () => fs.unlinkSync(filePath));
+
+    stream.on('finish', () => {
+      res.download(filePath, () => fs.unlinkSync(filePath)); // Cleanup after download
     });
+
   } catch (error) {
     console.error("PDF Generation Error:", error.message);
     res.status(500).json({ success: false, message: "Error generating PDF." });
@@ -412,7 +284,10 @@ const getExcel = async (req, res) => {
       orderStatus: { $in: ["Delivered", "Completed"] },
     });
 
-    if (!orders.length) return res.status(404).json({ success: false, message: "No orders found." });
+    if (!orders.length)
+      return res
+        .status(404)
+        .json({ success: false, message: "No orders found." });
 
     const workbook = new ExcelJS.Workbook();
     const sheet = workbook.addWorksheet("Sales Report");
@@ -425,7 +300,7 @@ const getExcel = async (req, res) => {
     ];
 
     sheet.getRow(1).font = { bold: true };
-    orders.forEach(order => {
+    orders.forEach((order) => {
       sheet.addRow({
         _id: order._id.toString(),
         createdOn: order.createdOn.toDateString(),
@@ -434,14 +309,22 @@ const getExcel = async (req, res) => {
       });
     });
 
-    res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-    res.setHeader("Content-Disposition", "attachment; filename=sales-report.xlsx");
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=sales-report.xlsx"
+    );
 
     await workbook.xlsx.write(res);
     res.end();
   } catch (error) {
     console.error("Excel Generation Error:", error.message);
-    res.status(500).json({ success: false, message: "Error generating Excel file." });
+    res
+      .status(500)
+      .json({ success: false, message: "Error generating Excel file." });
   }
 };
 module.exports = {

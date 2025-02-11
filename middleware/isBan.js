@@ -19,6 +19,7 @@ let checkBan = async (req, res, next) => {
 
       // Check if the user exists and is blocked
       if (user && user.isBlocked) {
+        delete req.session.user;
         console.log(`User ${email} is blocked`);
         return res.render('user/index', {
           message: "Your account has been blocked. Please contact support.",

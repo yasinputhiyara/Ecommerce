@@ -18,7 +18,7 @@ var router = express.Router();
 /* GET home page. */
 router.get('/login',adminController.loadLogin);
 router.post('/login',adminController.verifyAdminLogin)
-router.get('/',adminController.loadDashboard)
+router.get('/',adminAuth,adminController.loadDashboard)
 
 //-------User-------//
 router.get('/view-users',adminAuth ,adminController.viewUsers )

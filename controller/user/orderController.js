@@ -429,50 +429,155 @@ const returnSingleProduct = async (req, res) => {
 };
 
 
-const InvoiceDownload = async (req,res)=>{
+const InvoiceDownload = async (req, res) => {
   try {
-    const order = await Orders.findById(req.params.orderId).populate('orderedItems.product');
+      const order = await Orders.findById(req.params.orderId).populate('orderedItems.product');
 
-    if (!order) {
-        return res.status(404).send('Order not found');
-    }
+      if (!order) {
+          return res.status(404).send('Order not found');
+      }
 
-    const doc = new PDFDocument();
-    const filename = `invoice_${order.orderId}.pdf`;
+      const doc = new PDFDocument({ margin: 50, size: 'A4' });
+      const filename = `invoice_${order.orderId}.pdf`;
 
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
 
-    doc.pipe(res);
+      doc.pipe(res);
 
-    doc.fontSize(25).text('Invoice', { align: 'center' });
-    doc.moveDown();
-    doc.fontSize(14).text(`Order ID: ${order.orderId}`);
-    doc.text(`Order Date: ${new Date(order.createdOn).toLocaleDateString()}`);
-    doc.moveDown();
+      // Add company logo or name
+      doc.fontSize(20).text('SHOEZO', { align: 'center' });
+      doc.moveDown();
 
-    doc.fontSize(18).text('Order Details', { underline: true });
-    order.orderedItems.forEach((item, index) => {
-        doc.moveDown();
-        doc.text(`Product: ${item.product.productName}`);
-        doc.text(`Size: ${item.size}`);
-        doc.text(`Quantity: ${item.quantity}`);
-        doc.text(`Price: ₹${item.price.toFixed(2)}`);
-        doc.text(`Total: ₹${(item.price * item.quantity).toFixed(2)}`);
-    });
+      // Invoice header
+      doc.fontSize(16).text('INVOICE', { align: 'center' });
+      doc.moveDown();
 
-    doc.moveDown();
-    doc.fontSize(18).text('Order Summary', { underline: true });
-    doc.text(`Subtotal: ₹${order.subtotal.toFixed(2)}`);
-    doc.text(`Discount: -₹${order.discount.toFixed(2)}`);
-    doc.text(`Total Amount: ₹${order.totalPrice.toFixed(2)}`);
+      // Create a box for order details
+      doc.rect(50, doc.y, 500, 80)
+         .stroke();
 
-    doc.end();
-} catch (error) {
-    console.error('Error generating invoice:', error);
-    res.status(500).send('Error generating invoice');
-}
-}
+      const startY = doc.y + 10;
+      
+      // Left side info
+      doc.fontSize(10)
+         .text('Order Details:', 60, startY)
+         .text(`Order ID: ${order.orderId}`, 60, startY + 15)
+         .text(`Order Date: ${new Date(order.createdOn).toLocaleDateString()}`, 60, startY + 30);
+
+      // Right side info (if you have customer details)
+      doc.fontSize(10)
+         .text('Customer Details:', 300, startY)
+         .text(`Name: ${order.address?.name || 'N/A'}`, 300, startY + 15)
+         .text(`Phone: ${order.address?.phone || 'N/A'}`, 300, startY + 30);
+
+      doc.moveDown(5);
+
+      // Table Header
+      const tableTop = doc.y + 10;
+      const itemCodeX = 50;
+      const descriptionX = 150;
+      const sizeX = 280;
+      const quantityX = 350;
+      const priceX = 400;
+      const totalX = 480;
+
+      // Draw table header
+      doc.rect(50, tableTop - 5, 500, 20).fill('#E4E4E4');
+      doc.fillColor('#000000');
+      doc.fontSize(10)
+         .text('Item', itemCodeX, tableTop)
+         .text('Description', descriptionX, tableTop)
+         .text('Size', sizeX, tableTop)
+         .text('Qty', quantityX, tableTop)
+         .text('Price', priceX, tableTop)
+         .text('Total', totalX, tableTop);
+
+      // Draw lines
+      doc.moveTo(50, tableTop + 15)
+         .lineTo(550, tableTop + 15)
+         .stroke();
+
+      let yPosition = tableTop + 25;
+
+      // Table rows
+      order.orderedItems.forEach((item, index) => {
+          // Check if we need a new page
+          if (yPosition > 700) {
+              doc.addPage();
+              yPosition = 50;
+              
+              // Redraw header on new page
+              doc.rect(50, yPosition - 5, 500, 20).fill('#E4E4E4');
+              doc.fillColor('#000000');
+              doc.fontSize(10)
+                 .text('Item', itemCodeX, yPosition)
+                 .text('Description', descriptionX, yPosition)
+                 .text('Size', sizeX, yPosition)
+                 .text('Qty', quantityX, yPosition)
+                 .text('Price', priceX, yPosition)
+                 .text('Total', totalX, yPosition);
+              
+              yPosition += 20;
+          }
+
+          // Add zebra striping
+          if (index % 2 === 1) {
+              doc.rect(50, yPosition - 5, 500, 20).fill('#F9F9F9');
+          }
+
+          doc.fillColor('#000000')
+             .fontSize(10)
+             .text(item.product.productId || 'N/A', itemCodeX, yPosition)
+             .text(item.product.productName, descriptionX, yPosition, { width: 120 })
+             .text(item.size, sizeX, yPosition)
+             .text(item.quantity.toString(), quantityX, yPosition)
+             .text(`₹${item.price.toFixed(2)}`, priceX, yPosition)
+             .text(`₹${(item.price * item.quantity).toFixed(2)}`, totalX, yPosition);
+
+          yPosition += 20;
+      });
+
+      // Draw bottom line
+      doc.moveTo(50, yPosition)
+         .lineTo(550, yPosition)
+         .stroke();
+
+      // Summary section
+      yPosition += 20;
+      const summaryX = 400;
+      
+      doc.fontSize(10)
+         .text('Subtotal:', summaryX, yPosition)
+         .text(`₹${order.subtotal.toFixed(2)}`, totalX, yPosition);
+      
+      yPosition += 20;
+      doc.text('Discount:', summaryX, yPosition)
+         .text(`-₹${order.discount.toFixed(2)}`, totalX, yPosition);
+      
+      yPosition += 20;
+      doc.text('Shipping Charge:', summaryX, yPosition)
+         .text(`₹${order.shippingCharge.toFixed(2) || 0}`, totalX, yPosition);
+      
+      yPosition += 20;
+      doc.fontSize(12)
+         .font('Helvetica-Bold')
+         .text('Total Amount:', summaryX, yPosition)
+         .text(`₹${order.totalPrice.toFixed(2)}`, totalX, yPosition);
+
+      // Footer
+      const footerTop = doc.page.height - 100;
+      doc.fontSize(10)
+         .font('Helvetica')
+         .text('Thank you for your business!', 50, footerTop, { align: 'center' })
+         .text('For any queries, please contact support@yourcompany.com', 50, footerTop + 15, { align: 'center' });
+
+      doc.end();
+  } catch (error) {
+      console.error('Error generating invoice:', error);
+      res.status(500).send('Error generating invoice');
+  }
+};
 
 
 

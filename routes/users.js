@@ -18,7 +18,7 @@ const walletController = require('../controller/user/walletController');
 /* GET users listing. */
 router.get('/login',checkBan,isLoggedIn,userController.loadLogin)
 router.post('/login',isLoggedIn,userController.verifyLogin)
-router.get('/register',checkBan,isLoggedIn,userController.loadRegister)
+router.get('/register',isLoggedIn,userController.loadRegister)
 router.post('/register' ,isLoggedIn, userController.verifyRegister);
 router.get('/otp-verify',checkBan ,isLoggedIn, userController.loadOtpPage)
 router.post('/verify-otp' ,isLoggedIn, userController.verifyOtp)
