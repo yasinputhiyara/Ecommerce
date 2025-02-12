@@ -146,6 +146,10 @@
                                 <button onclick="history.back()" class="back-button" title="Go back">
                                     <i class="fas fa-arrow-left"></i>
                                 </button>
+                                <% if(error){ %>
+                                    <h4 class="text-center" style="color: red;"><%= error  %></h4>
+                                    
+                                    <% } %>
                                 <h2 class="text-center mb-4 fw-bold">Create Account</h2>
 
 

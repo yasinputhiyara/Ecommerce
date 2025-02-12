@@ -1,60 +1,6 @@
 const { Brand, Category, Product } = require("../../model/Product");
 const Wishlist = require("../../model/Wishlist");
 
-// const loadProductDetail = async (req, res) => {
-//     try {
-//         const productId = req.params.id;
-//         const product = await Product.findById(productId).populate('category');
-//         const products = await Product.find({}).limit(4);
-//         const user = req.session.user;
-//         const category = await Category.findOne({})
-
-//         const similarProducts = await Product.find({}).limit(4)
-
-//         res.render('user/view-productDetails', {
-//             product,
-//             user,
-//             similarProducts,
-//             products
-
-//         });
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).send('Server Error');
-//     }
-// };
-
-// const loadProductDetail = async (req, res) => {
-//     try {
-//         const productId = req.params.id;
-//         const product = await Product.findById(productId)
-//             .populate('category')
-//             // .populate('reviews.userId')
-//             .populate('variants');
-
-//         const similarProducts = await Product.find({
-//             category: product.category,
-//             _id: { $ne: product._id }
-//         }).limit(4);
-
-//         // Calculate average rating
-//         // const averageRating = product.reviews.reduce((acc, review) =>
-//         //     acc + review.rating, 0) / (product.reviews.length || 1);
-
-//         res.render('user/view-productDetails', {
-//             product: {
-//                 ...product._doc,
-//                 // averageRating
-//             },
-//             user: req.session.user,
-//             products:similarProducts
-//         });
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).send('Server Error');
-//     }
-// };
-
 const loadProductDetail = async (req, res) => {
   try {
     const userId = req.session.user?._id;
@@ -62,7 +8,7 @@ const loadProductDetail = async (req, res) => {
     const product = await Product.findById(productId).populate("category");
 
     if (!product || product.isBlocked) {
-      return res.status(404).send("Product not found");
+      return res.status(404).render("error" ,{message:"Product not found "} );
     }
 
     // Check if the product is in the user's wishlist
